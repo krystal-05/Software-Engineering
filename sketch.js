@@ -6,7 +6,7 @@ let titleIcon;
 
 function preload() {
   bgImage = loadImage('assets/baseball_bg.jpg'); 
-  titleIcon = createImg('assets/Title_Logo_2.png','Title_Icon');
+  titleIcon = loadImage('assets/Title_Logo_2.png')
 }
 
 function setup() {
@@ -32,10 +32,7 @@ function draw() {
     fill(255);
     textSize(64);
     stroke(0);
-    
-    titleIcon.size(256,256);
-    titleIcon.position(160 ,-25);
-    //text("Batterground", width / 2, 130); <- Batterground text
+    image(titleIcon, (width / 2) - 128, 0, 256, 256);
     
     textStyle(NORMAL);
     for (let btn of buttons) {
