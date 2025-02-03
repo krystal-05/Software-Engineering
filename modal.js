@@ -8,6 +8,9 @@ function createModal(settingMenu) {
         display: none;
         align-items: center;
         justify-content: center;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
     }
     .modal-content {
         border: 1px solid #000000;
@@ -79,13 +82,8 @@ function showSettings() {
 function hideSettings() {
   settingMenu = false;
   modal.style.display = "none";
-}
-function centerSettings() {
-  let canvasWidth = canvas.width;  
-  let canvasHeight = canvas.height;  
-  let modalWidth = modal.offsetWidth;  
-  let modalHeight = modal.offsetHeight;  
-
-  modal.style.left = `${(canvasWidth - modalWidth) / 2}px`;
-  modal.style.top = `${(canvasHeight - modalHeight) / 2}px`;
-}
+}/*
+function centerSettings() {  
+  modal.style.left = `${(width/2) - (modal.offsetWidth/2)}px`;
+  modal.style.top = `${(height/2) - (modal.offsetHeight/2)}px`;
+}*/
