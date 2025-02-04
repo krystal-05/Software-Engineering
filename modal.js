@@ -76,7 +76,7 @@ function createModal(settingMenu) {
 
 function showSettings() {
   modal.style.display = "flex";
-  centerSettings();
+  //centerSettings();
 }
 
 function hideSettings() {
