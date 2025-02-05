@@ -1,5 +1,5 @@
 let buttons = [];
-let gameStarted = false;
+let gameState = "menu";
 let settingMenu = false;
 let bgImage;
 let titleIcon;
@@ -14,30 +14,20 @@ function setup() {
   textAlign(CENTER, CENTER);
   textSize(32);
   
-  buttons.push(new Button("Start Game", width / 2, 260)); 
-  buttons.push(new Button("Settings", width - 75, height - 35, true)); 
-  buttons.push(new Button("Credits", width - 150, height - 35, true));
+  buttons.push(new Button("Start Game", width / 2, 260, false, () => gameState = "loadGame"));
+  buttons.push(new Button("S", width - 75, height - 35, true, () => settingMenu = true));
+  buttons.push(new Button("C", width - 150, height - 35, true, () => alert("Credits Screen Placeholder")));
   
-  createModal(settingMenu);
+  createModal();
 }
 
 function draw() {
-  background(bgImage);
+  background(0);
   
-  if (gameStarted) {
-    text("Game started", width / 2, height / 2);
-  } else {
-    textStyle(BOLD);
-  
-    fill(255);
-    textSize(64);
-    stroke(0);
-    image(titleIcon, (width / 2) - 128, 0, 256, 256);
-    
-    textStyle(NORMAL);
-    for (let btn of buttons) {
-      btn.display();
-    }
+  if (gameState === "menu") {
+    drawMainMenu();
+  } else if (gameState === "loadGame") {
+    drawLoadScreen();
   }
   
   if (settingMenu) {
@@ -45,18 +35,42 @@ function draw() {
   }
 }
 
+function drawMainMenu() {
+  background(bgImage);
+  fill(255, 215, 0);
+  textSize(60);
+  textStyle(BOLD);
+  image(titleIcon, (width / 2) - 128, 0, 256, 256);
+
+  textStyle(NORMAL);
+  for (let btn of buttons) {
+    btn.display();
+  }
+}
+
+function drawLoadScreen() {
+  fill(255, 215, 0);
+  textSize(60);
+  textStyle(BOLD);
+  text("Load Game", width / 2, height * 0.2);
+
+  let loadButtons = [
+    new Button("Game 1", width / 2, 200),
+    new Button("Game 2", width / 2, 270),
+    new Button("Game 3", width / 2, 340),
+    new Button("B", 100, height - 50, true, goBack)
+  ];
+
+  for (let btn of loadButtons) {
+    btn.display();
+  }
+}
+
 function mousePressed() {
   if (!settingMenu) {
     for (let btn of buttons) {
-      if (btn.isHovered()) {
-        console.log(btn.label + " clicked");
-        switch(btn.label) {
-          case "Start Game":
-            gameStarted = true;
-            break;
-          case "Settings":
-            settingMenu = true;
-        }
+      if (btn.isHovered() && btn.action) {
+        btn.action();
       }
     }
   }

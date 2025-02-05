@@ -1,6 +1,6 @@
 let modal;
 
-function createModal(settingMenu) {
+function createModal() {
   const style = document.createElement("style");
   style.textContent = `
     .modal {
@@ -54,36 +54,39 @@ function createModal(settingMenu) {
     <div class="modal-content">
         <span class="close-button">&times;</span>
         <p><b>Settings</b></p>
-        <button id="updateVolume" class="modal-button">Update Volume</button>
+        <button id="muteToggle" class="modal-button">Mute</button>
+        <button id ="unmuteToggle" class="modal-button">Unmute</button>
+        <button id="backSettings" class="modal-button">Back</button>
     </div>
   `;
   document.body.appendChild(modal);
 
   // Get modal elements
   const closeButton = modal.querySelector(".close-button");
-  const volButton = modal.querySelector("#updateVolume");
+  const muteButton = modal.querySelector("#muteToggle");
+  const backButton = modal.querySelector("#backSettings");
 
   // Event listeners for modal
-  closeButton.addEventListener("click", () => {
-    modal.style.display = "none";
-    hideSettings();
-  });
-  
-  volButton.addEventListener("click", () => {
-    console.log("Volume Updated");
-  });
+  closeButton.addEventListener("click", hideSettings);
+  muteButton.addEventListener("click", () => console.log("Mute/Unmute button clicked"));
+  backButton.addEventListener("click", hideSettings);
 }
 
 function showSettings() {
   modal.style.display = "flex";
-  //centerSettings();
 }
 
 function hideSettings() {
   settingMenu = false;
   modal.style.display = "none";
-}/*
-function centerSettings() {  
-  modal.style.left = `${(width/2) - (modal.offsetWidth/2)}px`;
-  modal.style.top = `${(height/2) - (modal.offsetHeight/2)}px`;
-}*/
+}
+
+function goBack() {
+  gameState = "menu";
+}
+
+function keyPressed() {
+  if (keyCode === ESCAPE) {
+    goBack();
+  }
+}
