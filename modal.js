@@ -1,7 +1,7 @@
 let modal;
 let volumeSlider;
 let isMuted = false;
-let currVolume = 1.0;
+let currVolume = 0.5;
 let muteButton;
 
 
@@ -82,14 +82,31 @@ function createModal() {
   // Event listeners for modal
   closeButton.addEventListener("click", hideSettings);
   volumeSlider.addEventListener("input", updateVolume);
-  muteButton.addEventListener("click", toggleMute);
-  backButton.addEventListener("click", hideSettings);
+  muteButton.addEventListener("click", () => {
+    toggleMute();
+    buttonClick();
+  });
+  backButton.addEventListener("click", () => {
+    buttonClick();
+    hideSettings();
+  });
+
 
   const savedVolume = localStorage.getItem("volume");
+  const savedMute = localStorage.getItem("isMuted");
+
+
   if (savedVolume !== null) {
     currVolume = parseFloat(savedVolume);
     volumeSlider.value = currVolume;
-    if (gameSong) gameSong.setVolume(currVolume);
+  }
+  if (savedMute !== null) {
+    isMuted = savedMute === "true";
+    muteButton.textContent = isMuted ? "Unmute" : "Mute";
+    if (menuSong || buttonSound) {
+      menuSong.setVolume(isMuted ? 0 : currVolume);
+      buttonSound.setVolume(isMuted ? 0 : currVolume);
+    }
   }
 
 }
@@ -104,34 +121,23 @@ function hideSettings() {
 }
 
 function toggleMute() {
-  if (!gameSong) return;
+  if (!menuSong) return;
   
-  if (isMuted) {
-    gameSong.setVolume(currVolume);
-    muteButton.textContent = "Mute";
-  } else {
-    currVolume = parseFloat(volumeSlider.value);
-    gameSong.setVolume(0);
-    muteButton.textContent = "Unmute";
-  }
   isMuted = !isMuted;
+  muteButton.textContent = isMuted ? "Unmute" : "Mute";
+  menuSong.setVolume(isMuted ? 0 : currVolume);
+  buttonSound.setVolume(isMuted ? 0 : currVolume);
+  
   localStorage.setItem("volume", currVolume);
+  localStorage.setItem("isMuted", isMuted.toString());
 }
 
 function updateVolume() {
   if (!isMuted) {
     let volume = parseFloat(volumeSlider.value);
-    gameSong.setVolume(volume);
+    menuSong.setVolume(volume);
+    buttonSound.setVolume(volume);
     localStorage.setItem("volume", volume);
-  }
-}
-
-function goBack() {
-  gameState = "menu";
-}
-
-function keyPressed() {
-  if (keyCode === ESCAPE) {
-    goBack();
+    currVolume = volume;
   }
 }

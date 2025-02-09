@@ -1,14 +1,15 @@
 let buttons = [];
+let loadButtons = [];
 let gameState = "menu";
 let settingMenu = false;
-let bgImage;
-let titleIcon;
-let gameSong;
+let bgImage, titleIcon;
+let menuSong, buttonSound;
 
 function preload() {
-  bgImage = loadImage('assets/baseball_bg.jpg'); 
+  bgImage = loadImage('assets/roughititlescreen.png'); 
   titleIcon = loadImage('assets/Title_Logo_2.png');
-  gameSong = loadSound('sounds/gamesong.mp3');
+  menuSong = loadSound('sounds/gamesong.mp3');
+  buttonSound = loadSound('sounds/buttonClick.mp3');
 }
 
 function setup() {
@@ -16,19 +17,19 @@ function setup() {
   textAlign(CENTER, CENTER);
   textSize(32);
   
-  if (gameSong.isLoaded() && !gameSong.isPlaying()) {
-    gameSong.loop();
-  }
+  /*if (menuSong.isLoaded() && !menuSong.isPlaying()) {
+    menuSong.loop();
+  }*/
 
   buttons.push(new Button("Start Game", width / 2, 260, false, () => gameState = "loadGame"));
   buttons.push(new Button("S", width - 75, height - 35, true, () => settingMenu = true));
-  buttons.push(new Button("C", width - 150, height - 35, true, () => alert("Credits Screen Placeholder")));
+  buttons.push(new Button("C", width - 150, height - 35, true, () => loadCredits()));
   
   createModal();
 }
 
 function draw() {
-  background(0);
+  background(20);
   
   if (gameState === "menu") {
     drawMainMenu();
@@ -60,11 +61,11 @@ function drawLoadScreen() {
   textStyle(BOLD);
   text("Load Game", width / 2, height * 0.2);
 
-  let loadButtons = [
-      new Button("Game 1", width / 2, 200),
-      new Button("Game 2", width / 2, 270),
-      new Button("Game 3", width / 2, 340),
-      new Button("B", 100, height - 50, true, goBack)
+  loadButtons = [
+      new Button("Game 1", width / 2, 200, false, () => loadGame()),
+      new Button("Game 2", width / 2, 270, false, () => loadGame()),
+      new Button("Game 3", width / 2, 340, false, () => loadGame()),
+      new Button("B", 100, height - 50, true, () => goBack())
   ];
 
   for (let btn of loadButtons) {
@@ -73,11 +74,35 @@ function drawLoadScreen() {
 }
 
 function mousePressed() {
-    if (!settingMenu) {
-        for (let btn of buttons) {
-            if (btn.isHovered() && btn.action) {
-                btn.action();
-            }
-        }
+  if (!settingMenu) {
+    let activeButtons = (gameState === "menu") ? buttons : loadButtons;
+    for (let btn of activeButtons) {
+      if (btn.isHovered() && btn.action) {
+        buttonClick();
+        btn.action();
+      }
     }
+  }
+}
+
+function goBack() {
+  gameState = "menu";
+}
+function buttonClick() {
+  buttonSound.play();
+}
+
+function loadGame() {
+  //menuSong.loop();
+  window.location.href = "game.html";
+}
+
+function loadCredits() {
+  window.location.href = "credits.html";
+}
+
+function keyPressed() {
+  if (keyCode === ESCAPE) {
+    goBack();
+  }
 }

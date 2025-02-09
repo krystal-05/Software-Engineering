@@ -1,6 +1,7 @@
 let pitcher, batter, ball, bases, fielders, runners = [], lineup, currentBatter = 0;
 let score = { home: 0, away: 0 }, outs = 0, inning = 1, topInning = true;
 let ballMoving = false, ballHit = false, pitchAnimation = false, gamePaused = false;
+let gameSong, currVolume = 0.5;
 
 // Zoom effect variables
 let zoomFactor = 1;          // Default zoom level
@@ -11,8 +12,16 @@ let zoomState = 'none';      // Zoom states: 'none', 'batter', 'pitch', 'ball'
 let initialFielderPositions = [];
 const catchingRadius = 100; // Radius around the ball's path where fielders can move towards it
 
+function preload(){
+  gameSong = loadSound('sounds/gamesong.mp3');
+}
+
 function setup() {
   createCanvas(700, 500);
+  if (gameSong.isLoaded() && !gameSong.isPlaying()) {
+    loadVolumeSetting();
+    gameSong.loop();
+  }
 
   // Bases: Home, 1st, 2nd, 3rd
   bases = [
@@ -197,6 +206,11 @@ function keyPressed() {
     pitchAnimation = true;
     zoomState = 'batter'; // Zoom in on batter when space is pressed
   }
+  //Added currently for demo purposes
+
+  if (keyCode === ESCAPE) {
+    goBack();
+  }
 }
 
 function resetBall() {
@@ -238,4 +252,25 @@ function resetZoom() {
     zoomFactor -= 0.05;
   }
   applyZoom(width / 2, height / 2);
+}
+
+function loadVolumeSetting() {
+  const savedVolume = localStorage.getItem("volume");
+  const savedMute = localStorage.getItem("isMuted");
+
+  if (savedVolume !== null) {
+    currVolume = parseFloat(savedVolume);
+  }
+  if (savedMute !== null) {
+    let isMuted = savedMute === "true";
+    if (gameSong) {
+      gameSong.setVolume(isMuted ? 0 : currVolume);
+    }
+  }
+}
+
+
+//Added currently for demo purposes
+function goBack() {
+  window.location.href = "index.html";
 }
