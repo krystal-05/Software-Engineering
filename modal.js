@@ -1,4 +1,9 @@
 let modal;
+let volumeSlider;
+let isMuted = false;
+let currVolume = 1.0;
+let muteButton;
+
 
 function createModal() {
   const style = document.createElement("style");
@@ -44,6 +49,10 @@ function createModal() {
         font-size: 20px;
         float: right;
     }
+    .volume_slider {
+        margin-top: 15px;
+        width: 100%;
+    }
   `;
   document.head.appendChild(style);
 
@@ -54,8 +63,11 @@ function createModal() {
     <div class="modal-content">
         <span class="close-button">&times;</span>
         <p><b>Settings</b></p>
+        <div>
+        <label for="volumeSlider">Volume</label>
+        <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="1">
+        </div>
         <button id="muteToggle" class="modal-button">Mute</button>
-        <button id ="unmuteToggle" class="modal-button">Unmute</button>
         <button id="backSettings" class="modal-button">Back</button>
     </div>
   `;
@@ -63,13 +75,23 @@ function createModal() {
 
   // Get modal elements
   const closeButton = modal.querySelector(".close-button");
-  const muteButton = modal.querySelector("#muteToggle");
+  volumeSlider = modal.querySelector("#volumeSlider");
+  muteButton = modal.querySelector("#muteToggle");
   const backButton = modal.querySelector("#backSettings");
 
   // Event listeners for modal
   closeButton.addEventListener("click", hideSettings);
-  muteButton.addEventListener("click", () => console.log("Mute/Unmute button clicked"));
+  volumeSlider.addEventListener("input", updateVolume);
+  muteButton.addEventListener("click", toggleMute);
   backButton.addEventListener("click", hideSettings);
+
+  const savedVolume = localStorage.getItem("volume");
+  if (savedVolume !== null) {
+    currVolume = parseFloat(savedVolume);
+    volumeSlider.value = currVolume;
+    if (gameSong) gameSong.setVolume(currVolume);
+  }
+
 }
 
 function showSettings() {
@@ -79,6 +101,29 @@ function showSettings() {
 function hideSettings() {
   settingMenu = false;
   modal.style.display = "none";
+}
+
+function toggleMute() {
+  if (!gameSong) return;
+  
+  if (isMuted) {
+    gameSong.setVolume(currVolume);
+    muteButton.textContent = "Mute";
+  } else {
+    currVolume = parseFloat(volumeSlider.value);
+    gameSong.setVolume(0);
+    muteButton.textContent = "Unmute";
+  }
+  isMuted = !isMuted;
+  localStorage.setItem("volume", currVolume);
+}
+
+function updateVolume() {
+  if (!isMuted) {
+    let volume = parseFloat(volumeSlider.value);
+    gameSong.setVolume(volume);
+    localStorage.setItem("volume", volume);
+  }
 }
 
 function goBack() {
