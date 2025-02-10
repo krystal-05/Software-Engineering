@@ -23,8 +23,8 @@ function setup() {
   textSize(32);
 
   buttons.push(new Button("Start Game", width / 2, 300, 300, 80, null, null, () => gameState = "loadGame"));
-  buttons.push(new Button("Settings", width - 100, height - 100, 150, 100, settingsImg, settingsImgHover, () => settingMenu = true));
-  buttons.push(new Button("Credits", width - 300, height - 100, 150, 100, creditsImg, creditsImgHover, () => loadCredits()));
+  buttons.push(new Button("Settings", width - 100, height - 100, 120, 120, settingsImg, settingsImgHover, () => settingMenu = true));
+  buttons.push(new Button("Credits", width - 250, height - 100, 120, 120, creditsImg, creditsImgHover, () => loadCredits()));
   
   createModal();
 }
@@ -48,7 +48,7 @@ function drawMainMenu() {
   fill(255, 215, 0);
   textSize(60);
   textStyle(BOLD);
-  image(titleIcon, (width / 2) - 200, -40, 400, 400);
+  image(titleIcon, (width / 2) - 320, -20, 640, 320);
 
   textStyle(NORMAL);
   for (let btn of buttons) {
