@@ -4,26 +4,27 @@ let gameState = "menu";
 let settingMenu = false;
 let bgImage, titleIcon;
 let menuSong, buttonSound;
+let settingsImg, settingsImgHover, creditsImg, creditsImgHover;
 
 function preload() {
   bgImage = loadImage('assets/roughititlescreen.png'); 
-  titleIcon = loadImage('assets/Title_Logo_2.png');
+  titleIcon = loadImage('assets/OREDTitle.png');
   menuSong = loadSound('sounds/gamesong.mp3');
   buttonSound = loadSound('sounds/buttonClick.mp3');
+  settingsImg = loadImage('assets/OSettings_1.png');
+  settingsImgHover = loadImage('assets/OSettings_2.png');
+  creditsImg = loadImage('assets/OCredits_1.png');
+  creditsImgHover = loadImage('assets/OCredits_2.png');
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   textAlign(CENTER, CENTER);
   textSize(32);
-  
-  /*if (menuSong.isLoaded() && !menuSong.isPlaying()) {
-    menuSong.loop();
-  }*/
 
-  buttons.push(new Button("Start Game", width / 2, 260, false, () => gameState = "loadGame"));
-  buttons.push(new Button("S", width - 75, height - 35, true, () => settingMenu = true));
-  buttons.push(new Button("C", width - 150, height - 35, true, () => loadCredits()));
+  buttons.push(new Button("Start Game", width / 2, 300, 300, 80, null, null, () => gameState = "loadGame"));
+  buttons.push(new Button("Settings", width - 100, height - 100, 150, 100, settingsImg, settingsImgHover, () => settingMenu = true));
+  buttons.push(new Button("Credits", width - 300, height - 100, 150, 100, creditsImg, creditsImgHover, () => loadCredits()));
   
   createModal();
 }
@@ -47,7 +48,7 @@ function drawMainMenu() {
   fill(255, 215, 0);
   textSize(60);
   textStyle(BOLD);
-  image(titleIcon, (width / 2) - 128, 0, 256, 256);
+  image(titleIcon, (width / 2) - 200, -40, 400, 400);
 
   textStyle(NORMAL);
   for (let btn of buttons) {
@@ -62,10 +63,10 @@ function drawLoadScreen() {
   text("Load Game", width / 2, height * 0.2);
 
   loadButtons = [
-      new Button("Game 1", width / 2, 200, false, () => loadGame()),
-      new Button("Game 2", width / 2, 270, false, () => loadGame()),
-      new Button("Game 3", width / 2, 340, false, () => loadGame()),
-      new Button("B", 100, height - 50, true, () => goBack())
+      new Button("Game 1", width / 2, 240, 300, 75, null, null, () => loadGame()),
+      new Button("Game 2", width / 2, 330, 300, 75, null, null, () => loadGame()),
+      new Button("Game 3", width / 2, 420, 300, 75, null, null, () => loadGame()),
+      new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack())
   ];
 
   for (let btn of loadButtons) {

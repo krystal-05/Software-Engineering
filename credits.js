@@ -1,6 +1,10 @@
+let backButton;
+
 function setup() {
   createCanvas(windowWidth, windowHeight); // Canvas size
   background(20); // Dark background color
+
+  backButton = new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack());
 }
 
 function draw() {
@@ -26,6 +30,14 @@ function draw() {
   text("Trevor" , width / 2, height / 3 + (35 * 7));
   text("Tristian" , width / 2, height / 3 + (35 * 8));
   text("Vidhi" , width / 2, height / 3 + (35 * 9));
+
+  backButton.display();
+}
+
+function mousePressed() {
+  if (backButton.isHovered()) {
+    backButton.action();
+  }
 }
 
 function goBack() {
