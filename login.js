@@ -1,7 +1,7 @@
 let bgImage;
 
 function preload() {
-  bgImage = loadImage('baseball_bg.jpg');
+  bgImage = loadImage('assets/roughititlescreen.png');
 }
 
 function setup() {

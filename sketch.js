@@ -25,19 +25,19 @@ function setup() {
   buttons.push(new Button("Start Game", width / 2, 300, 300, 80, null, null, () => gameState = "loadGame"));
   buttons.push(new Button("Settings", width - 100, height - 100, 120, 120, settingsImg, settingsImgHover, () => settingMenu = true));
   buttons.push(new Button("Credits", width - 250, height - 100, 120, 120, creditsImg, creditsImgHover, () => loadCredits()));
-  
+
   createModal();
 }
 
 function draw() {
   background(20);
-  
+
   if (gameState === "menu") {
     drawMainMenu();
   } else if (gameState === "loadGame") {
     drawLoadScreen();
   }
-  
+
   if (settingMenu) {
     showSettings();
   }
@@ -66,7 +66,8 @@ function drawLoadScreen() {
       new Button("Game 1", width / 2, 240, 300, 75, null, null, () => loadGame()),
       new Button("Game 2", width / 2, 330, 300, 75, null, null, () => loadGame()),
       new Button("Game 3", width / 2, 420, 300, 75, null, null, () => loadGame()),
-      new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack())
+      new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack()),
+      new Button("Login Test", 500, height - 50, 100, 50, null, null, () => loadlogin())
   ];
 
   for (let btn of loadButtons) {
@@ -97,6 +98,10 @@ function buttonClick() {
 function loadGame() {
   //menuSong.loop();
   window.location.href = "game.html";
+}
+function loadlogin() {
+  //menuSong.loop();
+  window.location.href = "login.html";
 }
 
 function loadCredits() {
