@@ -80,7 +80,7 @@ function mousePressed() {
     for (let btn of activeButtons) {
       if (btn.isHovered() && btn.action) {
         buttonClick();
-        btn.action();
+        setTimeout(() => btn.action(), 200);
       }
     }
   }
@@ -89,6 +89,7 @@ function mousePressed() {
 function goBack() {
   gameState = "menu";
 }
+
 function buttonClick() {
   buttonSound.play();
 }
