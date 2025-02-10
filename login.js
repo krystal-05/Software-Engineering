@@ -2,6 +2,7 @@ let bgImage;
 
 function preload() {
   bgImage = loadImage('assets/roughititlescreen.png');
+  titleIcon = loadImage('assets/OREDTitle.png');
 }
 
 function setup() {
@@ -18,7 +19,7 @@ function draw() {
   stroke(0);
   strokeWeight(4);
   fill(255);
-  text('Batterground', width / 2, 150);
+  image(titleIcon, (width / 2) - 320, -20, 640, 320);
 
   noStroke();
 }
