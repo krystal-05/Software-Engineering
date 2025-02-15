@@ -5,6 +5,8 @@ let settingMenu = false;
 let bgImage, titleIcon;
 let menuSong, buttonSound;
 let settingsImg, settingsImgHover, creditsImg, creditsImgHover;
+let mainScreenSound; //added 
+
 
 function preload() {
   bgImage = loadImage('assets/roughititlescreen.png'); 
@@ -15,6 +17,7 @@ function preload() {
   settingsImgHover = loadImage('assets/OSettings_2.png');
   creditsImg = loadImage('assets/OCredits_1.png');
   creditsImgHover = loadImage('assets/OCredits_2.png');
+  mainScreenSound = loadSound('sounds/mainScreenSounds.mp3') //added 
 }
 
 function setup() {
@@ -111,5 +114,11 @@ function loadCredits() {
 function keyPressed() {
   if (keyCode === ESCAPE) {
     goBack();
+  }
+}
+//added 
+function playMainSong(){
+  if (mainScreenSound.isLoaded() && !mainScreenSong.isPlaying()){
+    mainScreenSound.loop();
   }
 }
