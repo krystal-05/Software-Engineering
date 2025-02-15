@@ -17,7 +17,7 @@ function preload() {
   settingsImgHover = loadImage('assets/OSettings_2.png');
   creditsImg = loadImage('assets/OCredits_1.png');
   creditsImgHover = loadImage('assets/OCredits_2.png');
-  mainScreenSound = loadSound('sounds/mainScreenSounds.mp3') //added 
+  mainScreenSound = loadSound('sounds/mainScreenSounds.mp3'); //added 
 }
 
 function setup() {
