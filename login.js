@@ -1,4 +1,5 @@
 let bgImage;
+let currVolume = 0.5;
 
 function preload() {
   bgImage = loadImage('assets/roughititlescreen.png');
@@ -54,4 +55,22 @@ function login(username, password) {
 
 function saveProgress(username, progress) {
   localStorage.setItem(username, progress);
+}
+
+function loadVolumeSetting() {
+  const savedVolume = localStorage.getItem("volume");
+  const savedMute = localStorage.getItem("isMuted");
+
+  if (savedVolume !== null) {
+      currVolume = parseFloat(savedVolume);
+  }
+  if (savedMute !== null) {
+      let isMuted = savedMute === "true";
+      /*
+      if (menuSong || buttonSound) {
+          menuSong.setVolume(isMuted ? 0 : currVolume);
+          buttonSound.setVolume(isMuted ? 0 : currVolume);
+      }
+      */
+  }
 }

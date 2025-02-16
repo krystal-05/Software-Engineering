@@ -2,6 +2,7 @@ let pitcher, batter, ball, bases, fielders, runners = [], lineup, currentBatter 
 let score = { home: 0, away: 0 }, outs = 0, inning = 1, topInning = true;
 let ballMoving = false, ballHit = false, pitchAnimation = false, gamePaused = false;
 let gameSong, currVolume = 0.5;
+let characterModel;
 
 // Zoom effect variables
 let zoomFactor = 1;          // Default zoom level
@@ -22,6 +23,8 @@ function setup() {
     loadVolumeSetting();
     gameSong.loop();
   }
+
+  characterModel = localStorage.getItem("confirmedPreset");
 
   // Bases: Home, 1st, 2nd, 3rd
   bases = [
@@ -97,6 +100,15 @@ function draw() {
   }
 
   moveRunners();
+
+  //temp
+  fill('black');
+  textSize(64)
+  if (characterModel) {
+    text(characterModel, width/2, 100);
+  } else {
+    text("Error ", width/2, 100);
+  }
 }
 
 function drawField() {

@@ -22,6 +22,13 @@ function setup() {
   textAlign(CENTER, CENTER);
   textSize(32);
 
+  let storedState = localStorage.getItem("gameState");
+  if (storedState) {
+    gameState = storedState;
+    localStorage.removeItem("gameState");
+  }
+
+
   buttons.push(new Button("Start Game", width / 2, 300, 300, 80, null, null, () => gameState = "loadGame"));
   buttons.push(new Button("Settings", width - 100, height - 100, 120, 120, settingsImg, settingsImgHover, () => settingMenu = true));
   buttons.push(new Button("Credits", width - 250, height - 100, 120, 120, creditsImg, creditsImgHover, () => loadCredits()));
@@ -63,7 +70,7 @@ function drawLoadScreen() {
   text("Load Game", width / 2, height * 0.2);
 
   loadButtons = [
-      new Button("Game 1", width / 2, 240, 300, 75, null, null, () => loadGame()),
+      new Button("Game 1", width / 2, 240, 300, 75, null, null, () => loadCharacterSelect()),
       new Button("Game 2", width / 2, 330, 300, 75, null, null, () => loadGame()),
       new Button("Game 3", width / 2, 420, 300, 75, null, null, () => loadGame()),
       new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack()),
@@ -95,15 +102,15 @@ function buttonClick() {
   buttonSound.play();
 }
 
+function loadCharacterSelect() {
+  window.location.href = "create-character.html";
+}
 function loadGame() {
-  //menuSong.loop();
   window.location.href = "game.html";
 }
 function loadlogin() {
-  //menuSong.loop();
   window.location.href = "login.html";
 }
-
 function loadCredits() {
   window.location.href = "credits.html";
 }
