@@ -286,6 +286,7 @@ function moveRunners() {
     lineup[currentBatter % lineup.length] = batter;
     
     resetBall();
+    resetFieldersPosition();
     zoomState = 'none';
     zoomFactor = 1;
   }
