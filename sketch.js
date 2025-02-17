@@ -70,7 +70,7 @@ function drawLoadScreen() {
   fill(255, 215, 0);
   textSize(60);
   textStyle(BOLD);
-  text("Load Game", width / 2, height * 0.2);
+  text("Load Game", width / 2, height * .1);
 
   loadButtons = [
       new Button("Game 1", width / 2, 300, 300, 75, null, null, () => loadGame()),
