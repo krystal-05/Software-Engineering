@@ -3,7 +3,7 @@ let volumeSlider;
 let isMuted = false;
 let currVolume = 0.5;
 let muteButton;
-
+let currSong, buttonSound;
 
 function createModal() {
   const style = document.createElement("style");
@@ -103,8 +103,10 @@ function createModal() {
   if (savedMute !== null) {
     isMuted = savedMute === "true";
     muteButton.textContent = isMuted ? "Unmute" : "Mute";
-    if (menuSong || buttonSound) {
-      menuSong.setVolume(isMuted ? 0 : currVolume);
+    if (currSong) {
+      currSong.setVolume(isMuted ? 0 : currVolume);
+    }
+    if (buttonSound) {
       buttonSound.setVolume(isMuted ? 0 : currVolume);
     }
   }
@@ -121,12 +123,16 @@ function hideSettings() {
 }
 
 function toggleMute() {
-  if (!menuSong) return;
-  
+  console.log("toggle mute");
   isMuted = !isMuted;
   muteButton.textContent = isMuted ? "Unmute" : "Mute";
-  menuSong.setVolume(isMuted ? 0 : currVolume);
-  buttonSound.setVolume(isMuted ? 0 : currVolume);
+
+  if(currSong) {
+    currSong.setVolume(isMuted ? 0 : currVolume);
+  }
+  if(buttonSound) {
+    buttonSound.setVolume(isMuted ? 0 : currVolume);
+  }
   
   localStorage.setItem("volume", currVolume);
   localStorage.setItem("isMuted", isMuted.toString());
@@ -134,9 +140,16 @@ function toggleMute() {
 
 function updateVolume() {
   if (!isMuted) {
+    console.log("updated volume");
     let volume = parseFloat(volumeSlider.value);
-    menuSong.setVolume(volume);
-    buttonSound.setVolume(volume);
+    
+    if(currSong) {
+      currSong.setVolume(volume);
+    }
+    if(buttonSound) {
+      buttonSound.setVolume(volume);
+    }
+
     localStorage.setItem("volume", volume);
     currVolume = volume;
   }

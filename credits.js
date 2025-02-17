@@ -1,5 +1,5 @@
 let backButton;
-let menuSong, buttonSound, currVolume = 0.5;
+let buttonSound, currVolume = 0.5;
 
 function preload() {
   buttonSound = loadSound("sounds/buttonClick.mp3");
@@ -60,7 +60,6 @@ function loadVolumeSetting() {
   }
   if (savedMute !== null) {
       let isMuted = savedMute === "true";
-      //menuSong.setVolume(isMuted ? 0 : currVolume);
       buttonSound.setVolume(isMuted ? 0 : currVolume);
   }
 }

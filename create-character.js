@@ -13,6 +13,7 @@ function preload() {
 function setup() {
     createCanvas(windowWidth, windowHeight);
     textAlign(CENTER, CENTER);
+    rectMode(CENTER);
     textSize(32);
 
     loadVolumeSetting();
@@ -81,6 +82,7 @@ function selectedCharacter(characterTag) {
 function confirmCharacter() {
     let characterTag = localStorage.getItem("characterTag");
     localStorage.setItem("confirmedPreset", characterTag);
+    localStorage.setItem("isLoad1", "true");
     localStorage.setItem("characterTag", null);
     window.location.href = "game.html";
 }
