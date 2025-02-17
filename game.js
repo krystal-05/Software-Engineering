@@ -59,7 +59,7 @@ function setup() {
   lineup = [batter];
   resetBall();
 
-  settingButton = new Button("Settings", width - 80, 40, 120, 40, null, null, () => showSettings());
+  settingButton = new Button("Settings", width - 80, 40, 120, 40, null, null, () => settingsClick());
   returnButton = new Button("Menu", width - 80, 40 + 40 + 10, 120, 40, null, null, () => goBack());
   createModal();
 }
@@ -175,13 +175,15 @@ function drawScoreboard() {
 }
 
 function mousePressed() {
-  if (settingButton.isHovered()) {
-    buttonClick();
-    setTimeout(() => settingButton.action(), 200);
-  }
-  if (returnButton.isHovered()) {
-    buttonClick();
-    setTimeout(() => returnButton.action(), 200);
+  if (!settingMenu) {  
+    if (settingButton.isHovered()) {
+      buttonClick();
+      setTimeout(() => settingButton.action(), 200);
+    }
+    if (returnButton.isHovered()) {
+      buttonClick();
+      setTimeout(() => returnButton.action(), 200);
+    }
   }
 }
 
@@ -331,6 +333,10 @@ function moveRunners() {
     }
   }
 
+  function settingsClick() {
+    settingMenu = true;
+    showSettings();
+  }
   function buttonClick() {
     buttonSound.play();
   }
