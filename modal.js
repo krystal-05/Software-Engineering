@@ -3,7 +3,7 @@ let volumeSlider;
 let isMuted = false;
 let currVolume = 0.5;
 let muteButton;
-let currSong, buttonSound;
+let currSong, buttonSound, mainScreenSound;
 
 function createModal() {
   const style = document.createElement("style");
@@ -109,6 +109,9 @@ function createModal() {
     if (buttonSound) {
       buttonSound.setVolume(isMuted ? 0 : currVolume);
     }
+    if (buttonSound) {
+      mainScreenSound.setVolume(isMuted ? 0 : currVolume); //added 
+    }
   }
 
 }
@@ -148,6 +151,9 @@ function updateVolume() {
     }
     if(buttonSound) {
       buttonSound.setVolume(volume);
+    }
+    if(mainScreenSound){
+      mainScreenSound.setVolume(volume); //added 
     }
 
     localStorage.setItem("volume", volume);

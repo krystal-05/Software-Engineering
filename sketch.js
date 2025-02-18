@@ -5,7 +5,6 @@ let isLoad1 = "false";
 let settingMenu = false;
 let bgImage, titleIcon;
 let settingsImg, settingsImgHover, creditsImg, creditsImgHover;
-let mainScreenSound; //added 
 
 
 function preload() {
@@ -44,6 +43,8 @@ function setup() {
 
 function draw() {
   background(20);
+  mainScreenSound.play();
+  //playMainSong();
 
   if (gameState === "menu") {
     drawMainMenu();
