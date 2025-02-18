@@ -1,9 +1,9 @@
 let buttons = [];
 let loadButtons = [];
 let gameState = "menu";
+let isLoad1 = "false";
 let settingMenu = false;
 let bgImage, titleIcon;
-let menuSong, buttonSound;
 let settingsImg, settingsImgHover, creditsImg, creditsImgHover;
 let mainScreenSound; //added 
 
@@ -11,7 +11,7 @@ let mainScreenSound; //added
 function preload() {
   bgImage = loadImage('assets/roughititlescreen.png'); 
   titleIcon = loadImage('assets/OREDTitle.png');
-  menuSong = loadSound('sounds/gamesong.mp3');
+  currSong = loadSound('sounds/gamesong.mp3');
   buttonSound = loadSound('sounds/buttonClick.mp3');
   settingsImg = loadImage('assets/OSettings_1.png');
   settingsImgHover = loadImage('assets/OSettings_2.png');
@@ -25,9 +25,19 @@ function setup() {
   textAlign(CENTER, CENTER);
   textSize(32);
 
+  isLoad1 = localStorage.getItem("isLoad1");
+
+  let storedState = localStorage.getItem("gameState");
+  if (storedState) {
+    gameState = storedState;
+    localStorage.removeItem("gameState");
+  }
+
   buttons.push(new Button("Start Game", width / 2, 300, 300, 80, null, null, () => gameState = "loadGame"));
   buttons.push(new Button("Settings", width - 100, height - 100, 120, 120, settingsImg, settingsImgHover, () => settingMenu = true));
   buttons.push(new Button("Credits", width - 250, height - 100, 120, 120, creditsImg, creditsImgHover, () => loadCredits()));
+  resetButton = new Button("Reset Game Save", width / 2, 420, 300, 75, null, null, () => deleteSave());
+
 
   createModal();
 }
@@ -63,18 +73,20 @@ function drawLoadScreen() {
   fill(255, 215, 0);
   textSize(60);
   textStyle(BOLD);
-  text("Load Game", width / 2, height * 0.2);
+  text("Load Game", width / 2, height * .1);
 
   loadButtons = [
-      new Button("Game 1", width / 2, 240, 300, 75, null, null, () => loadGame()),
-      new Button("Game 2", width / 2, 330, 300, 75, null, null, () => loadGame()),
-      new Button("Game 3", width / 2, 420, 300, 75, null, null, () => loadGame()),
+      new Button("Game 1", width / 2, 300, 300, 75, null, null, () => loadGame()),
+      //new Button("Game 2", width / 2, 330, 300, 75, null, null, () => loadGame()),
       new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack()),
       new Button("Login Test", 500, height - 50, 100, 50, null, null, () => loadlogin())
   ];
 
   for (let btn of loadButtons) {
       btn.display();
+  }
+  if (isLoad1 === "true") {
+    resetButton.display();
   }
 }
 
@@ -87,6 +99,10 @@ function mousePressed() {
         setTimeout(() => btn.action(), 200);
       }
     }
+    if (resetButton.isHovered() && localStorage.getItem("isLoad1") !== "false") {
+      buttonClick();
+      setTimeout(() => resetButton.action(), 200);
+    }
   }
 }
 
@@ -98,17 +114,25 @@ function buttonClick() {
   buttonSound.play();
 }
 
+function loadCharacterSelect() {
+  window.location.href = "create-character.html";
+}
 function loadGame() {
-  //menuSong.loop();
-  window.location.href = "game.html";
+  if (isLoad1 === "true") {
+    window.location.href = "game.html";
+  } else {
+    loadCharacterSelect();
+  }
 }
 function loadlogin() {
-  //menuSong.loop();
   window.location.href = "login.html";
 }
-
 function loadCredits() {
   window.location.href = "credits.html";
+}
+function deleteSave() {
+  localStorage.setItem("isLoad1", false);
+  isLoad1 = localStorage.getItem("isLoad1");
 }
 
 function keyPressed() {

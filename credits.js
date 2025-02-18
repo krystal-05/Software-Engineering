@@ -8,7 +8,7 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight); // Canvas size
   background(20); // Dark background color
-  userStartAudio();
+  loadVolumeSetting();
 
   backButton = new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack());
 }
@@ -40,21 +40,6 @@ function draw() {
   backButton.display();
 }
 
-function loadVolumeSetting() {
-  const savedVolume = localStorage.getItem("volume");
-  const savedMute = localStorage.getItem("isMuted");
-
-  if (savedVolume !== null) {
-    currVolume = parseFloat(savedVolume);
-  }
-  if (savedMute !== null) {
-    let isMuted = savedMute === "true";
-    if (gameSong) {
-      gameSong.setVolume(isMuted ? 0 : currVolume);
-    }
-  }
-}
-
 function buttonClick() {
   buttonSound.play();
 }
@@ -63,6 +48,19 @@ function mousePressed() {
   if (backButton.isHovered()) {
     buttonClick();
     setTimeout(() => backButton.action(), 200);
+  }
+}
+
+function loadVolumeSetting() {
+  const savedVolume = localStorage.getItem("volume");
+  const savedMute = localStorage.getItem("isMuted");
+
+  if (savedVolume !== null) {
+      currVolume = parseFloat(savedVolume);
+  }
+  if (savedMute !== null) {
+      let isMuted = savedMute === "true";
+      buttonSound.setVolume(isMuted ? 0 : currVolume);
   }
 }
 
