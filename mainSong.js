@@ -1,7 +1,7 @@
 let mainScreenSound;
 
 function preload() {
-  mainScreenSound = loadSound('mainScreenSound.mp3');
+  mainScreenSound = loadSound('sounds/mainScreenSound.mp3');
 }
 
 function setup() {
