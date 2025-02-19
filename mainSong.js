@@ -4,6 +4,6 @@ function preload() {
   mainScreenSound = loadSound('mainScreenSound.mp3');
 }
 
-function playSound() {
+function setup() {
   mainScreenSound.play();
 }
