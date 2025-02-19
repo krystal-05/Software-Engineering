@@ -3,7 +3,7 @@ let volumeSlider;
 let isMuted = false;
 let currVolume = 0.5;
 let muteButton;
-let currSong, buttonSound, mainScreenSound;
+let currSong, buttonSound;
 
 function createModal() {
   const style = document.createElement("style");
@@ -113,7 +113,6 @@ function createModal() {
       mainScreenSound.setVolume(isMuted ? 0 : currVolume); //added 
     }
   }
-
 }
 
 function showSettings() {

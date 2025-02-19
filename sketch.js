@@ -16,10 +16,10 @@ function preload() {
   settingsImgHover = loadImage('assets/OSettings_2.png');
   creditsImg = loadImage('assets/OCredits_1.png');
   creditsImgHover = loadImage('assets/OCredits_2.png');
-  mainScreenSound = loadSound('sounds/mainScreenSound.mp3'); //added 
 }
 
 function setup() {
+  mainScreenSong();
   createCanvas(windowWidth, windowHeight);
   textAlign(CENTER, CENTER);
   textSize(32);
@@ -43,8 +43,7 @@ function setup() {
 
 function draw() {
   background(20);
-  mainScreenSound.play();
-  //playMainSong();
+  
 
   if (gameState === "menu") {
     drawMainMenu();
