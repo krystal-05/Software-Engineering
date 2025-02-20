@@ -19,6 +19,7 @@ function preload() {
 }
 
 function setup() {
+  mainScreenSound.play();
   createCanvas(windowWidth, windowHeight);
   textAlign(CENTER, CENTER);
   textSize(32);
