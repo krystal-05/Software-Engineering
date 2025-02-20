@@ -5,5 +5,8 @@ function preload() {
 }
 
 function setup() {
-  mainScreenSound.play();
+  createCanvas(400,200);
+  if(mousePressed()){
+    mainScreenSound.play();
+  }
 }
