@@ -4,9 +4,12 @@ let currVolume = 0.5;
 function preload() {
   bgImage = loadImage('assets/roughititlescreen.png');
   titleIcon = loadImage('assets/OREDTitle.png');
+  mainScreenSound = loadSound('sounds/mainScreenSound.mp3');
+
 }
 
 function setup() {
+  mainScreenSound.play();
   createCanvas(windowWidth, windowHeight);
   createLoginForm();
 }
