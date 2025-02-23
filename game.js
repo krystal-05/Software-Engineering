@@ -657,8 +657,9 @@ function nextInning() {
   outs = 0;
   runners = [];
   resetFieldersPosition()
-  topInning = !topInning;
   if (!topInning) inning++;
+  topInning = !topInning;
+  
 
   showOutPopup = true;
   outPopupTime = millis();
