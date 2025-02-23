@@ -20,11 +20,10 @@ function preload() {
 }
 
 function setup() {
-  mainScreenSound.play();
   createCanvas(windowWidth, windowHeight);
   textAlign(CENTER, CENTER);
   textSize(32);
-
+ 
   isLoad1 = localStorage.getItem("isLoad1");
 
   let storedState = localStorage.getItem("gameState");
@@ -37,8 +36,6 @@ function setup() {
   buttons.push(new Button("Settings", width - 100, height - 100, 120, 120, settingsImg, settingsImgHover, () => settingMenu = true));
   buttons.push(new Button("Credits", width - 250, height - 100, 120, 120, creditsImg, creditsImgHover, () => loadCredits()));
   resetButton = new Button("Reset Game Save", width / 2, 420, 300, 75, null, null, () => deleteSave());
-
-
   createModal();
 }
 
@@ -100,11 +97,13 @@ function mousePressed() {
         setTimeout(() => btn.action(), 200);
       }
     }
+    if(!mainScreenSound.isPlaying())
+      mainScreenSound.play();
+    }
     if (resetButton.isHovered() && localStorage.getItem("isLoad1") !== "false") {
       buttonClick();
       setTimeout(() => resetButton.action(), 200);
     }
-  }
 }
 
 function goBack() {
@@ -139,11 +138,5 @@ function deleteSave() {
 function keyPressed() {
   if (keyCode === ESCAPE) {
     goBack();
-  }
-}
-//added 
-function playMainSong(){
-  if (mainScreenSound.isLoaded() && !mainScreenSong.isPlaying()){
-    mainScreenSound.loop();
   }
 }
