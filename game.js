@@ -1,8 +1,8 @@
 let pitcher, batter, ball, bases, fielders, runners = [];
 let lineup, currentBatter = 0;
-let score = { home: 0, away: 0 }, outs = 0, inning = 1, topInning = true;
-let ballMoving = false, ballHit = false, pitchAnimation = false;
-let settingMenu = false;
+let score = { home: 0, away: 0 }, outs = 0, strikes = 0, inning = 1, topInning = true;
+let ballMoving = false, ballHit = false, pitchAnimation = false, swingAttempt = false;
+let settingMenu = false, inputEnabled = false;
 let showOutPopup = false, ballCaughtThisFrame = false;
 let outPopupTime = 0;
 
@@ -44,6 +44,17 @@ function setup() {
   ];
 
   pitcher = { x: width * 0.5, y: height * 0.50, armAngle: 0 };
+  ball = { 
+    x: pitcher.x, 
+    y: pitcher.y, 
+    speedY: 5, 
+    speedX: 0, 
+    throwing: false,
+    inAir: false,
+    advancingRunner: null,
+    strikePitch: false
+  };
+  
   batter = {
     x: width * 0.5,
     y: height * 0.80,
@@ -84,6 +95,8 @@ function setup() {
   settingButton = new Button("Settings", width - 80, 40, 120, 40, null, null, () => settingsClick());
   returnButton = new Button("Menu", width - 80, 90, 120, 40, null, null, () => goBack());
   createModal();
+
+  inputEnabled = true;
 }
 
 function draw() {
@@ -95,6 +108,14 @@ function draw() {
   push();
     drawField();
     drawPlayers();
+    // draw hitzone
+    if (batter) {
+      stroke(255, 0, 0);
+      strokeWeight(2);
+      noFill();
+      rectMode(CENTER);
+      rect(batter.x, batter.y - 15, 30, 20);
+    }
   pop();
   
   // Draw the HUD
@@ -109,6 +130,7 @@ function draw() {
     drawOutPopup();
   }
   pop();
+
   // Game logic
   if (pitchAnimation) {
     pitcher.armAngle += 0.05;
@@ -120,60 +142,52 @@ function draw() {
   
   if (ballMoving && !ballHit && !ball.throwing) {
     ball.y += ball.speedY;
-    if (ball.y >= batter.y - 20 && abs(ball.x - batter.x) < 20) {
-    ballHit = true;
-    ball.inAir = true;
-    let xPower = windowWidth / 200;
-    let yPower = windowHeight / 200;
-    ball.speedX = random(-xPower * 0.8, xPower * 0.8);
-    ball.speedY = random(-yPower * 4.5, -yPower * 4.0);
-    batter.running = true;
+    if (ball.y >= batter.y && abs(ball.x - batter.x) < 40 && !swingAttempt) {
+      ball.strikePitch = true;
+      swingAttempt = true;
 
-    runners.forEach(runner => {
-      runner.running = true;
-    });
-    runners.push(batter);
-    ball.advancingRunner = batter;
-    batter = null;
+      strikes++;
+      console.log("No swing! Strike " + strikes);
     }
   }
 
-  if (ballHit && !ball.throwing) {
-    ball.x += ball.speedX;
-    ball.y += ball.speedY;
-    
-    let gravity = windowHeight / 3000;
-    
-    if (ball.speedY < 0) {
-      ball.speedY += gravity;
-    } else {
+  if (ballMoving && !ball.throwing) {
+    if (ballHit) {
+      ball.x += ball.speedX;
+      ball.y += ball.speedY;
       
-      let horizontalDistance = ball.x - pitcher.x;
-      let maxDistance = windowWidth * 0.6; 
-    
-      let targetY = lerp(windowHeight * 0.5, windowHeight * 0.3, horizontalDistance / maxDistance);
-      targetY = constrain(targetY, windowHeight * 0.3, windowHeight * 0.5);
-      
-      if (ball.y < targetY) {
+      let gravity = windowHeight / 3000;
+      if (ball.speedY < 0) {
         ball.speedY += gravity;
       } else {
-        ball.y = lerp(ball.y, targetY, 0.1);
-        ball.speedY *= 0.9;
+        
+        let horizontalDistance = ball.x - pitcher.x;
+        let maxDistance = windowWidth * 0.6; 
+      
+        let targetY = lerp(windowHeight * 0.5, windowHeight * 0.3, horizontalDistance / maxDistance);
+        targetY = constrain(targetY, windowHeight * 0.3, windowHeight * 0.5);
+        
+        if (ball.y < targetY) {
+          ball.speedY += gravity;
+        } else {
+          ball.y = lerp(ball.y, targetY, 0.1);
+          ball.speedY *= 0.9;
 
-        if (abs(ball.y - targetY) < 15) {
-          ball.inAir = false;
-        }  
+          if (abs(ball.y - targetY) < 15) {
+            ball.inAir = false;
+          }  
+        }
       }
+    
+      ball.speedX *= 0.98;
+      
+      if (abs(ball.speedX) < 0.3 && abs(ball.speedY) < 0.3) {
+        ball.speedX = 0;
+        ball.speedY = 0;
+      }
+      
+      moveFieldersTowardsBall();
     }
-    
-    ball.speedX *= 0.98;
-    
-    if (abs(ball.speedX) < 0.3 && abs(ball.speedY) < 0.3) {
-      ball.speedX = 0;
-      ball.speedY = 0;
-    }
-    
-    moveFieldersTowardsBall();
     checkFielderCatch();
   }
 
@@ -190,13 +204,10 @@ function draw() {
     if (!advancingRunner) {
       advancingRunner = targetRunner;
     }
-
     if (!chosenRunner) {
       console.error("No valid runner found! Stopping play.");
       ball.throwing = false;
-      resetBall();
       resetBatter();
-      resetFieldersPosition();
       return;
     }
     
@@ -215,6 +226,7 @@ function draw() {
         if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
           if (!runnerAtFielderBase.backtracking && forwardFielder === targetFielder) {
             outs++;
+            resetBatter();
             console.log("outs to", outs);
             runners = runners.filter(r => r !== runnerAtFielderBase);
             if (outs >= 3) {
@@ -224,6 +236,7 @@ function draw() {
             return;
           } else if (runnerAtFielderBase.backtracking && backtrackFielder === targetFielder) {
             outs++;
+            resetBatter();
             console.log("outs to", outs);
             runners = runners.filter(r => r !== runnerAtFielderBase);
             if (outs >= 3) {
@@ -270,12 +283,37 @@ function resetInfielders() {
   }
 }
 
+function handleStrikeCatch(catcher) {
+  ball.x = catcher.x;
+  ball.y = catcher.y;
+  ball.speedY = 0;
+  ball.speedX = 0;
+
+  setTimeout(() => {
+    resetBall();
+    if (strikes >= 3) {
+      outs++;
+      resetBatter();
+      console.log("Strikeout! Batter is out.");
+      if (outs >= 3) {
+        nextInning();
+        return;
+      }
+        }
+  }, 500);
+}
 
 function checkFielderCatch() {
   if (ballCaughtThisFrame) return;
   if (ball.caught) return;
 
-  if (catcherPlayer && dist(ball.x, ball.y, catcherPlayer.x, catcherPlayer.y) < 15) {
+  if (ball.strikePitch && dist(ball.x, ball.y, catcherPlayer.x, catcherPlayer.y) < 5) {
+    catcherPlayer.state = "hasBall";
+    handleStrikeCatch(catcherPlayer);
+    ballCaughtThisFrame = true;
+    return;
+  } 
+  if (!ball.strikePitch && dist(ball.x, ball.y, catcherPlayer.x, catcherPlayer.y) < 15) {
     catcherPlayer.state = "hasBall";
     
     if (ball.inAir) {
@@ -314,7 +352,8 @@ function resetBall() {
     speedX: 0, 
     throwing: false,
     inAir: false,
-    advancingRunner: null
+    advancingRunner: null,
+    strikePitch: false
   };
   ballMoving = false;
   ballHit = false;
@@ -394,6 +433,7 @@ function drawScoreboard() {
   text(`Inning: ${inning} ${topInning ? '▲' : '▼'}`, 30, 40);
   text(`Score - Home: ${score.home}  Away: ${score.away}`, 30, 60);
   text(`Outs: ${outs}`, 30, 80);
+  text(`Strikes: ${strikes}`, 30, 100);
 }
 
 function moveRunners() {
@@ -505,21 +545,13 @@ function handleGroundThrow(catcher) {
   ball.throwingFielder = catcher;
   ball.wasAirCatch = false;
 
-  let advancingRunner = ball.advancingRunner;
-  if (!advancingRunner) {
-      console.error("No advancing runner found for ground throw!");
-      return;
-  }
-
   let unsafeRunners = runners.filter(runner => !runner.safe);
-
   if (unsafeRunners.length > 0) {
     throwToNextRunner(catcher);
     return;
   }
 
   console.log("No unsafe runners left, resetting the play.");
-  resetBall();
   resetBatter();
   resetFieldersPosition();
 }
@@ -536,6 +568,7 @@ function handleThrow(catcher) {
       runners = runners.filter(runner => runner !== batterOut);
       if (!showOutPopup) {
         outs++;
+        resetBatter();
       }
       console.log(`outs to ${outs}`);
       if (outs >= 3) {
@@ -563,9 +596,7 @@ function handleThrow(catcher) {
 
   // If no unsafe runners left, reset the play
   console.log("No unsafe runners left, resetting the play.");
-  resetBall();
   resetBatter();
-  resetFieldersPosition();
 }
 
 function throwToNextRunner(currentFielder) {
@@ -584,6 +615,7 @@ function throwToNextRunner(currentFielder) {
    
   if (!nextRunner.safe && targetFielder === currentFielder && !nextRunner.backtracking) {
     outs++;
+    resetBatter();
     console.log("outs is now", outs);
     runners = runners.filter(r => r !== nextRunner);
     if (outs >= 3) {
@@ -616,6 +648,7 @@ function throwToNextRunner(currentFielder) {
   ball.speedX = (dx / magnitude) * 10;
   ball.speedY = (dy / magnitude) * 10;
 
+  ball.advancingRunner = nextRunner;
   ball.targetFielder = targetFielder;
   ball.targetBase = targetBase;
   ball.throwing = true;
@@ -654,26 +687,55 @@ function getFielderForBase(baseIndex) {
 }
 
 function nextInning() {
+  inputEnabled = false;
   outs = 0;
   runners = [];
   resetFieldersPosition()
   if (!topInning) inning++;
   topInning = !topInning;
   
-
   showOutPopup = true;
-  outPopupTime = millis();
+  resetBatter();
+  runners = [];
 
   setTimeout(() => {
     showOutPopup = false;
-    runners = [];
-    resetBatter();
+    inputEnabled = true;
   }, 1500);
+  
 }
 
 function keyPressed() {
-  if (key === ' ' && !ballMoving) {
-    pitchAnimation = true;
+  if (key === ' ') {
+    // Start pitch
+    if (!ballMoving && inputEnabled) {
+      pitchAnimation = true;
+      swingAttempt = false;
+    } else if (ballMoving && !ballHit && !swingAttempt && inputEnabled) {
+      if (ball.y >= batter.y - 30 && ball.y <= batter.y && abs(ball.x - batter.x) < 20) {
+        // Successful swing/hit.
+        ballHit = true;
+        ball.inAir = true;
+        let xPower = windowWidth / 200;
+        let yPower = windowHeight / 200;
+        ball.speedX = random(-xPower * 0.8, xPower * 0.8);
+        ball.speedY = random(-yPower * 4.5, -yPower * 4.0);
+
+        batter.running = true;
+        runners.forEach(runner => {
+          runner.running = true;
+        });
+        runners.push(batter);
+        ball.advancingRunner = batter;
+        batter = null;
+      } else {
+        ball.strikePitch = true;
+
+        strikes++;
+        console.log("Swing missed! Strike " + strikes);
+      }
+      swingAttempt = true;
+    }
   }
 }
 
@@ -691,6 +753,7 @@ function resetBatter() {
     lineup[currentBatter % lineup.length] = batter;
     currentBatter++;
   }
+  strikes = 0;
   resetBall();
   resetFieldersPosition();
 }
