@@ -6,7 +6,7 @@ let settingMenu = false;
 
 
 function preload() {
-    bgImage = loadImage('assets/roughititlescreen.png');
+    bgImage = loadImage('assets/roughititlescreen3.png');
     characterImage = loadImage('assets/tempCharacter.png');
     buttonSound = loadSound('sounds/buttonClick.mp3');
     currSong = loadSound('sounds/stadiumSound.mp3');

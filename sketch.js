@@ -7,7 +7,7 @@ let bgImage, titleIcon;
 let settingsImg, settingsImgHover, creditsImg, creditsImgHover;
 
 function preload() {
-  bgImage = loadImage('assets/roughititlescreen.png'); 
+  bgImage = loadImage('assets/roughititlescreen3.png'); 
   titleIcon = loadImage('assets/OREDTitle.png');
   buttonSound = loadSound('sounds/buttonClick.mp3');
   settingsImg = loadImage('assets/OSettings_1.png');
