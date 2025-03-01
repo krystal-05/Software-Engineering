@@ -148,7 +148,6 @@ function updateVolume() {
     if(buttonSound) {
       buttonSound.setVolume(volume);
     }
-
     localStorage.setItem("volume", volume);
     currVolume = volume;
   }

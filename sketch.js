@@ -9,7 +9,6 @@ let settingsImg, settingsImgHover, creditsImg, creditsImgHover;
 function preload() {
   bgImage = loadImage('assets/roughititlescreen.png'); 
   titleIcon = loadImage('assets/OREDTitle.png');
-  currSong = loadSound('sounds/gamesong.mp3');
   buttonSound = loadSound('sounds/buttonClick.mp3');
   settingsImg = loadImage('assets/OSettings_1.png');
   settingsImgHover = loadImage('assets/OSettings_2.png');
@@ -22,7 +21,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   textAlign(CENTER, CENTER);
   textSize(32);
- 
+
   isLoad1 = localStorage.getItem("isLoad1");
 
   let storedState = localStorage.getItem("gameState");
@@ -41,13 +40,19 @@ function setup() {
 function draw() {
   background(20);
   
-
-  if (gameState === "menu") {
-    drawMainMenu();
-  } else if (gameState === "loadGame") {
-    drawLoadScreen();
+  switch (gameState) {
+    case "preMenu":
+      //TODO
+      break;
+    case "menu":
+      drawMainMenu();
+      break;
+    case "loadGame":
+      drawLoadScreen();
+      break;
+    default:
   }
-
+  
   if (settingMenu) {
     showSettings();
   }
@@ -88,21 +93,22 @@ function drawLoadScreen() {
 }
 
 function mousePressed() {
-  if (!settingMenu) {
-    let activeButtons = (gameState === "menu") ? buttons : loadButtons;
-    for (let btn of activeButtons) {
-      if (btn.isHovered() && btn.action) {
-        buttonClick();
-        setTimeout(() => btn.action(), 200);
-      }
-    }
-    if(!currSong.isPlaying())
-      currSong.loop();
-    }
-    if (resetButton.isHovered() && localStorage.getItem("isLoad1") !== "false") {
+  if (settingMenu) {return;}
+
+  let activeButtons = (gameState === "menu") ? buttons : loadButtons;
+  for (let btn of activeButtons) {
+    if (btn.isHovered() && btn.action) {
       buttonClick();
-      setTimeout(() => resetButton.action(), 200);
+      setTimeout(() => btn.action(), 200);
     }
+  }
+  if (resetButton.isHovered() && localStorage.getItem("isLoad1") !== "false") {
+    buttonClick();
+    setTimeout(() => resetButton.action(), 200);
+  }
+  if(!currSong.isPlaying()) { 
+    currSong.loop();
+  }
 }
 
 function goBack() {

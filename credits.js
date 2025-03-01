@@ -1,5 +1,6 @@
 let backButton;
 let buttonSound, currVolume = 0.5;
+let settingMenu = false;
 
 function preload() {
   buttonSound = loadSound("sounds/buttonClick.mp3");
@@ -49,6 +50,9 @@ function mousePressed() {
     buttonClick();
     setTimeout(() => backButton.action(), 200);
   }
+  if(currSong && !currSong.isPlaying()) {
+    currSong.loop();
+  }
 }
 
 function loadVolumeSetting() {
@@ -65,6 +69,7 @@ function loadVolumeSetting() {
 }
 
 function goBack() {
+  localStorage.setItem("gameState", "menu");
   window.location.href = "index.html";
 }
 

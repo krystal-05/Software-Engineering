@@ -29,9 +29,9 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
 
   canvas.getContext('2d', { willReadFrequently: true });
-
+  
+  loadVolumeSetting();
   if (currSong.isLoaded() && !currSong.isPlaying()) {
-    loadVolumeSetting();
     currSong.loop();
   }
 
@@ -777,6 +777,9 @@ function loadVolumeSetting() {
     if (currSong) {
       currSong.setVolume(isMuted ? 0 : currVolume);
     }
+    if (buttonSound) {
+      buttonSound.setVolume(isMuted ? 0 : currVolume);
+    }
   }
 }
 
@@ -791,6 +794,9 @@ function mousePressed() {
       setTimeout(() => returnButton.action(), 200);
     }
   }
+  if(!currSong.isPlaying()) {
+    currSong.loop();
+  }
 }
 
 function settingsClick() {
@@ -803,5 +809,6 @@ function buttonClick() {
 
 // Added currently for demo purposes
 function goBack() {
+  localStorage.setItem("gameState", "menu");
   window.location.href = "index.html";
 }

@@ -1,7 +1,8 @@
 let buttons = [], confirmButton;
 let bgImage, characterImage;
 let menuSong, buttonSound;
-let currVolume = 0.5;
+let isMuted, currVolume = 0.5;
+let settingMenu = false;
 
 
 function preload() {
@@ -18,6 +19,9 @@ function setup() {
     textSize(32);
 
     loadVolumeSetting();
+    if (currSong.isLoaded() && !currSong.isPlaying()) {
+        currSong.loop();
+    }
     localStorage.setItem("characterTag", null);
 
     buttons.push(new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack()));
@@ -27,7 +31,6 @@ function setup() {
     confirmButton = new Button("Confirm Character", width-175, height - 50, 200, 50, null, null, () => confirmCharacter());
    
 }
-
 
 function draw() {
     background(bgImage);
@@ -74,6 +77,9 @@ function mousePressed() {
         buttonClick();
         setTimeout(() => confirmButton.action(), 200);
     }
+    if(!currSong.isPlaying()) {
+        currSong.loop();
+    }
 }
 
 function selectedCharacter(characterTag) {
@@ -89,10 +95,7 @@ function confirmCharacter() {
     window.location.href = "game.html";
 }
 function buttonClick(){
-    buttonSound.play()
-if (!currSong.isPlaying()) {
-    currSong.loop();
-} 
+    buttonSound.play();
 }
 
 function loadVolumeSetting() {
@@ -103,16 +106,16 @@ function loadVolumeSetting() {
         currVolume = parseFloat(savedVolume);
     }
     if (savedMute !== null) {
-        let isMuted = savedMute === "true";
-    if(currSong){
-        currSong.setVolume(isMuted ? 0 : currVolume);
+        isMuted = savedMute === "true";
+        if(currSong){
+            currSong.setVolume(isMuted ? 0 : currVolume);
+        }
+        if (buttonSound){
+            buttonSound.setVolume(isMuted ? 0 : currVolume);
+        }
     }
-    if (buttonSound){}
-        buttonSound.setVolume(isMuted ? 0 : currVolume);
-    }
-    }
-
-
+    
+}
 function goBack() {
     localStorage.setItem("gameState", "loadGame");
     window.location.href = "index.html";
