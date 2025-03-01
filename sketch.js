@@ -5,7 +5,6 @@ let isLoad1 = "false";
 let settingMenu = false;
 let bgImage, titleIcon;
 let settingsImg, settingsImgHover, creditsImg, creditsImgHover;
-let mainScreenSound;
 
 function preload() {
   bgImage = loadImage('assets/roughititlescreen.png'); 
@@ -16,7 +15,7 @@ function preload() {
   settingsImgHover = loadImage('assets/OSettings_2.png');
   creditsImg = loadImage('assets/OCredits_1.png');
   creditsImgHover = loadImage('assets/OCredits_2.png');
-  mainScreenSound = loadSound('sounds/mainScreenSound.mp3');
+  currSong = loadSound('sounds/mainScreenSound.mp3');
 }
 
 function setup() {
@@ -97,8 +96,8 @@ function mousePressed() {
         setTimeout(() => btn.action(), 200);
       }
     }
-    if(!mainScreenSound.isPlaying())
-      mainScreenSound.play();
+    if(!currSong.isPlaying())
+      currSong.loop();
     }
     if (resetButton.isHovered() && localStorage.getItem("isLoad1") !== "false") {
       buttonClick();

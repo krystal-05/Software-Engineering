@@ -2,14 +2,13 @@ let buttons = [], confirmButton;
 let bgImage, characterImage;
 let menuSong, buttonSound;
 let currVolume = 0.5;
-let backgroundSound;
 
 
 function preload() {
     bgImage = loadImage('assets/roughititlescreen.png');
     characterImage = loadImage('assets/tempCharacter.png');
     buttonSound = loadSound('sounds/buttonClick.mp3');
-    backgroundSound = loadSound('sounds/stadiumSound.mp3');
+    currSong = loadSound('sounds/stadiumSound.mp3');
 }
 
 function setup() {
@@ -19,9 +18,6 @@ function setup() {
     textSize(32);
 
     loadVolumeSetting();
-    if (!backgroundSound.isPlaying()){
-        backgroundSound.play()
-            }
     localStorage.setItem("characterTag", null);
 
     buttons.push(new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack()));
@@ -92,10 +88,11 @@ function confirmCharacter() {
     localStorage.setItem("characterTag", null);
     window.location.href = "game.html";
 }
-
-function buttonClick() {
-    loadVolumeSetting();
-    buttonSound.play();
+function buttonClick(){
+    buttonSound.play()
+if (!currSong.isPlaying()) {
+    currSong.loop();
+} 
 }
 
 function loadVolumeSetting() {
@@ -107,12 +104,14 @@ function loadVolumeSetting() {
     }
     if (savedMute !== null) {
         let isMuted = savedMute === "true";
-    if(backgroundSound || buttonSound){
-        backgroundSound.setVolume(isMuted ? 0 : currVolume);
+    if(currSong){
+        currSong.setVolume(isMuted ? 0 : currVolume);
+    }
+    if (buttonSound){}
         buttonSound.setVolume(isMuted ? 0 : currVolume);
     }
     }
-}
+
 
 function goBack() {
     localStorage.setItem("gameState", "loadGame");

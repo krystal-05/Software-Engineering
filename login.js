@@ -1,10 +1,9 @@
 let bgImage;
 let currVolume = 0.5;
-let loginSound;
 function preload() {
   bgImage = loadImage('assets/roughititlescreen.png');
   titleIcon = loadImage('assets/OREDTitle.png');
-  loginSound = loadSound('sounds/mainScreenSound.mp3');
+  currSong = loadSound('sounds/mainScreenSound.mp3');
 
 }
 
@@ -71,8 +70,8 @@ function loadVolumeSetting() {
   if (savedMute !== null) {
       let isMuted = savedMute === "true";
   
-      if (loginSound){
-         loginSound.setVolume(isMuted ? 0 : currVolume);
+      if (currSong){
+         currSong.setVolume(isMuted ? 0 : currVolume);
       }
       }
       console.log("Saved Volume:", localStorage.getItem("volume"));
@@ -81,7 +80,7 @@ function loadVolumeSetting() {
 
 
     function mousePressed() {
-      if (!loginSound.isPlaying()) {
-        loginSound.play();
+      if (!currSong.isPlaying()) {
+       currSong.loop();
       }
     }
