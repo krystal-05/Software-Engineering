@@ -110,7 +110,6 @@ function createModal() {
       buttonSound.setVolume(isMuted ? 0 : currVolume);
     }
   }
-
 }
 
 function showSettings() {
