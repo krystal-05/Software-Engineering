@@ -12,12 +12,14 @@ let ballMoving = false, ballHit = false, pitchAnimation = false, swingAttempt = 
 let settingMenu = false, inputEnabled = false;
 let showOutPopup = false, ballCaughtThisFrame = false;
 let outPopupTime = 0;
+let currentPerspective = "side";
 
 let initialFielderPositions = [];
 const catchingRadius = 100;
 
 let bgImage, batterGif;
 let settingButton, returnButton;
+let tempSwapPerspective;
 
 function preload() {
   bgImage = loadImage('assets/gamebackg.jpg');
@@ -107,7 +109,8 @@ function setup() {
   });
   
   settingButton = new Button("Settings", width - 80, 40, 120, 40, null, null, () => settingsClick());
-  returnButton = new Button("Menu", width - 80, 90, 120, 40, null, null, () => goBack());
+  returnButton = new Button("Menu", width - 80, 90, 120, 40, null, null, () => returnToMenu());
+  tempSwapPerspective = new Button("Perspective", width - 80, 140, 120, 40, null, null, () => togglePerspective());
   createModal();
 
   inputEnabled = true;
@@ -118,18 +121,26 @@ function draw() {
   image(bgImage, 0, 0, width, height);
   ballCaughtThisFrame = false;
 
-  // Draw the game elements (field, players, ball)
   push();
-    drawField();
-    drawPlayers();
-    // draw hitzone
-    if (batter) {
-      stroke(255, 0, 0);
-      strokeWeight(2);
-      noFill();
-      rectMode(CENTER);
-      rect(batter.x, batter.y - 15, 30, 20);
+    if (currentPerspective === "topDown") {
+      background(34, 139, 34); // a solid green field
+      drawTopDownField();
+      drawTopDownPlayers();
+    } else {
+      // Your original side-view drawing
+      background(50, 168, 82);
+      image(bgImage, 0, 0, width, height);
+      drawField();
+      drawPlayers();
+      if (batter) {
+        stroke(255, 0, 0);
+        strokeWeight(2);
+        noFill();
+        rectMode(CENTER);
+        rect(batter.x, batter.y - 15, 30, 20);
+      }
     }
+    // draw hitzone
   pop();
   
   // Draw the HUD
@@ -137,6 +148,7 @@ function draw() {
     drawScoreboard();
     settingButton.display();
     returnButton.display();
+    tempSwapPerspective.display();
   pop();
 
   push();
@@ -377,6 +389,52 @@ function resetBall() {
   runners.forEach(runner => {
     runner.safe = false;
   });
+}
+
+function drawTopDownField() {
+  // Draw the diamond
+  stroke(255);
+  strokeWeight(2);
+  noFill();
+  beginShape();
+    vertex(bases[0].x, bases[0].y); // Home plate
+    vertex(bases[1].x, bases[1].y); // First base
+    vertex(bases[2].x, bases[2].y); // Second base
+    vertex(bases[3].x, bases[3].y); // Third base
+  endShape(CLOSE);
+
+  // Draw each base 
+  fill(255);
+  noStroke();
+  for (let base of bases) {
+    ellipse(base.x, base.y, 20, 20);
+  }
+}
+
+function drawTopDownPlayers() {
+  fill('red');
+  ellipse(pitcher.x, pitcher.y, 15, 15);
+
+  if (batter) {
+    fill('orange');
+    ellipse(batter.x, batter.y, 15, 15);
+  }
+
+  fill('blue');
+  ellipse(catcherPlayer.x, catcherPlayer.y, 15, 15);
+
+  fill('purple');
+  for (let fielder of fielders) {
+    ellipse(fielder.x, fielder.y, 15, 15);
+  }
+
+  fill('yellow');
+  for (let runner of runners) {
+    ellipse(runner.x, runner.y, 15, 15);
+  }
+
+  fill('white');
+  ellipse(ball.x, ball.y, 10, 10);
 }
 
 function drawField() {
@@ -823,12 +881,19 @@ function mousePressed() {
       buttonClick();
       setTimeout(() => returnButton.action(), 200);
     }
+    if (tempSwapPerspective.isHovered()) {
+      buttonClick();
+      setTimeout(() => tempSwapPerspective.action(), 200);
+    }
   }
   if(!currSong.isPlaying()) {
     currSong.loop();
   }
 }
 
+function togglePerspective() {
+  currentPerspective = currentPerspective === "side" ? "topDown" : "side";
+}
 function settingsClick() {
   settingMenu = true;
   showSettings();
@@ -837,8 +902,7 @@ function buttonClick() {
   playSoundEffect("buttonSound");
 }
 
-// Added currently for demo purposes
-function goBack() {
+function returnToMenu() {
   localStorage.setItem("gameState", "menu");
   window.location.href = "index.html";
 }
