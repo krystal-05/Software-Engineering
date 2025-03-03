@@ -90,7 +90,7 @@ function confirmCharacter() {
     localStorage.setItem("confirmedPreset", characterTag);
     localStorage.setItem("isLoad1", "true");
     localStorage.setItem("characterTag", null);
-    window.location.href = "game.html";
+    window.location.href = "map.html";
 }
 function buttonClick() {
     playSoundEffect("buttonSound");
