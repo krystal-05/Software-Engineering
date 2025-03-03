@@ -1,4 +1,4 @@
-const DEBUG = false;
+const DEBUG = true;
 const PLAYER_OFFSET_X = 40;
 const PLAYER_OFFSET_Y = 80;
 const PLAYER_WIDTH = 80;
@@ -29,7 +29,6 @@ function preload() {
   catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
 
   currSong = loadSound('sounds/gamesong.mp3');
-  //buttonSound = loadSound('sounds/buttonClick.mp3');
   soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
   soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3');
 }
@@ -39,8 +38,9 @@ function setup() {
 
   hitZoneWidth = windowWidth * 0.05;
   hitZoneHeight = windowHeight * 0.04;
-  catchDistance = windowWidth * 0.02;
+  catchDistance = windowWidth * 0.015;
   runnerProximity = windowWidth * 0.01;
+  strikeCatchThreshold = windowWidth * 0.01;
 
   canvas.getContext('2d', { willReadFrequently: true });
   
@@ -187,7 +187,7 @@ function draw() {
           ball.y = lerp(ball.y, targetY, 0.1);
           ball.speedY *= 0.9;
 
-          if (abs(ball.y - targetY) < 15) {
+          if (abs(ball.y - targetY) < catchDistance) {
             ball.inAir = false;
           }  
         }
@@ -225,7 +225,7 @@ function draw() {
       return;
     }
     
-    if (targetFielder && dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < 15) {
+    if (targetFielder && dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < catchDistance) {
       if (DEBUG) console.log(`Fielder targeting base ${chosenRunner.base + 1} catches the ball`);
       ball.throwing = false;
   
@@ -240,7 +240,6 @@ function draw() {
         if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
           if (!runnerAtFielderBase.backtracking && forwardFielder === targetFielder) {
             outs++;
-            //resetBatter();
             if (DEBUG) console.log("outs to", outs);
             runners = runners.filter(r => r !== runnerAtFielderBase);
             if (outs >= 3) {
@@ -323,13 +322,13 @@ function checkFielderCatch() {
   if (ballCaughtThisFrame) return;
   if (ball.caught) return;
 
-  if (ball.strikePitch && dist(ball.x, ball.y, catcherPlayer.x, catcherPlayer.y) < 5) {
+  if (ball.strikePitch && dist(ball.x, ball.y, catcherPlayer.x, catcherPlayer.y) < strikeCatchThreshold) {
     catcherPlayer.state = "hasBall";
     handleStrikeCatch(catcherPlayer);
     ballCaughtThisFrame = true;
     return;
   } 
-  if (!ball.strikePitch && dist(ball.x, ball.y, catcherPlayer.x, catcherPlayer.y) < 15) {
+  if (!ball.strikePitch && dist(ball.x, ball.y, catcherPlayer.x, catcherPlayer.y) < catchDistance) {
     catcherPlayer.state = "hasBall";
     
     if (ball.inAir) {
@@ -341,9 +340,11 @@ function checkFielderCatch() {
     return;
   }
 
+
+  if (!ballHit) return;
   for (let fielder of fielders) {
     if ((fielder.state === "idle" || fielder.state === "running") && 
-         dist(ball.x, ball.y, fielder.x, fielder.y) < 15) {
+         dist(ball.x, ball.y, fielder.x, fielder.y) < catchDistance) {
       // Fielder catches the ball:
       fielder.state = "hasBall";
       resetInfielders();
@@ -638,7 +639,6 @@ function throwToNextRunner(currentFielder) {
    
   if (!nextRunner.safe && targetFielder === currentFielder && !nextRunner.backtracking) {
     outs++;
-    //resetBatter();
     if (DEBUG) console.log("outs is now", outs);
     runners = runners.filter(r => r !== nextRunner);
     if (outs >= 3) {
