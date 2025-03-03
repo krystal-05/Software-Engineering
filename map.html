@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/addons/p5.sound.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  </head>
+  <body>
+    <main>
+    </main>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+    </style>
+   <script>
+
+    let map;
+    let button;
+
+    function preload() {
+      map = loadImage('assets/map.png');
+    }
+
+    function setup(){
+        createCanvas(windowWidth, windowHeight);
+        levelButton();
+        secretLevel();
+
+    }
+
+    function draw(){
+        background(0);
+        image(map, 0, 0, windowWidth, windowHeight);
+    }
+
+    function levelButton(){ //i know I can make a 'new Button' and better function management , but  ill do that later
+        
+        button = createButton('level 1');
+        button.style('border-radius', '100%',);
+        button.style('width', '50px');
+        button.style('height', '50px');
+        button.style('font-weight', 'bold');
+        button.position(windowWidth / 2 + 200, windowHeight /2 - 200 );
+        button.mousePressed(city);
+    }
+
+    function secretLevel(){
+        button = createButton('?');
+        button.style('border-radius', '100%',);
+        button.style('width', '50px');
+        button.style('height', '50px');
+        button.style('font-weight', 'bold');
+        button.position(windowWidth / 2 - 600 , windowHeight /2 - 265 );
+        button.mousePressed(dawgs);
+    }
+
+    function city() {
+        window.location.href = "game.html";
+    }
+
+    function dawgs() {
+        window.open('https://www.youtube.com/watch?v=RQmEERvqq70&ab_channel=Generuu')
+    }
+
+   </script>
+
+  
+  </body>
+</html>
