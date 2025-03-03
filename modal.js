@@ -67,7 +67,7 @@ function createModal() {
         <span class="close-button">&times;</span>
         <p><b>Settings</b></p>
         <div>
-        <label for="volumeSlider">Volume</label>
+        <label for="volumeSlider">Music</label>
         <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="1">
         </div>
         <div>
