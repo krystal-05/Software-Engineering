@@ -1,9 +1,8 @@
 let backButton;
-let buttonSound, currVolume = 0.5;
 let settingMenu = false;
 
 function preload() {
-  buttonSound = loadSound("sounds/buttonClick.mp3");
+  soundEffects["buttonSound"] = loadSound("sounds/buttonClick.mp3");
 }
 
 function setup() {
@@ -42,12 +41,15 @@ function draw() {
 }
 
 function buttonClick() {
-  buttonSound.play();
+  playSoundEffect("buttonSound");
 }
 
 function mousePressed() {
   if (backButton.isHovered()) {
-    buttonClick();
+    if(soundEffects["buttonSound"] && soundEffects["buttonSound"] !== null) {
+      console.log("IN")
+      buttonClick();
+    }
     setTimeout(() => backButton.action(), 200);
   }
   if(currSong && !currSong.isPlaying()) {
@@ -58,13 +60,20 @@ function mousePressed() {
 function loadVolumeSetting() {
   const savedVolume = localStorage.getItem("volume");
   const savedMute = localStorage.getItem("isMuted");
+  const savedEffectsVolume = localStorage.getItem("effectsVolume");
 
   if (savedVolume !== null) {
       currVolume = parseFloat(savedVolume);
   }
+  if(savedEffectsVolume !== null) {
+    currEffectsVolume = parseFloat(savedEffectsVolume);
+  }
   if (savedMute !== null) {
       let isMuted = savedMute === "true";
-      buttonSound.setVolume(isMuted ? 0 : currVolume);
+      
+      Object.values(soundEffects).forEach((sound) => {
+        sound.setVolume(isMuted ? 0 : currEffectsVolume);
+      });
   }
 }
 

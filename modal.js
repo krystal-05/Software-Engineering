@@ -1,9 +1,12 @@
 let modal;
 let volumeSlider;
+let effectsVolumeSlider;
 let isMuted = false;
 let currVolume = 0.5;
 let muteButton;
 let currSong, buttonSound;
+let currEffectsVolume = 0.5;
+let soundEffects = {};
 
 function createModal() {
   const style = document.createElement("style");
@@ -64,8 +67,12 @@ function createModal() {
         <span class="close-button">&times;</span>
         <p><b>Settings</b></p>
         <div>
-        <label for="volumeSlider">Volume</label>
+        <label for="volumeSlider">Music</label>
         <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="1">
+        </div>
+        <div>
+        <label for="effectsVolumeSlider">Effects</label>
+        <input type="range" id="effectsVolumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="1">
         </div>
         <button id="muteToggle" class="modal-button">Mute</button>
         <button id="backSettings" class="modal-button">Back</button>
@@ -76,12 +83,14 @@ function createModal() {
   // Get modal elements
   const closeButton = modal.querySelector(".close-button");
   volumeSlider = modal.querySelector("#volumeSlider");
+  effectsVolumeSlider = modal.querySelector("#effectsVolumeSlider");
   muteButton = modal.querySelector("#muteToggle");
   const backButton = modal.querySelector("#backSettings");
 
   // Event listeners for modal
   closeButton.addEventListener("click", hideSettings);
   volumeSlider.addEventListener("input", updateVolume);
+  effectsVolumeSlider.addEventListener("input", updateEffectsVolume);
   muteButton.addEventListener("click", () => {
     toggleMute();
     buttonClick();
@@ -93,12 +102,17 @@ function createModal() {
 
 
   const savedVolume = localStorage.getItem("volume");
+  const savedEffectsVolume = localStorage.getItem("effectsVolume");
   const savedMute = localStorage.getItem("isMuted");
 
 
   if (savedVolume !== null) {
     currVolume = parseFloat(savedVolume);
     volumeSlider.value = currVolume;
+  }
+  if(savedEffectsVolume !== null) {
+    currEffectsVolume = parseFloat(savedEffectsVolume);
+    effectsVolumeSlider.value = currEffectsVolume;
   }
   if (savedMute !== null) {
     isMuted = savedMute === "true";
@@ -129,10 +143,6 @@ function toggleMute() {
   if(currSong) {
     currSong.setVolume(isMuted ? 0 : currVolume);
   }
-  if(buttonSound) {
-    buttonSound.setVolume(isMuted ? 0 : currVolume);
-  }
-  
   localStorage.setItem("volume", currVolume);
   localStorage.setItem("isMuted", isMuted.toString());
 }
@@ -145,10 +155,26 @@ function updateVolume() {
     if(currSong) {
       currSong.setVolume(volume);
     }
-    if(buttonSound) {
-      buttonSound.setVolume(volume);
-    }
     localStorage.setItem("volume", volume);
     currVolume = volume;
+  }
+}
+
+
+function playSoundEffect(effect) {
+  if(soundEffects[effect] && soundEffects[effect].isLoaded()) {
+    soundEffects[effect].setVolume(isMuted ? 0 : currEffectsVolume);
+    soundEffects[effect].play();
+  }      
+}
+
+
+function updateEffectsVolume() {
+  if(!isMuted) {
+    currEffectsVolume = parseFloat(effectsVolumeSlider.value);
+    Object.values(soundEffects).forEach((sound) => {
+      sound.setVolume(currEffectsVolume);
+    });
+    localStorage.setItem("effectsVolume", currEffectsVolume);
   }
 }

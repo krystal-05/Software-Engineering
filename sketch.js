@@ -9,12 +9,12 @@ let settingsImg, settingsImgHover, creditsImg, creditsImgHover;
 function preload() {
   bgImage = loadImage('assets/roughititlescreen3.png'); 
   titleIcon = loadImage('assets/OREDTitle.png');
-  buttonSound = loadSound('sounds/buttonClick.mp3');
   settingsImg = loadImage('assets/OSettings_1.png');
   settingsImgHover = loadImage('assets/OSettings_2.png');
   creditsImg = loadImage('assets/OCredits_1.png');
   creditsImgHover = loadImage('assets/OCredits_2.png');
   currSong = loadSound('sounds/mainScreenSound.mp3');
+  soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
 }
 
 function setup() {
@@ -116,7 +116,7 @@ function goBack() {
 }
 
 function buttonClick() {
-  buttonSound.play();
+  playSoundEffect("buttonSound");
 }
 
 function loadCharacterSelect() {
