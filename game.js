@@ -22,7 +22,9 @@ function preload() {
   catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
 
   currSong = loadSound('sounds/gamesong.mp3');
-  buttonSound = loadSound('sounds/buttonClick.mp3');
+  //buttonSound = loadSound('sounds/buttonClick.mp3');
+  soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
+  soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3');
 }
 
 function setup() {
@@ -716,6 +718,8 @@ function keyPressed() {
         // Successful swing/hit.
         ballHit = true;
         ball.inAir = true;
+        playSoundEffect("hitBall");
+
         let xPower = windowWidth / 200;
         let yPower = windowHeight / 200;
         ball.speedX = random(-xPower * 0.8, xPower * 0.8);
@@ -768,18 +772,23 @@ function drawOutPopup() {
 function loadVolumeSetting() {
   const savedVolume = localStorage.getItem("volume");
   const savedMute = localStorage.getItem("isMuted");
+  const savedEffectsVolume = localStorage.getItem("effectsVolume");
 
   if (savedVolume !== null) {
     currVolume = parseFloat(savedVolume);
+  }
+  if(savedEffectsVolume !== null) {
+    currEffectsVolume = parseFloat(savedEffectsVolume);
   }
   if (savedMute !== null) {
     let isMuted = savedMute === "true";
     if (currSong) {
       currSong.setVolume(isMuted ? 0 : currVolume);
     }
-    if (buttonSound) {
-      buttonSound.setVolume(isMuted ? 0 : currVolume);
-    }
+    Object.values(soundEffects).forEach((sound) => {
+      sound.setVolume(isMuted ? 0 : currEffectsVolume);
+    });
+
   }
 }
 
@@ -804,7 +813,7 @@ function settingsClick() {
   showSettings();
 }
 function buttonClick() {
-  buttonSound.play();
+  playSoundEffect("buttonSound");
 }
 
 // Added currently for demo purposes

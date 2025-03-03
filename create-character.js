@@ -1,14 +1,12 @@
 let buttons = [], confirmButton;
 let bgImage, characterImage;
-let menuSong, buttonSound;
-let isMuted, currVolume = 0.5;
 let settingMenu = false;
 
 
 function preload() {
     bgImage = loadImage('assets/roughititlescreen3.png');
     characterImage = loadImage('assets/tempCharacter.png');
-    buttonSound = loadSound('sounds/buttonClick.mp3');
+    soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
     currSong = loadSound('sounds/stadiumSound.mp3');
 }
 
@@ -95,24 +93,28 @@ function confirmCharacter() {
     window.location.href = "game.html";
 }
 function buttonClick(){
-    buttonSound.play();
+    playSoundEffect("buttonSound");
 }
 
 function loadVolumeSetting() {
     const savedVolume = localStorage.getItem("volume");
     const savedMute = localStorage.getItem("isMuted");
+    const savedEffectsVolume = localStorage.getItem("effectsVolume");
   
     if (savedVolume !== null) {
         currVolume = parseFloat(savedVolume);
+    }
+    if(savedEffectsVolume !== null) {
+        currEffectsVolume = parseFloat(savedEffectsVolume);
     }
     if (savedMute !== null) {
         isMuted = savedMute === "true";
         if(currSong){
             currSong.setVolume(isMuted ? 0 : currVolume);
         }
-        if (buttonSound){
-            buttonSound.setVolume(isMuted ? 0 : currVolume);
-        }
+        Object.values(soundEffects).forEach((sound) => {
+            sound.setVolume(isMuted ? 0 : currEffectsVolume);
+        });
     }
     
 }
