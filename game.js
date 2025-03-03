@@ -1,3 +1,10 @@
+const DEBUG = false;
+const PLAYER_OFFSET_X = 40;
+const PLAYER_OFFSET_Y = 80;
+const PLAYER_WIDTH = 80;
+const PLAYER_HEIGHT = 120;
+
+let hitZoneWidth, hitZoneHeight, catchDistance, runnerProximity;
 let pitcher, batter, ball, bases, fielders, runners = [];
 let lineup, currentBatter = 0;
 let score = { home: 0, away: 0 }, outs = 0, strikes = 0, inning = 1, topInning = true;
@@ -27,6 +34,11 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+
+  hitZoneWidth = windowWidth * 0.05;
+  hitZoneHeight = windowHeight * 0.04;
+  catchDistance = windowWidth * 0.02;
+  runnerProximity = windowWidth * 0.01;
 
   canvas.getContext('2d', { willReadFrequently: true });
   
@@ -142,12 +154,12 @@ function draw() {
   
   if (ballMoving && !ballHit && !ball.throwing) {
     ball.y += ball.speedY;
-    if (ball.y >= batter.y && abs(ball.x - batter.x) < 40 && !swingAttempt) {
+    if (ball.y >= batter.y && abs(ball.x - batter.x) < hitZoneWidth && !swingAttempt) {
       ball.strikePitch = true;
       swingAttempt = true;
 
       strikes++;
-      console.log("No swing! Strike " + strikes);
+      if (DEBUG) console.log("No swing! Strike " + strikes);
     }
   }
 
@@ -212,7 +224,7 @@ function draw() {
     }
     
     if (targetFielder && dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < 15) {
-      console.log(`Fielder targeting base ${chosenRunner.base + 1} catches the ball`);
+      if (DEBUG) console.log(`Fielder targeting base ${chosenRunner.base + 1} catches the ball`);
       ball.throwing = false;
   
 
@@ -226,8 +238,8 @@ function draw() {
         if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
           if (!runnerAtFielderBase.backtracking && forwardFielder === targetFielder) {
             outs++;
-            resetBatter();
-            console.log("outs to", outs);
+            //resetBatter();
+            if (DEBUG) console.log("outs to", outs);
             runners = runners.filter(r => r !== runnerAtFielderBase);
             if (outs >= 3) {
               nextInning();
@@ -236,8 +248,10 @@ function draw() {
             return;
           } else if (runnerAtFielderBase.backtracking && backtrackFielder === targetFielder) {
             outs++;
+            ball.throwing = false;
+            ball.caught = true;
             resetBatter();
-            console.log("outs to", outs);
+            if (DEBUG) console.log("outs to", outs);
             runners = runners.filter(r => r !== runnerAtFielderBase);
             if (outs >= 3) {
               nextInning();
@@ -255,7 +269,7 @@ function draw() {
   
       let targetRunner = getNearestUnsafedRunner(targetFielder);
       if (targetRunner) {
-          console.log(`Throwing to next unsafe runner to base ${targetRunner.base + 1}`);
+          if (DEBUG) console.log(`Throwing to next unsafe runner to base ${targetRunner.base + 1}`);
           handleGroundThrow(targetFielder);
       } else {
           resetBatter();
@@ -294,7 +308,7 @@ function handleStrikeCatch(catcher) {
     if (strikes >= 3) {
       outs++;
       resetBatter();
-      console.log("Strikeout! Batter is out.");
+      if (DEBUG) console.log("Strikeout! Batter is out.");
       if (outs >= 3) {
         nextInning();
         return;
@@ -379,24 +393,24 @@ function drawField() {
 function drawPlayers() {
   fielders.forEach(fielder => {
     if (fielder.state === "running") {
-      image(fielderRunningGif, fielder.x - 40, fielder.y - 80, 80, 120);
+      image(fielderRunningGif, fielder.x - PLAYER_OFFSET_X, fielder.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
     } else {
-      image(fielderIdleGif, fielder.x - 40, fielder.y - 80, 80, 120);
+      image(fielderIdleGif, fielder.x - PLAYER_OFFSET_X, fielder.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
     }
   });
 
   runners.forEach(runner => {
     if (runner.running) {
-      image(runnerRunningGif, runner.x - 40, runner.y - 80, 80, 120);
+      image(runnerRunningGif, runner.x - PLAYER_OFFSET_X, runner.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
     } else {
-      image(runnerIdle, runner.x - 40, runner.y - 80, 80, 120);
+      image(runnerIdle, runner.x - PLAYER_OFFSET_X, runner.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
     }
   });
 
   drawPlayer(pitcher, 'red');
 
   if (batter) {
-    image(batterGif, batter.x - 40, batter.y - 80, 80, 120);
+    image(batterGif, batter.x - PLAYER_OFFSET_X, batter.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
   }
   
   drawPlayer(catcherPlayer, 'blue');
@@ -408,15 +422,15 @@ function drawPlayers() {
 function drawPlayer(player, color) {
    
   if (player === pitcher) {
-    image(fielderIdleGif, player.x - 40, player.y - 80, 80, 120);
+    image(fielderIdleGif, player.x - PLAYER_OFFSET_X, player.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
     return;
   }
   if (player === batter) {
-    image(batterGif, player.x - 40, player.y - 80, 80, 120);
+    image(batterGif, player.x - PLAYER_OFFSET_X, player.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
     return;
   }
   if (player === catcherPlayer) {
-    image(catcherImg, player.x - 40, player.y - 80, 80, 120);
+    image(catcherImg, player.x - PLAYER_OFFSET_X, player.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
     return;
   }
   fill(color);
@@ -462,12 +476,12 @@ function moveRunners() {
           runner.base++;
           if (runner.base >= 4) {
             score[topInning ? 'away' : 'home']++;
-            console.log(`Runner scored! Updated Score - Home: ${score.home}, Away: ${score.away}`);
+            if (DEBUG) console.log(`Runner scored! Updated Score - Home: ${score.home}, Away: ${score.away}`);
             return false;
           } else {
             runner.running = false;
             runner.safe = true;
-            console.log(`Runner reached base ${runner.base} and is holding.`);
+            if (DEBUG) console.log(`Runner reached base ${runner.base} and is holding.`);
           }
         }
       }
@@ -502,7 +516,7 @@ function moveFieldersTowardsBall() {
     closestFielder.x = newX;
     closestFielder.y = newY;
 
-    if (dist(closestFielder.x, closestFielder.y, ball.x, ball.y) > 15) {
+    if (dist(closestFielder.x, closestFielder.y, ball.x, ball.y) > catchDistance) {
       closestFielder.state = "running";
     } else {
       closestFielder.state = "idle";
@@ -551,7 +565,7 @@ function handleGroundThrow(catcher) {
     return;
   }
 
-  console.log("No unsafe runners left, resetting the play.");
+  if (DEBUG) console.log("No unsafe runners left, resetting the play.");
   resetBatter();
   resetFieldersPosition();
 }
@@ -564,13 +578,12 @@ function handleThrow(catcher) {
 
   let batterOut = ball.advancingRunner;
   if (batterOut) {
-      console.log("Air catch");
+      if (DEBUG) console.log("Air catch");
       runners = runners.filter(runner => runner !== batterOut);
       if (!showOutPopup) {
         outs++;
-        resetBatter();
       }
-      console.log(`outs to ${outs}`);
+      if (DEBUG) console.log(`outs to ${outs}`);
       if (outs >= 3) {
       setTimeout(() => {
         nextInning();
@@ -582,7 +595,7 @@ function handleThrow(catcher) {
   }
 
   let runnerFirstToSecond = runners.find(r => r.base === 1 && r.running);
-  if (runnerFirstToSecond) {
+  if (runnerFirstToSecond && shouldBacktrack(runnerFirstToSecond)) {
     runnerFirstToSecond.backtracking = true;
   }
 
@@ -595,14 +608,22 @@ function handleThrow(catcher) {
   }
 
   // If no unsafe runners left, reset the play
-  console.log("No unsafe runners left, resetting the play.");
+  if (DEBUG) console.log("No unsafe runners left, resetting the play.");
   resetBatter();
+}
+
+function shouldBacktrack(runner) {
+  let currentBase = bases[runner.base];
+  let nextBase = bases[(runner.base + 1) % bases.length];
+  let totalDistance = dist(currentBase.x, currentBase.y, nextBase.x, nextBase.y);
+  let runnerDistance = dist(currentBase.x, currentBase.y, runner.x, runner.y);
+  return runnerDistance < totalDistance / 2;
 }
 
 function throwToNextRunner(currentFielder) {
   let nextRunner = getNearestUnsafedRunner(currentFielder);
   if (!nextRunner) {
-      console.log("No more unsafe runners left.");
+      if (DEBUG) console.log("No more unsafe runners left.");
       resetBatter();
       return;
   }
@@ -615,8 +636,8 @@ function throwToNextRunner(currentFielder) {
    
   if (!nextRunner.safe && targetFielder === currentFielder && !nextRunner.backtracking) {
     outs++;
-    resetBatter();
-    console.log("outs is now", outs);
+    //resetBatter();
+    if (DEBUG) console.log("outs is now", outs);
     runners = runners.filter(r => r !== nextRunner);
     if (outs >= 3) {
       nextInning();
@@ -628,12 +649,12 @@ function throwToNextRunner(currentFielder) {
 
   nextRunner = getNearestUnsafedRunner(currentFielder);
   if (!nextRunner) {
-      console.log("No more unsafe runners left.");
+      if (DEBUG) console.log("No more unsafe runners left.");
       resetBatter();
       return;
   }
   if (!targetFielder) {
-      console.log("targetfielder returned null");
+      if (DEBUG) console.log("targetfielder returned null");
       targetFielder = getClosestFielderToBase(nextRunner);
   }
 
@@ -712,7 +733,7 @@ function keyPressed() {
       pitchAnimation = true;
       swingAttempt = false;
     } else if (ballMoving && !ballHit && !swingAttempt && inputEnabled) {
-      if (ball.y >= batter.y - 30 && ball.y <= batter.y && abs(ball.x - batter.x) < 20) {
+      if (ball.y >= batter.y - hitZoneHeight && ball.y <= batter.y && abs(ball.x - batter.x) < hitZoneWidth * 0.5) {
         // Successful swing/hit.
         ballHit = true;
         ball.inAir = true;
@@ -732,7 +753,7 @@ function keyPressed() {
         ball.strikePitch = true;
 
         strikes++;
-        console.log("Swing missed! Strike " + strikes);
+        if (DEBUG) console.log("Swing missed! Strike " + strikes);
       }
       swingAttempt = true;
     }
