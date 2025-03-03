@@ -23,11 +23,11 @@ function setup() {
     localStorage.setItem("characterTag", null);
 
     buttons.push(new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack()));
-    buttons.push(new Button("Character 1", width/2 - 230, height/2 - 275, 200, 50, null, null, () => selectedCharacter("Character 1")));
-    buttons.push(new Button("Character 2", width/2,       height/2 - 275, 200, 50, null, null, () => selectedCharacter("Character 2")));
-    buttons.push(new Button("Character 3", width/2 + 230, height/2 - 275, 200, 50, null, null, () => selectedCharacter("Character 3")));
-    confirmButton = new Button("Confirm Character", width-175, height - 50, 200, 50, null, null, () => confirmCharacter());
-   
+    buttons.push(new Button("Character 1", width / 2 - 230, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 1")));
+    buttons.push(new Button("Character 2", width / 2, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 2")));
+    buttons.push(new Button("Character 3", width / 2 + 230, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 3")));
+    confirmButton = new Button("Confirm Character", width - 175, height - 50, 200, 50, null, null, () => confirmCharacter());
+
 }
 
 function draw() {
@@ -36,24 +36,24 @@ function draw() {
     textSize(64);
     textStyle(BOLD);
     fill('black');
-    text("Select Character", width/2, 100);
+    text("Select Character", width / 2, 100);
 
     fill('grey');
-    rect(width/2, height/2 + 50, 400, 550, 20);
+    rect(width / 2, height / 2 + 50, 400, 550, 20);
 
     textSize(32);
     fill('black');
     if (localStorage.getItem("characterTag") === "null") {
-        text("Select a Preset", width/2, height/2 - 200);
+        text("Select a Preset", width / 2, height / 2 - 200);
     } else if (localStorage.getItem("characterTag") === "Character 1") {
-        text("Character 1", width/2, height/2 - 200);
-        image(characterImage, width/2 - 200, height/2 - 175, 400, 400);
+        text("Character 1", width / 2, height / 2 - 200);
+        image(characterImage, width / 2 - 200, height / 2 - 175, 400, 400);
     } else if (localStorage.getItem("characterTag") === "Character 2") {
-        text("Character 2", width/2, height/2 - 200);
-        image(characterImage, width/2 - 200, height/2 - 175, 400, 400);
+        text("Character 2", width / 2, height / 2 - 200);
+        image(characterImage, width / 2 - 200, height / 2 - 175, 400, 400);
     } else if (localStorage.getItem("characterTag") === "Character 3") {
-        text("Character 3", width/2, height/2 - 200);
-        image(characterImage, width/2 - 200, height/2 - 175, 400, 400);
+        text("Character 3", width / 2, height / 2 - 200);
+        image(characterImage, width / 2 - 200, height / 2 - 175, 400, 400);
     }
 
     for (let btn of buttons) {
@@ -75,7 +75,7 @@ function mousePressed() {
         buttonClick();
         setTimeout(() => confirmButton.action(), 200);
     }
-    if(!currSong.isPlaying()) {
+    if (!currSong.isPlaying()) {
         currSong.loop();
     }
 }
@@ -92,7 +92,7 @@ function confirmCharacter() {
     localStorage.setItem("characterTag", null);
     window.location.href = "game.html";
 }
-function buttonClick(){
+function buttonClick() {
     playSoundEffect("buttonSound");
 }
 
@@ -100,23 +100,23 @@ function loadVolumeSetting() {
     const savedVolume = localStorage.getItem("volume");
     const savedMute = localStorage.getItem("isMuted");
     const savedEffectsVolume = localStorage.getItem("effectsVolume");
-  
+
     if (savedVolume !== null) {
         currVolume = parseFloat(savedVolume);
     }
-    if(savedEffectsVolume !== null) {
+    if (savedEffectsVolume !== null) {
         currEffectsVolume = parseFloat(savedEffectsVolume);
     }
     if (savedMute !== null) {
         isMuted = savedMute === "true";
-        if(currSong){
+        if (currSong) {
             currSong.setVolume(isMuted ? 0 : currVolume);
         }
         Object.values(soundEffects).forEach((sound) => {
             sound.setVolume(isMuted ? 0 : currEffectsVolume);
         });
     }
-    
+
 }
 function goBack() {
     localStorage.setItem("gameState", "loadGame");
