@@ -1,4 +1,4 @@
-const DEBUG = true;
+const DEBUG = false;
 const PLAYER_OFFSET_X = 40;
 const PLAYER_OFFSET_Y = 80;
 const PLAYER_WIDTH = 80;
