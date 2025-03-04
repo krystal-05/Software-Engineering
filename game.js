@@ -63,7 +63,7 @@ function setup() {
     ball = {
         x: pitcher.x,
         y: pitcher.y,
-        speedY: 5,
+        speedY: 400,
         speedX: 0,
         throwing: false,
         inAir: false,
@@ -75,7 +75,7 @@ function setup() {
         x: width * 0.5,
         y: height * 0.80,
         running: false,
-        speed: 4,
+        speed: 240,
         base: 0,
         safe: false,
         backtracking: false
@@ -120,6 +120,7 @@ function draw() {
     background(50, 168, 82);
     image(bgImage, 0, 0, width, height);
     ballCaughtThisFrame = false;
+    let dt = deltaTime / 1000;
 
     push();
     if (currentPerspective === "topDown") {
@@ -159,7 +160,7 @@ function draw() {
 
     // Game logic
     if (pitchAnimation) {
-        pitcher.armAngle += 0.05;
+        pitcher.armAngle += 0.05 * dt;
         if (pitcher.armAngle > PI / 2) {
             pitchAnimation = false;
             ballMoving = true;
@@ -167,7 +168,7 @@ function draw() {
     }
 
     if (ballMoving && !ballHit && !ball.throwing) {
-        ball.y += ball.speedY;
+        ball.y += ball.speedY * dt;
         if (ball.y >= batter.y && abs(ball.x - batter.x) < hitZoneWidth && !swingAttempt) {
             ball.strikePitch = true;
             swingAttempt = true;
@@ -179,12 +180,12 @@ function draw() {
 
     if (ballMoving && !ball.throwing) {
         if (ballHit) {
-            ball.x += ball.speedX;
-            ball.y += ball.speedY;
+            ball.x += ball.speedX * dt;
+            ball.y += ball.speedY * dt;
 
-            let gravity = windowHeight / 3000;
+            let gravity = windowHeight * 1.3;
             if (ball.speedY < 0) {
-                ball.speedY += gravity;
+                ball.speedY += gravity * dt;
             } else {
 
                 let horizontalDistance = ball.x - pitcher.x;
@@ -194,7 +195,7 @@ function draw() {
                 targetY = constrain(targetY, windowHeight * 0.3, windowHeight * 0.5);
 
                 if (ball.y < targetY) {
-                    ball.speedY += gravity;
+                    ball.speedY += gravity * dt;
                 } else {
                     ball.y = lerp(ball.y, targetY, 0.1);
                     ball.speedY *= 0.9;
@@ -218,8 +219,8 @@ function draw() {
     }
 
     if (ball.throwing) {
-        ball.x += ball.speedX;
-        ball.y += ball.speedY;
+        ball.x += ball.speedX * dt;
+        ball.y += ball.speedY * dt;
 
         let targetFielder = ball.targetFielder;
         let advancingRunner = ball.advancingRunner;
@@ -377,7 +378,7 @@ function resetBall() {
     ball = {
         x: pitcher.x,
         y: pitcher.y,
-        speedY: 5,
+        speedY: 400,
         speedX: 0,
         throwing: false,
         inAir: false,
@@ -512,6 +513,7 @@ function drawScoreboard() {
 }
 
 function moveRunners() {
+    let dt = deltaTime / 1000;
     runners = runners.filter(runner => {
         if (runner.running) {
             let targetIndex = runner.base + 1;
@@ -520,10 +522,10 @@ function moveRunners() {
             }
             let targetBase = bases[targetIndex % 4];
 
-            if (runner.x < targetBase.x) runner.x += runner.speed;
-            if (runner.x > targetBase.x) runner.x -= runner.speed;
-            if (runner.y < targetBase.y) runner.y += runner.speed;
-            if (runner.y > targetBase.y) runner.y -= runner.speed;
+            if (runner.x < targetBase.x) runner.x += runner.speed * dt;
+            if (runner.x > targetBase.x) runner.x -= runner.speed * dt;
+            if (runner.y < targetBase.y) runner.y += runner.speed * dt;
+            if (runner.y > targetBase.y) runner.y -= runner.speed * dt;
 
             if (dist(runner.x, runner.y, targetBase.x, targetBase.y) < 5) {
                 runner.x = targetBase.x;
@@ -565,10 +567,11 @@ function moveFieldersTowardsBall() {
 
     if (closestFielder) {
         let angleToBall = atan2(ball.y - closestFielder.y, ball.x - closestFielder.x);
-        let speed = 2;
+        let speed = 120;
+        let dt = deltaTime / 1000;
 
-        let newX = closestFielder.x + cos(angleToBall) * speed;
-        let newY = closestFielder.y + sin(angleToBall) * speed;
+        let newX = closestFielder.x + cos(angleToBall) * speed * dt;
+        let newY = closestFielder.y + sin(angleToBall) * speed * dt;
 
         if ((closestFielder.y <= height * 0.42) && (ball.y <= height * 0.42)) {
             newY = closestFielder.y; // Stop moving up/down
@@ -725,9 +728,10 @@ function throwToNextRunner(currentFielder) {
     let dx = targetFielder.x - currentFielder.x;
     let dy = targetFielder.y - currentFielder.y;
     let magnitude = sqrt(dx * dx + dy * dy);
+    let dt = deltaTime / 1000
 
-    ball.speedX = (dx / magnitude) * 10;
-    ball.speedY = (dy / magnitude) * 10;
+    ball.speedX = (dx / magnitude) * 600;
+    ball.speedY = (dy / magnitude) * 600;
 
     ball.advancingRunner = nextRunner;
     ball.targetFielder = targetFielder;
@@ -801,8 +805,8 @@ function keyPressed() {
 
                 let xPower = windowWidth / 200;
                 let yPower = windowHeight / 200;
-                ball.speedX = random(-xPower * 0.8, xPower * 0.8);
-                ball.speedY = random(-yPower * 4.5, -yPower * 4.0);
+                ball.speedX = random(-xPower * 0.8, xPower * 0.8) * 60;
+                ball.speedY = random(-yPower * 4.5, -yPower * 4.0) * 60;
 
                 batter.running = true;
                 runners.forEach(runner => {
@@ -828,7 +832,7 @@ function resetBatter() {
             x: width * 0.5,
             y: height * 0.80,
             running: false,
-            speed: 4,
+            speed: 240,
             base: 0,
             safe: false,
             backtracking: false
