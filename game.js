@@ -160,7 +160,7 @@ function draw() {
 
     // Game logic
     if (pitchAnimation) {
-        pitcher.armAngle += 0.05 * dt;
+        pitcher.armAngle += 0.05 * 60 * dt;
         if (pitcher.armAngle > PI / 2) {
             pitchAnimation = false;
             ballMoving = true;
