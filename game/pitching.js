@@ -2,8 +2,8 @@
 
 let pitchSkillCheckActive = false;
 let sliderX = 0;
-let sliderSpeed = 300;
-const barWidth = 300;
+let sliderSpeed = 400;
+const barWidth = 175;
 const barHeight = 15;
 let barX, barY;
 const perfectZoneWidth = 10;

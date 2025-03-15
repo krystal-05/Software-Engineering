@@ -796,7 +796,7 @@ function keyPressed() {
         // Start pitch
         if (pitchSkillCheckActive) {
             let pitchMultiplier = evaluatePitchMultiplier();
-            console.log("Pitch multiplier:", pitchMultiplier);
+            if (DEBUG) console.log("Pitch multiplier:", pitchMultiplier);
 
             ball.speedY *= pitchMultiplier;
             pitchSkillCheckActive = false;
