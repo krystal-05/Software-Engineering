@@ -149,6 +149,11 @@ function draw() {
     // draw hitzone
     pop();
 
+    // pitch skill-ckeck
+    if (pitchSkillCheckActive) {
+        drawSkillCheckBar(dt);
+    }
+
     // Draw the HUD
     push();
     drawScoreboard();
@@ -256,17 +261,7 @@ function draw() {
                     let backtrackFielder = getFielderForBase(baseVal);
 
                     if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
-                        // believe this is useless and buggy (when infielder has ball on base, get runner out)
-                        /*if (!runnerAtFielderBase.backtracking && forwardFielder === targetFielder) {
-                            outs++;
-                            if (DEBUG) console.log("outs to", outs);
-                            runners = runners.filter(r => r !== runnerAtFielderBase);
-                            if (outs >= 3) {
-                                nextInning();
-                                return;
-                            }
-                            return;
-                        } else*/ if (runnerAtFielderBase.backtracking && backtrackFielder === targetFielder) {
+                        if (runnerAtFielderBase.backtracking && backtrackFielder === targetFielder) {
                             outs++;
                             ball.throwing = false;
                             ball.caught = true;
@@ -395,6 +390,7 @@ function resetBall() {
     };
     ballMoving = false;
     ballHit = false;
+    swingAttempt = false;
     runners.forEach(runner => {
         runner.safe = false;
     });
@@ -798,6 +794,19 @@ function nextInning() {
 function keyPressed() {
     if (key === ' ') {
         // Start pitch
+        if (pitchSkillCheckActive) {
+            let pitchMultiplier = evaluatePitchMultiplier();
+            console.log("Pitch multiplier:", pitchMultiplier);
+
+            ball.speedY *= pitchMultiplier;
+            pitchSkillCheckActive = false;
+            pitchAnimation = true;
+            return;
+        }
+        if (!ballMoving && inputEnabled && !pitchSkillCheckActive) {
+            startPitch();
+            return;
+        }
         if (!ballMoving && inputEnabled) {
             pitchAnimation = true;
             swingAttempt = false;
