@@ -23,6 +23,7 @@ function setup() {
     textSize(32);
 
     isLoad1 = localStorage.getItem("isLoad1");
+    loadVolumeSetting();
 
     let storedState = localStorage.getItem("gameState");
     if (storedState) {
@@ -138,6 +139,27 @@ function loadCredits() {
 function deleteSave() {
     localStorage.setItem("isLoad1", false);
     isLoad1 = localStorage.getItem("isLoad1");
+}
+
+function loadVolumeSetting() {
+    const savedVolume = localStorage.getItem("volume");
+    const savedMute = localStorage.getItem("isMuted");
+    const savedEffectsVolume = localStorage.getItem("effectsVolume");
+
+    if (savedVolume !== null) {
+        currVolume = parseFloat(savedVolume);
+    }
+    if (savedEffectsVolume !== null) {
+        currEffectsVolume = parseFloat(savedEffectsVolume);
+    }
+    isMuted = savedMute !== null ? (savedMute === "true") : false;
+
+    if (currSong) {
+        currSong.setVolume(isMuted ? 0 : currVolume);
+    }
+    Object.values(soundEffects).forEach((sound) => {
+        sound.setVolume(isMuted ? 0 : currEffectsVolume);
+    });
 }
 
 function keyPressed() {

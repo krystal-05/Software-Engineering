@@ -868,16 +868,14 @@ function loadVolumeSetting() {
     if (savedEffectsVolume !== null) {
         currEffectsVolume = parseFloat(savedEffectsVolume);
     }
-    if (savedMute !== null) {
-        let isMuted = savedMute === "true";
-        if (currSong) {
-            currSong.setVolume(isMuted ? 0 : currVolume);
-        }
-        Object.values(soundEffects).forEach((sound) => {
-            sound.setVolume(isMuted ? 0 : currEffectsVolume);
-        });
+    isMuted = savedMute !== null ? (savedMute === "true") : false;
 
+    if (currSong) {
+        currSong.setVolume(isMuted ? 0 : currVolume);
     }
+    Object.values(soundEffects).forEach((sound) => {
+        sound.setVolume(isMuted ? 0 : currEffectsVolume);
+    });
 }
 
 function mousePressed() {

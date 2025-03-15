@@ -16,9 +16,9 @@ function setup() {
     rectMode(CENTER);
     textSize(32);
 
-    loadVolumeSetting();
     if (currSong.isLoaded() && !currSong.isPlaying()) {
         currSong.loop();
+        loadVolumeSetting();
     }
     localStorage.setItem("characterTag", null);
 
@@ -107,16 +107,14 @@ function loadVolumeSetting() {
     if (savedEffectsVolume !== null) {
         currEffectsVolume = parseFloat(savedEffectsVolume);
     }
-    if (savedMute !== null) {
-        isMuted = savedMute === "true";
-        if (currSong) {
-            currSong.setVolume(isMuted ? 0 : currVolume);
-        }
-        Object.values(soundEffects).forEach((sound) => {
-            sound.setVolume(isMuted ? 0 : currEffectsVolume);
-        });
-    }
+    isMuted = savedMute !== null ? (savedMute === "true") : false;
 
+    if (currSong) {
+        currSong.setVolume(isMuted ? 0 : currVolume);
+    }
+    Object.values(soundEffects).forEach((sound) => {
+        sound.setVolume(isMuted ? 0 : currEffectsVolume);
+    });
 }
 function goBack() {
     localStorage.setItem("gameState", "loadGame");

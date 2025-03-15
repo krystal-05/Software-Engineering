@@ -68,13 +68,14 @@ function loadVolumeSetting() {
     if (savedEffectsVolume !== null) {
         currEffectsVolume = parseFloat(savedEffectsVolume);
     }
-    if (savedMute !== null) {
-        let isMuted = savedMute === "true";
+    isMuted = savedMute !== null ? (savedMute === "true") : false;
 
-        Object.values(soundEffects).forEach((sound) => {
-            sound.setVolume(isMuted ? 0 : currEffectsVolume);
-        });
+    if (currSong) {
+        currSong.setVolume(isMuted ? 0 : currVolume);
     }
+    Object.values(soundEffects).forEach((sound) => {
+        sound.setVolume(isMuted ? 0 : currEffectsVolume);
+    });
 }
 
 function goBack() {

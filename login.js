@@ -62,19 +62,22 @@ function saveProgress(username, progress) {
 function loadVolumeSetting() {
     const savedVolume = localStorage.getItem("volume");
     const savedMute = localStorage.getItem("isMuted");
+    const savedEffectsVolume = localStorage.getItem("effectsVolume");
 
     if (savedVolume !== null) {
         currVolume = parseFloat(savedVolume);
     }
-    if (savedMute !== null) {
-        let isMuted = savedMute === "true";
-
-        if (currSong) {
-            currSong.setVolume(isMuted ? 0 : currVolume);
-        }
+    if (savedEffectsVolume !== null) {
+        currEffectsVolume = parseFloat(savedEffectsVolume);
     }
-    console.log("Saved Volume:", localStorage.getItem("volume"));
-    console.log("Saved Mute:", localStorage.getItem("isMuted"));
+    isMuted = savedMute !== null ? (savedMute === "true") : false;
+
+    if (currSong) {
+        currSong.setVolume(isMuted ? 0 : currVolume);
+    }
+    Object.values(soundEffects).forEach((sound) => {
+        sound.setVolume(isMuted ? 0 : currEffectsVolume);
+    });
 }
 
 

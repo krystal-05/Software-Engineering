@@ -110,15 +110,14 @@ let settingMenu = false;
         if (savedEffectsVolume !== null) {
             currEffectsVolume = parseFloat(savedEffectsVolume);
         }
-        if (savedMute !== null) {
-            isMuted = savedMute === "true";
-            if (currSong) {
-                currSong.setVolume(isMuted ? 0 : currVolume);
-            }
-            Object.values(soundEffects).forEach((sound) => {
-                sound.setVolume(isMuted ? 0 : currEffectsVolume);
-            });
+        isMuted = savedMute !== null ? (savedMute === "true") : false;
+    
+        if (currSong) {
+            currSong.setVolume(isMuted ? 0 : currVolume);
         }
+        Object.values(soundEffects).forEach((sound) => {
+            sound.setVolume(isMuted ? 0 : currEffectsVolume);
+        });
     }
     function mousePressed() {
         for(let btn of buttons){
