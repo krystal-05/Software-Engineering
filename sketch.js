@@ -31,7 +31,7 @@ function setup() {
         localStorage.removeItem("gameState");
     }
 
-    buttons.push(new Button("Start Game", width / 2, 300, 300, 80, null, null, () => gameState = "loadGame"));
+    buttons.push(new Button("Start Game", width / 2, height * 0.60, width * 0.3, (width * 0.3)/4, null, null, () => gameState = "loadGame"));
     buttons.push(new Button("Settings", width - 100, height - 100, 120, 120, settingsImg, settingsImgHover, () => settingMenu = true));
     buttons.push(new Button("Credits", width - 250, height - 100, 120, 120, creditsImg, creditsImgHover, () => loadCredits()));
     resetButton = new Button("Reset Game Save", width / 2, 420, 300, 75, null, null, () => deleteSave());
@@ -60,12 +60,22 @@ function draw() {
 }
 
 function drawMainMenu() {
-    background(bgImage);
+    background(0);
+
+    let scaleFactor = Math.max(width / bgImage.width, height / bgImage.height);
+    let drawWidth = bgImage.width * scaleFactor;
+    let drawHeight = bgImage.height * scaleFactor;
+    image(bgImage, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
+    
+    let rawIconWidth  = width * 0.4;
+    let desiredIconWidth = constrain(rawIconWidth, 300, width); // minimum 300px, maximum the canvas width
+    let iconScale = desiredIconWidth / titleIcon.width;
+    let desiredIconHeight = titleIcon.height * iconScale;
+    image(titleIcon, (width - desiredIconWidth) / 2, height * 0.01, desiredIconWidth, desiredIconHeight);
+
     fill(255, 215, 0);
     textSize(60);
     textStyle(BOLD);
-    image(titleIcon, (width / 2) - 320, -20, 640, 320);
-
     textStyle(NORMAL);
     for (let btn of buttons) {
         btn.display();
@@ -80,7 +90,6 @@ function drawLoadScreen() {
 
     loadButtons = [
         new Button("Game 1", width / 2, 300, 300, 75, null, null, () => loadGame()),
-        //new Button("Game 2", width / 2, 330, 300, 75, null, null, () => loadGame()),
         new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack()),
         new Button("Login Test", 500, height - 50, 100, 50, null, null, () => loadlogin())
     ];
