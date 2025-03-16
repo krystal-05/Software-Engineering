@@ -68,7 +68,7 @@ function drawMainMenu() {
     image(bgImage, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
     
     let rawIconWidth  = width * 0.4;
-    let desiredIconWidth = constrain(rawIconWidth, 300, width); // minimum 300px, maximum the canvas width
+    let desiredIconWidth = constrain(rawIconWidth, 300, width); 
     let iconScale = desiredIconWidth / titleIcon.width;
     let desiredIconHeight = titleIcon.height * iconScale;
     image(titleIcon, (width - desiredIconWidth) / 2, height * 0.01, desiredIconWidth, desiredIconHeight);
