@@ -148,15 +148,10 @@ function toggleMute() {
 }
 
 function updateVolume() {
-    if (!isMuted) {
-        console.log("updated volume");
-        let volume = parseFloat(volumeSlider.value);
-
-        if (currSong) {
-            currSong.setVolume(volume);
-        }
-        localStorage.setItem("volume", volume);
-        currVolume = volume;
+    currVolume = parseFloat(volumeSlider.value);
+    localStorage.setItem("volume", volume);
+    if (!isMuted && currSong) {
+        currSong.setVolume(volume);
     }
 }
 
@@ -170,11 +165,12 @@ function playSoundEffect(effect) {
 
 
 function updateEffectsVolume() {
+    currEffectsVolume = parseFloat(effectsVolumeSlider.value);
+    localStorage.setItem("effectsVolume", currEffectsVolume);
+
     if (!isMuted) {
-        currEffectsVolume = parseFloat(effectsVolumeSlider.value);
         Object.values(soundEffects).forEach((sound) => {
             sound.setVolume(currEffectsVolume);
         });
-        localStorage.setItem("effectsVolume", currEffectsVolume);
     }
 }
