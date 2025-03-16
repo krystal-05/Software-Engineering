@@ -31,9 +31,7 @@ function setup() {
         localStorage.removeItem("gameState");
     }
 
-    buttons.push(new Button("Start Game", width / 2, height * 0.60, width * 0.3, (width * 0.3)/4, null, null, () => gameState = "loadGame"));
-    buttons.push(new Button("Settings", width - 100, height - 100, 120, 120, settingsImg, settingsImgHover, () => settingMenu = true));
-    buttons.push(new Button("Credits", width - 250, height - 100, 120, 120, creditsImg, creditsImgHover, () => loadCredits()));
+    startMenuButtons();
     resetButton = new Button("Reset Game Save", width / 2, 420, 300, 75, null, null, () => deleteSave());
     createModal();
 }
@@ -68,10 +66,10 @@ function drawMainMenu() {
     image(bgImage, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
     
     let rawIconWidth  = width * 0.4;
-    let desiredIconWidth = constrain(rawIconWidth, 300, width); 
-    let iconScale = desiredIconWidth / titleIcon.width;
-    let desiredIconHeight = titleIcon.height * iconScale;
-    image(titleIcon, (width - desiredIconWidth) / 2, height * 0.01, desiredIconWidth, desiredIconHeight);
+    let baseIconWidth = constrain(rawIconWidth, 500, width); 
+    let iconScale = baseIconWidth / titleIcon.width;
+    let baseIconHeight = titleIcon.height * iconScale;
+    image(titleIcon, (width - baseIconWidth) / 2, height * 0.01, baseIconWidth, baseIconHeight);
 
     fill(255, 215, 0);
     textSize(60);
@@ -148,6 +146,26 @@ function loadCredits() {
 function deleteSave() {
     localStorage.setItem("isLoad1", false);
     isLoad1 = localStorage.getItem("isLoad1");
+}
+
+function startMenuButtons() {
+    let baseStartWidth = width * 0.15;
+    let baseStartHeight = baseStartWidth / 4;
+    let minStartWidth = 120;
+    let minStartHeight = 40;
+    let startButtonWidth = Math.max(baseStartWidth, minStartWidth);
+    let startButtonHeight = Math.max(baseStartHeight, minStartHeight);
+
+    let buttonSize = min(width * 0.15, height * 0.15);
+    let gap = buttonSize * 0.1;
+    let marginRight = buttonSize * .2;
+    let totalButtonsWidth = buttonSize * 2 + gap;
+    let startX = width - totalButtonsWidth - marginRight;
+    let buttonY = height - buttonSize - (buttonSize * 0.2);
+
+    buttons.push(new Button("Start Game", width / 2, height * 0.75, startButtonWidth, startButtonHeight, null, null, () => gameState = "loadGame"));
+    buttons.push(new Button("Settings", startX + buttonSize + gap + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, settingsImg, settingsImgHover, () => settingMenu = true));
+    buttons.push(new Button("Credits", startX + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, creditsImg, creditsImgHover, () => loadCredits()));
 }
 
 function loadVolumeSetting() {
