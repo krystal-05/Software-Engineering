@@ -23,6 +23,13 @@ let bgImage, batterGif;
 let settingButton, returnButton;
 let tempSwapPerspective;
 
+let umpire;
+let showStrikePopup = false;
+let showHomerunPopup = false;
+let popupTimer = 0;
+let popupMessage = "";
+
+
 function preload() {
     bgImage = loadImage('assets/gamebackg.jpg');
     batterGif = loadImage('assets/temp_assets/BATTER.gif');
@@ -84,6 +91,14 @@ function setup() {
         safe: false,
         backtracking: false
     };
+
+    umpire = { 
+      x: width * 0.30, 
+      y: height * 0.60, 
+      armRaised: false, 
+      armTimer: 0
+    };
+
     catcherPlayer = { x: width * 0.5, y: height * 0.85, state: "idle", isCatcher: true };
 
     // Fielders positioned at (or near) the bases
@@ -123,6 +138,8 @@ function setup() {
 function draw() {
     background(50, 168, 82);
     image(bgImage, 0, 0, width, height);
+
+    updateUmpire();
     ballCaughtThisFrame = false;
     let dt = deltaTime / 1000;
     dt = min(dt, 0.05);
@@ -169,6 +186,8 @@ function draw() {
     }
     pop();
 
+    drawPopup();
+
     // Game logic
     while (accumulator >= fixedDt) {
         if (pitchAnimation) {
@@ -186,6 +205,7 @@ function draw() {
                 swingAttempt = true;
 
                 strikes++;
+                handleStrikeCall();
                 if (DEBUG) console.log("No swing! Strike " + strikes);
             }
         }
@@ -459,6 +479,7 @@ function drawField() {
 }
 
 function drawPlayers() {
+    drawUmpire();
     fielders.forEach(fielder => {
         if (fielder.state === "running") {
             image(fielderRunningGif, fielder.x - PLAYER_OFFSET_X, fielder.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -518,6 +539,103 @@ function drawScoreboard() {
     text(`Strikes: ${strikes}`, 30, 100);
 }
 
+// Draw the umpire on the field
+function drawUmpire() {
+  push();
+  rectMode(CENTER);
+
+  // ** Skin Tone (Light Brown) **
+  let skinColor = color(210, 150, 100);
+
+  // ** Clothing Colors **
+  let shirtColor = color(20, 20, 20); // Black shirt
+  let pantsColor = color(100, 100, 100); // Gray pants
+  let shoeColor = color(0, 0, 0); // Black shoes
+  let hatColor = color(50, 50, 200); // Blue hat
+
+  // ** Body (Shirt) **
+  fill(shirtColor);
+  rect(umpire.x, umpire.y, 30, 50, 5); // Shirt
+
+  // ** Pants **
+  fill(pantsColor);
+  rect(umpire.x, umpire.y + 30, 25, 30); // Pants
+
+  // ** Shoes **
+  fill(shoeColor);
+  rect(umpire.x - 8, umpire.y + 50, 10, 5, 2); // Left shoe
+  rect(umpire.x + 8, umpire.y + 50, 10, 5, 2); // Right shoe
+
+  // ** Head (Skin Tone) **
+  fill(skinColor);
+  rect(umpire.x, umpire.y - 40, 30, 30, 10); // Head shape
+
+  // ** Eyes **
+  fill(0);
+  ellipse(umpire.x - 6, umpire.y - 42, 4, 4); // Left eye
+  ellipse(umpire.x + 6, umpire.y - 42, 4, 4); // Right eye
+
+  // ** Nose **
+  fill(180, 120, 90);
+  triangle(umpire.x - 2, umpire.y - 38, umpire.x + 2, umpire.y - 38, umpire.x, umpire.y - 32);
+
+  // ** Mouth (Neutral expression) **
+  fill(255, 0, 0);
+  arc(umpire.x, umpire.y - 30, 8, 5, 0, PI, CHORD); // Mouth shape
+
+  // ** Hat (Blue) **
+  fill(hatColor);
+  rect(umpire.x, umpire.y - 50, 32, 10, 3); // Brim
+  rect(umpire.x, umpire.y - 55, 20, 10, 3); // Top
+
+  // ** Arms (Shirt Color) **
+  stroke(0);
+  strokeWeight(3);
+  fill(shirtColor);
+  if (umpire.armRaised) {
+      line(umpire.x, umpire.y - 20, umpire.x - 20, umpire.y - 60); // Raised left arm
+  } else {
+      line(umpire.x, umpire.y - 20, umpire.x - 20, umpire.y); // Normal left arm
+  }
+  line(umpire.x, umpire.y - 20, umpire.x + 20, umpire.y); // Right arm
+
+  pop();
+}
+
+// Handle umpire strike call when a strike occurs
+function handleStrikeCall() {
+  umpire.armRaised = true;
+  umpire.armTimer = millis();
+  popupMessage = "STRIKE!";
+  showStrikePopup = true;
+  popupTimer = millis();
+  console.log("Umpire arm raised!");
+  setTimeout(() => {
+    umpire.armRaised = false;
+    setTimeout(() => {
+        umpire.armReset = true;
+    }, 500); // Allow arm to reset after half a second
+  }, 1000); // Lower the arm after 1 second
+}
+
+function drawPopup() {
+  if (showStrikePopup || showHomerunPopup) {
+      push();
+      textSize(50);
+      fill(255, 0, 0);
+      textAlign(CENTER, CENTER);
+      text(popupMessage, width / 2, height / 4);
+      pop();
+      
+      // Hide the popup after 1.5 seconds
+      if (millis() - popupTimer > 1500) {
+          showStrikePopup = false;
+          showHomerunPopup = false;
+      }
+  }
+}
+
+
 function moveRunners(dt) {
     runners = runners.filter(runner => {
         if (runner.running) {
@@ -544,6 +662,11 @@ function moveRunners(dt) {
                     runner.base++;
                     if (runner.base >= 4) {
                         score[topInning ? 'away' : 'home']++;
+                        
+                        popupMessage = "HOMERUN!";
+                        showHomerunPopup = true;
+                        popupTimer = millis();
+
                         if (DEBUG) console.log(`Runner scored! Updated Score - Home: ${score.home}, Away: ${score.away}`);
                         return false;
                     } else {
@@ -835,11 +958,19 @@ function keyPressed() {
                 ball.strikePitch = true;
 
                 strikes++;
+                handleStrikeCall();
                 if (DEBUG) console.log("Swing missed! Strike " + strikes);
             }
             swingAttempt = true;
         }
     }
+}
+
+// Reset umpire arm position after a short delay
+function updateUmpire() {
+  if (umpire.armRaised && millis() - umpire.armTimer > 1000) {
+      umpire.armRaised = false;
+  }
 }
 
 function resetBatter() {
