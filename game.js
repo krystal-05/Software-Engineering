@@ -31,6 +31,7 @@ function preload() {
     fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
     runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
     catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
+    ballImg = loadImage('assets/Baseball1.png');
 
     currSong = loadSound('sounds/gamesong.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
@@ -439,6 +440,7 @@ function drawTopDownPlayers() {
     }
 
     fill('white');
+    //tag
     ellipse(ball.x, ball.y, 10, 10);
 }
 
@@ -482,7 +484,7 @@ function drawPlayers() {
     drawPlayer(catcherPlayer, 'blue');
 
     fill(255);
-    ellipse(ball.x, ball.y, 10, 10);
+    image(ballImg, ball.x - 7.5, ball.y - 7.5, 15, 15);
 }
 
 function drawPlayer(player, color) {

@@ -9,6 +9,9 @@ let barX, barY;
 const perfectZoneWidth = 10;
 const goodZoneWidth = 40;
 
+function preload() {
+    ballImg = loadImage('assets/Baseball1.png');}
+
 function startPitch() {
     pitchSkillCheckActive = true;
     sliderX = random(0, barWidth);
@@ -37,7 +40,7 @@ function evaluatePitchMultiplier() {
 }
 
 function drawSkillCheckBar(dt) {
-    fill(200);
+    fill(100);
     rect(barX, barY, barWidth, barHeight);
     
     let goodZoneX = barX + (barWidth - goodZoneWidth) / 2;
@@ -54,6 +57,6 @@ function drawSkillCheckBar(dt) {
         sliderX += sliderSpeed * dt;
     }
     
-    fill('white');
-    ellipse(barX + sliderX, barY + barHeight / 2, barHeight, barHeight);
+    fill('red');
+    image(ballImg, barX + sliderX - barHeight/2, barY, barHeight, barHeight);
 }
