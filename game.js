@@ -22,6 +22,7 @@ const fixedDt = 1/60;
 let bgImage, batterGif;
 let settingButton, returnButton;
 let tempSwapPerspective;
+let audioButton;
 
 let umpire;
 let showStrikePopup = false;
@@ -43,6 +44,11 @@ function preload() {
     currSong = loadSound('sounds/gamesong.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
     soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3');
+    // audio2 = loadSound('sounds/audio2.mp3');
+    // audio3 = loadSound('sounds/audio3.mp3');
+    // audio4 = loadSound('sounds/audio4.mp3');
+    // audio5 = loadSound('sounds/audio5.mp3');
+
 }
 
 function setup() {
@@ -130,8 +136,9 @@ function setup() {
     settingButton = new Button("Settings", width - 80, 40, 120, 40, null, null, () => settingsClick());
     returnButton = new Button("Menu", width - 80, 90, 120, 40, null, null, () => returnToMenu());
     tempSwapPerspective = new Button("Perspective", width - 80, 140, 120, 40, null, null, () => togglePerspective());
+    audioButton = new Button("Audio", width - 80, 140, 120, 40, null, null, () => audioClick());
     createModal();
-
+    createAudioMenu();
     inputEnabled = true;
 }
 
@@ -178,6 +185,7 @@ function draw() {
     settingButton.display();
     returnButton.display();
     tempSwapPerspective.display();
+    audioButton.display();
     pop();
 
     push();
@@ -1054,4 +1062,7 @@ function buttonClick() {
 function returnToMenu() {
     localStorage.setItem("gameState", "menu");
     window.location.href = "index.html";
+}
+function audioClick(){
+    showAudioMenu();
 }
