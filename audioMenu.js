@@ -6,6 +6,7 @@ let audio3Button;
 let audio4Button;
 let audio5Button;
 
+
 function createAudioMenu(){
 const style = document.createElement("style")
 style.textContent= `
@@ -27,7 +28,20 @@ style.textContent= `
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         width: 300px;
         max-width: 80%;
+   
 }
+.audioMenu-button {
+        background: #DCDCDC;
+        border: 1px solid #000000;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 5px;
+        font-weight: bold;
+        color: #000000; 
+
+    }
 .audioMenu-button:hover {
         background-color: #6495FF;
         color: #000000;
@@ -38,6 +52,21 @@ style.textContent= `
         font-size: 20px;
         float: right;
     }   
+ .audio-button {
+        display: flex;
+        flex-direction: column; 
+        align-items: center; 
+        gap: 10px; 
+        width: 100%; 
+}
+p{ /* centers title */
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+} 
 `;
 document.head.appendChild(style);
 
@@ -46,17 +75,18 @@ audioMenu = document.createElement("div");
 audioMenu.classList.add("audioMenu");
 audioMenu.innerHTML = `
 <div class = "audioMenu-content">
-<span class= "close-button">&times;</span>
+<span class= "exit-button">&times;</span>
 <p><b>Audio Selection</b></p>
-<button id="Audio 1" class = "audioMenu-button"> audio1 </button>
-<button id="Audio 2" class = "audioMenu-button"> audio2 </button>
-<button id="Audio 3" class = "audioMenu-button"> audio3 </button>
-<button id="Audio 4" class = "audioMenu-button"> audio4 </button>
-<button id="Audio 5" class = "audioMenu-button"> audio5 </button>
-</div>
+<div class= "audio-button">
+<button id="audio1" class = "audioMenu-button"> Audio 1 </button>
+<button id="audio2" class = "audioMenu-button"> Audio 2 </button>
+<button id="audio3" class = "audioMenu-button"> Audio 3 </button>
+<button id="audio4" class = "audioMenu-button"> Audio 4 </button>
+<button id="audio5" class = "audioMenu-button"> Audio 5 </button>
+</div></div>
 `;
 document.body.appendChild(audioMenu);
-}
+
 
 //get audioMenu elements 
 exitButton = audioMenu.querySelector(".exit-button");
@@ -66,43 +96,69 @@ audio3Button = audioMenu.querySelector("#audio3");
 audio4Button = audioMenu.querySelector("#audio4");
 audio5Button = audioMenu.querySelector("#audio5");
 
-//events- on button click
-closeButton.addEventListener("click", hideAudioMenu);
-audio1Button.addEventListener("click", updateAudio);
-audio2Button.addEventListener("click", updateAudio);
-audio3Button.addEventListener("click", updateAudio);
-audio4Button.addEventListener("click", updateAudio);
-audio5Button.addEventListener("click", updateAudio);
 
+//events- on button click
+exitButton.addEventListener("click", () => {
+    hideAudioMenu();
+    buttonClick();
+});
+audio1Button.addEventListener("click", (event) => {
+    buttonClick();
+    updateAudio(event);
+});
+audio2Button.addEventListener("click", (event) => {
+    buttonClick();
+    updateAudio(event);
+});
+audio3Button.addEventListener("click", (event) => {
+    buttonClick();
+    updateAudio(event);
+});
+audio4Button.addEventListener("click", (event) => {
+    buttonClick();
+    updateAudio(event);
+});
+audio5Button.addEventListener("click", (event) => {
+    buttonClick();
+    updateAudio(event);
+   
+});
+}
 function showAudioMenu() {
     audioMenu.style.display = "flex";
 }
 
 function hideAudioMenu(){
+    audiosMenu = false;
     audioMenu.style.display = "none";
 }
+
 function updateAudio(event){
         let action = event.target.id;
+        if (currSong) {
+            currSong.pause();  // Pause the current song
      switch (action){
-        case "Audio 1":
-            currSong.src = "sounds/gamesong.mp3";
+        case "audio1":
+            currSong = audio1;
             break;
-        case "Audio 2":
-            currSong.src = "sounds/audio2.mp3";
+        case "audio2":
+            currSong = audio2;
             break;
-        case "Audio 3":
-            currSong.src = "sounds/audio3.mp3";
+        case "audio3":
+            currSong = audio3;
             break;
-        case "Audio 4":
-            currSong.src = "sounds/audio4.mp3";
+        case "audio4":
+            currSong = audio4;
             break;
-        case "Audio 5":
-            currSong.src = "sounds/audio5.mp3";
+        case "audio5":
+            currSong = audio5;
             break;
         default:
             console.log("Unknown selection");
             return;
     }
+    currSong.load();
+    currSong.loop();
+}
 
-    currSong.play();
 }
