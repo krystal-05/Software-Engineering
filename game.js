@@ -1,4 +1,4 @@
-const DEBUG = true;
+const DEBUG = false;
 const PLAYER_OFFSET_X = 40;
 const PLAYER_OFFSET_Y = 80;
 const PLAYER_WIDTH = 80;
@@ -31,7 +31,7 @@ let popupMessage = "";
 
 
 function preload() {
-    bgImage = loadImage('assets/gamebackg.jpg');
+    bgImage = loadImage('assets/bat_field1.png');
     batterGif = loadImage('assets/temp_assets/BATTER.gif');
     fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
     runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
@@ -64,10 +64,10 @@ function setup() {
 
     // Calculate positions based on canvas size
     bases = [
-        { x: width * 0.5, y: height * 0.78 },   // Home plate
-        { x: width * 0.86, y: height * 0.525 },  // 1st base
-        { x: width * 0.5, y: height * 0.48 },   // 2nd base
-        { x: width * 0.125, y: height * 0.52 }    // 3rd base
+        { x: width * 0.5, y: height * 0.88 },   // Home plate
+        { x: width * 0.91, y: height * 0.52 },  // 1st base
+        { x: width * 0.5, y: height * 0.45 },   // 2nd base
+        { x: width * 0.09, y: height * 0.52 }    // 3rd base
     ];
 
     pitcher = { x: width * 0.5, y: height * 0.50, armAngle: 0 };
@@ -84,28 +84,28 @@ function setup() {
 
     batter = {
         x: width * 0.5,
-        y: height * 0.80,
+        y: height * 0.90,
         running: false,
-        speed: 240,
+        speed: 300,
         base: 0,
         safe: false,
         backtracking: false
     };
 
     umpire = { 
-      x: width * 0.30, 
-      y: height * 0.60, 
+      x: width * 0.20, 
+      y: height * 0.70, 
       armRaised: false, 
       armTimer: 0
     };
 
-    catcherPlayer = { x: width * 0.5, y: height * 0.85, state: "idle", isCatcher: true };
+    catcherPlayer = { x: width * 0.5, y: height * 0.95, state: "idle", isCatcher: true };
 
     // Fielders positioned at (or near) the bases
     fielders = [
-        { x: width * 0.86, y: height * 0.525, isInfielder: true },
-        { x: width * 0.5, y: height * 0.48, isInfielder: true },
-        { x: width * 0.125, y: height * 0.52, isInfielder: true }
+        { x: width * 0.91, y: height * 0.48, isInfielder: true },
+        { x: width * 0.5, y: height * 0.42, isInfielder: true },
+        { x: width * 0.09, y: height * 0.48, isInfielder: true }
     ];
 
     // Additional fielders (non-infielders)
@@ -465,17 +465,19 @@ function drawTopDownPlayers() {
 }
 
 function drawField() {
-    fill(255);
-    bases.forEach(base => {
-        rect(base.x - 10, base.y - 10, 20, 20);
-    });
+    if (DEBUG) {    
+        fill(255);
+        bases.forEach(base => {
+            rect(base.x - 10, base.y - 10, 20, 20);
+        });
 
-    stroke(255);
-    noFill();
-    beginShape();
-    bases.forEach(base => vertex(base.x, base.y));
-    vertex(bases[0].x, bases[0].y);
-    endShape();
+        stroke(255);
+        noFill();
+        beginShape();
+        bases.forEach(base => vertex(base.x, base.y));
+        vertex(bases[0].x, bases[0].y);
+        endShape();
+    }
 }
 
 function drawPlayers() {
@@ -645,14 +647,23 @@ function moveRunners(dt) {
             }
             let targetBase = bases[targetIndex % 4];
 
-            if (runner.x < targetBase.x) runner.x += runner.speed * dt;
-            if (runner.x > targetBase.x) runner.x -= runner.speed * dt;
-            if (runner.y < targetBase.y) runner.y += runner.speed * dt;
-            if (runner.y > targetBase.y) runner.y -= runner.speed * dt;
+            let dx = targetBase.x - runner.x;
+            let dy = targetBase.y - runner.y;
+            let distance = sqrt(dx * dx + dy * dy);
 
-            if (dist(runner.x, runner.y, targetBase.x, targetBase.y) < 12) {
+            let step = runner.speed * dt;
+
+            if (step >= distance) {
                 runner.x = targetBase.x;
                 runner.y = targetBase.y;
+              } else {
+                runner.x += (dx / distance) * step;
+                runner.y += (dy / distance) * step;
+              }
+
+            if (dist(runner.x, runner.y, targetBase.x, targetBase.y) < 12) {
+                runner.x = targetBase.x - width*.01;
+                runner.y = targetBase.y - height*.02;
 
                 if (runner.backtracking) {
                     runner.running = false;
@@ -977,9 +988,9 @@ function resetBatter() {
     if (!batter) {
         batter = {
             x: width * 0.5,
-            y: height * 0.80,
+            y: height * 0.90,
             running: false,
-            speed: 240,
+            speed: 300,
             base: 0,
             safe: false,
             backtracking: false
