@@ -89,7 +89,8 @@ function setup() {
         throwing: false,
         inAir: false,
         advancingRunner: null,
-        strikePitch: false
+        strikePitch: false,
+        initialSpeedY: 0
     };
 
     batter = {
@@ -146,7 +147,6 @@ function setup() {
 }
 
 function draw() {
-
     updateUmpire();
     ballCaughtThisFrame = false;
     let dt = deltaTime / 1000;
@@ -193,6 +193,12 @@ function draw() {
         drawOutPopup();
     }
     pop();
+    
+    push();
+    stroke(255, 0, 0);  // red, for visibility
+    strokeWeight(2);
+    line(10, height * 0.4, width, height * 0.4);
+    pop();
 
     drawPopup();
 
@@ -227,11 +233,13 @@ function draw() {
                 if (ball.speedY < 0) {
                     ball.speedY += gravity * fixedDt;
                 } else {
-
-                    let horizontalDistance = ball.x - pitcher.x;
+                    let timeOfFlight = (2 * abs(ball.initialSpeedY)) / gravity;
                     let maxDistance = windowWidth * 0.6;
+                    let horizontalDistance = horizontalTravel = ball.speedX * timeOfFlight;
+                    let t = horizontalDistance / maxDistance;
+                    
 
-                    let targetY = lerp(windowHeight * 0.5, windowHeight * 0.3, horizontalDistance / maxDistance);
+                    let targetY = lerp(windowHeight * 0.42, windowHeight * 0.3, t); 
                     targetY = constrain(targetY, windowHeight * 0.3, windowHeight * 0.5);
 
                     if (ball.y < targetY) {
@@ -247,6 +255,11 @@ function draw() {
                 }
 
                 ball.speedX *= 0.98;
+                if (!ball.inAir && ball.y <= height * 0.4) {
+                    ball.speedX = 0;
+                    ball.speedY = 0;
+                    ball.y = height * 0.4;
+                }
 
                 if (abs(ball.speedX) < 0.3 && abs(ball.speedY) < 0.3) {
                     ball.speedX = 0;
@@ -414,7 +427,8 @@ function resetBall() {
         throwing: false,
         inAir: false,
         advancingRunner: null,
-        strikePitch: false
+        strikePitch: false,
+        initialSpeedY: 0
     };
     ballMoving = false;
     ballHit = false;
@@ -801,8 +815,8 @@ function moveFieldersTowardsBall(dt) {
         let newX = closestFielder.x + cos(angleToBall) * speed * dt;
         let newY = closestFielder.y + sin(angleToBall) * speed * dt;
 
-        if ((closestFielder.y <= height * 0.42) && (ball.y <= height * 0.42)) {
-            newY = closestFielder.y; // Stop moving up/down
+        if ((closestFielder.y <= height * 0.4) && (ball.y <= height * 0.40)) {
+            newY = closestFielder.y; 
         }
 
         closestFielder.x = newX;
@@ -1045,8 +1059,9 @@ function keyPressed() {
 
                 let xPower = windowWidth / 200;
                 let yPower = windowHeight / 200;
-                ball.speedX = random(-xPower * 0.8, xPower * 0.8) * 60;
-                ball.speedY = random(-yPower * 4.5, -yPower * 4.0) * 60;
+                ball.speedX = random(-xPower * 1.5, xPower * 1.5) * 60;
+                ball.speedY = random(-yPower * 5, -yPower * 5) * 60;
+                ball.initialSpeedY = ball.speedY;
 
                 batter.running = true;
                 runners.forEach(runner => {
