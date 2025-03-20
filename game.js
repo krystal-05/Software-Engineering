@@ -29,9 +29,12 @@ let showHomerunPopup = false;
 let popupTimer = 0;
 let popupMessage = "";
 
+let topDownCamera;
+
 
 function preload() {
-    bgImage = loadImage('assets/bat_field1.png');
+    bgSideImage = loadImage('assets/bat_field1.png');
+    bgTopImage = loadImage('assets/flat_field1.png');
     batterGif = loadImage('assets/temp_assets/BATTER.gif');
     fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
     runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
@@ -71,6 +74,14 @@ function setup() {
     ];
 
     pitcher = { x: width * 0.5, y: height * 0.50, armAngle: 0 };
+    let transformedPitcher = sideToTopDown(pitcher.x, pitcher.y);
+    topDownCamera = {
+        worldAnchor: { x: transformedPitcher.x, y: transformedPitcher.y },
+        screenAnchor: { x: width * 0.5, y: height * 0.73 },
+        scaleX: .275,
+        scaleY: .85
+    };
+
     ball = {
         x: pitcher.x,
         y: pitcher.y,
@@ -136,8 +147,6 @@ function setup() {
 }
 
 function draw() {
-    background(50, 168, 82);
-    image(bgImage, 0, 0, width, height);
 
     updateUmpire();
     ballCaughtThisFrame = false;
@@ -147,15 +156,15 @@ function draw() {
 
     push();
     if (currentPerspective === "topDown") {
-        background(34, 139, 34); // a solid green field
+        image(bgTopImage, 0, 0, width, height);
         drawTopDownField();
         drawTopDownPlayers();
     } else {
         // batter-view
-        background(50, 168, 82);
-        image(bgImage, 0, 0, width, height);
+        image(bgSideImage, 0, 0, width, height);
         drawField();
         drawPlayers();
+        // draw hitzone
         if (batter) {
             stroke(255, 0, 0);
             strokeWeight(2);
@@ -164,7 +173,7 @@ function draw() {
             rect(batter.x, batter.y - 15, 30, 20);
         }
     }
-    // draw hitzone
+    
     pop();
 
     // pitch skill-ckeck
@@ -278,7 +287,6 @@ function draw() {
                     let runnerAtFielderBase = runners.find(runner => runner.base === chosenRunner.base);
                     let baseVal = chosenRunner.base;
 
-                    let forwardFielder = getFielderForBase(baseVal + 1);
                     let backtrackFielder = getFielderForBase(baseVal);
 
                     if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
@@ -417,51 +425,131 @@ function resetBall() {
     });
 }
 
+function sideToTopDown(worldX, worldY) {
+    let centerX = width / 2;
+    let dx = worldX - centerX;
+    // adjust this to control how much the vertical shift is affected
+    let perspectiveFactor = 0.18;
+    
+    let newY = worldY + Math.abs(dx) * perspectiveFactor;
+    return { x: worldX, y: newY };
+}
+
+function perspectiveToTopDown(worldX, worldY, offsetUpY = 0) {
+    let adjusted = sideToTopDown(worldX, worldY);
+    
+    return {
+        x: (adjusted.x - topDownCamera.worldAnchor.x) * topDownCamera.scaleX + topDownCamera.screenAnchor.x,
+        y: (adjusted.y - topDownCamera.worldAnchor.y) * topDownCamera.scaleY + topDownCamera.screenAnchor.y - offsetUpY
+    };
+}
+function perspectiveToTopDownBall(worldX, worldY, offsetUpY = 0, anchor = pitcher) {
+    let adjusted = sideToTopDown(worldX, worldY);
+    let anchorTopDown = sideToTopDown(anchor.x, anchor.y);
+    let ballTopDownSlowFactor = 0.6;
+    adjusted.y = anchorTopDown.y + (adjusted.y - anchorTopDown.y) * ballTopDownSlowFactor;
+
+    return {
+        x: (adjusted.x - topDownCamera.worldAnchor.x) * topDownCamera.scaleX + topDownCamera.screenAnchor.x,
+        y: (adjusted.y - topDownCamera.worldAnchor.y) * topDownCamera.scaleY + topDownCamera.screenAnchor.y - offsetUpY
+    };
+}
+function perspectiveToTopDownForThrownBall(worldX, worldY, extraYOffset = 0, thrower, target) {
+    let totalDistance = dist(thrower.x, thrower.y, target.x, target.y);
+    let currentDistance = dist(thrower.x, thrower.y, worldX, worldY);
+    let t = constrain(currentDistance / totalDistance, 0, 1);
+
+    let throwerTD = sideToTopDown(thrower.x, thrower.y);
+    let targetTD = sideToTopDown(target.x, target.y);
+
+    throwerTD.y -= extraYOffset;
+    targetTD.y -= extraYOffset;
+
+    let interpolatedTD = {
+        x: lerp(throwerTD.x, targetTD.x, t),
+        y: lerp(throwerTD.y, targetTD.y, t)
+    };
+
+    return {
+        x: (interpolatedTD.x - topDownCamera.worldAnchor.x) * topDownCamera.scaleX + topDownCamera.screenAnchor.x,
+        y: (interpolatedTD.y - topDownCamera.worldAnchor.y) * topDownCamera.scaleY + topDownCamera.screenAnchor.y
+    }
+}
+
 function drawTopDownField() {
-    // Draw the diamond
     stroke(255);
     strokeWeight(2);
     noFill();
     beginShape();
-    vertex(bases[0].x, bases[0].y); // Home plate
-    vertex(bases[1].x, bases[1].y); // First base
-    vertex(bases[2].x, bases[2].y); // Second base
-    vertex(bases[3].x, bases[3].y); // Third base
+
+    let verticalOffset = height * 0.14;
+    bases.forEach(base => {
+        let topDownBase = perspectiveToTopDown(base.x, base.y, verticalOffset);
+        vertex(topDownBase.x, topDownBase.y);
+    });
     endShape(CLOSE);
 
-    // Draw each base 
+    let firstBase = perspectiveToTopDown(bases[0].x, bases[0].y, verticalOffset);
+    vertex(firstBase.x, firstBase.y);
+    endShape(CLOSE);
+    
     fill(255);
     noStroke();
     for (let base of bases) {
-        ellipse(base.x, base.y, 20, 20);
+        let topDownBase = perspectiveToTopDown(base.x, base.y, verticalOffset);
+        ellipse(topDownBase.x, topDownBase.y, 10, 10);
     }
 }
 
 function drawTopDownPlayers() {
+    let pitcherPos = perspectiveToTopDown(pitcher.x, pitcher.y);
     fill('red');
-    ellipse(pitcher.x, pitcher.y, 15, 15);
+    ellipse(pitcherPos.x, pitcherPos.y, 15, 15);
+    
+    let verticalOffset = height * 0.14;
+    let ballOffset = !ballHit ? 0 : verticalOffset;
+    if (ball.throwing && ball.throwingFielder && ball.targetFielder) {
+        // thrower as the anchor and targetFielder as the target
+        let ballPos = perspectiveToTopDownForThrownBall(
+            ball.x, 
+            ball.y, 
+            ballOffset,
+            ball.throwingFielder,
+            ball.targetFielder
+        );
+        fill('white');
+        ellipse(ballPos.x, ballPos.y, 10, 10);
+    } else {
+        let ballPos = perspectiveToTopDownBall(ball.x, ball.y, ballOffset, pitcher);
+        fill('white');
+        ellipse(ballPos.x, ballPos.y, 10, 10);
+    }
 
+    // Draw batter (if needed)
     if (batter) {
+        let batterPos = perspectiveToTopDown(batter.x, batter.y, verticalOffset);
         fill('orange');
-        ellipse(batter.x, batter.y, 15, 15);
+        ellipse(batterPos.x, batterPos.y, 15, 15);
     }
-
+    
+    // Draw catcher
+    let catcherPos = perspectiveToTopDown(catcherPlayer.x, catcherPlayer.y, verticalOffset);
     fill('blue');
-    ellipse(catcherPlayer.x, catcherPlayer.y, 15, 15);
-
+    ellipse(catcherPos.x, catcherPos.y, 15, 15);
+    
+    // Draw fielders
     fill('purple');
-    for (let fielder of fielders) {
-        ellipse(fielder.x, fielder.y, 15, 15);
-    }
-
+    fielders.forEach(fielder => {
+        let fielderPos = perspectiveToTopDown(fielder.x, fielder.y, verticalOffset);
+        ellipse(fielderPos.x, fielderPos.y, 15, 15);
+    });
+    
+    // Draw runners
     fill('yellow');
-    for (let runner of runners) {
-        ellipse(runner.x, runner.y, 15, 15);
-    }
-
-    fill('white');
-    //tag
-    ellipse(ball.x, ball.y, 10, 10);
+    runners.forEach(runner => {
+        let runnerPos = perspectiveToTopDown(runner.x, runner.y, verticalOffset);
+        ellipse(runnerPos.x, runnerPos.y, 15, 15);
+    });
 }
 
 function drawField() {
@@ -621,20 +709,23 @@ function handleStrikeCall() {
 }
 
 function drawPopup() {
-  if (showStrikePopup || showHomerunPopup) {
-      push();
-      textSize(50);
-      fill(255, 0, 0);
-      textAlign(CENTER, CENTER);
-      text(popupMessage, width / 2, height / 4);
-      pop();
-      
-      // Hide the popup after 1.5 seconds
-      if (millis() - popupTimer > 1500) {
-          showStrikePopup = false;
-          showHomerunPopup = false;
-      }
-  }
+    if (showStrikePopup || showHomerunPopup) {
+        inputEnabled = false;
+
+        push();
+        textSize(50);
+        fill(255, 0, 0);
+        textAlign(CENTER, CENTER);
+        text(popupMessage, width / 2, height / 4);
+        pop();
+        
+        // Hide the popup after 1.5 seconds
+        if (millis() - popupTimer > 1500) {
+            inputEnabled = true;
+            showStrikePopup = false;
+            showHomerunPopup = false;
+        }
+    }
 }
 
 
