@@ -7,6 +7,7 @@ let muteButton;
 let currSong, buttonSound;
 let currEffectsVolume = 0.5;
 let soundEffects = {};
+let DEBUG = false;
 
 function createModal() {
     const style = document.createElement("style");
@@ -76,6 +77,10 @@ function createModal() {
         </div>
         <button id="muteToggle" class="modal-button">Mute</button>
         <button id="backSettings" class="modal-button">Back</button>
+        <div>
+            <label for="debugMode">Debug Mode</label>
+            <input type="checkbox" id="debugMode"></input>
+        </div>
     </div>
   `;
     document.body.appendChild(modal);
@@ -86,6 +91,7 @@ function createModal() {
     effectsVolumeSlider = modal.querySelector("#effectsVolumeSlider");
     muteButton = modal.querySelector("#muteToggle");
     const backButton = modal.querySelector("#backSettings");
+    debugButton = modal.querySelector("#debugMode");
 
     // Event listeners for modal
     closeButton.addEventListener("click", hideSettings);
@@ -100,6 +106,10 @@ function createModal() {
         hideSettings();
     });
 
+    debugButton.addEventListener("change", (event) => {
+        DEBUG = event.target.checked;
+        console.log("debug mode: ", DEBUG);
+    });
 
     const savedVolume = localStorage.getItem("volume");
     const savedEffectsVolume = localStorage.getItem("effectsVolume");
@@ -146,6 +156,7 @@ function toggleMute() {
     localStorage.setItem("volume", currVolume);
     localStorage.setItem("isMuted", isMuted.toString());
 }
+
 
 function updateVolume() {
     currVolume = parseFloat(volumeSlider.value);
