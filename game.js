@@ -2,6 +2,7 @@ const PLAYER_OFFSET_X = 40;
 const PLAYER_OFFSET_Y = 80;
 const PLAYER_WIDTH = 80;
 const PLAYER_HEIGHT = 120;
+const SPRITE_Y_OFFSET = 20;
 
 let hitZoneWidth, hitZoneHeight, catchDistance, groundDistance, runnerProximity;
 let pitcher, batter, ball, bases, fielders, runners = [];
@@ -90,7 +91,8 @@ function setup() {
         inAir: false,
         advancingRunner: null,
         strikePitch: false,
-        initialSpeedY: 0
+        initialSpeedY: 0,
+        crossedGround: false
     };
 
     batter = {
@@ -113,20 +115,7 @@ function setup() {
     catcherPlayer = { x: width * 0.5, y: height * 0.95, state: "idle", isCatcher: true };
 
     // Fielders positioned at (or near) the bases
-    fielders = [
-        { x: width * 0.91, y: height * 0.48, isInfielder: true },
-        { x: width * 0.5, y: height * 0.42, isInfielder: true },
-        { x: width * 0.09, y: height * 0.48, isInfielder: true }
-    ];
-
-    // Additional fielders (non-infielders)
-    for (let i = 3; i < 9; i++) {
-        fielders.push({
-            x: random(width * 0.11, width * 0.88),
-            y: random(height * 0.5, height * 0.58),
-            isInfielder: false
-        });
-    }
+    fielders = generateFielders();
 
 
     initialFielderPositions = fielders.map(fielder => ({ x: fielder.x, y: fielder.y }));
@@ -193,13 +182,14 @@ function draw() {
         drawOutPopup();
     }
     pop();
+    if (DEBUG) {
+        push();
+        stroke(255, 0, 0);  // red, for visibility
+        strokeWeight(2);
+        line(10, height * 0.4, width, height * 0.4);
+        pop();
+    }
     
-    push();
-    stroke(255, 0, 0);  // red, for visibility
-    strokeWeight(2);
-    line(10, height * 0.4, width, height * 0.4);
-    pop();
-
     drawPopup();
 
     // Game logic
@@ -229,7 +219,7 @@ function draw() {
                 ball.x += ball.speedX * fixedDt;
                 ball.y += ball.speedY * fixedDt;
 
-                let gravity = windowHeight * 1.3;
+                let gravity = windowHeight * 1.2;
                 if (ball.speedY < 0) {
                     ball.speedY += gravity * fixedDt;
                 } else {
@@ -237,10 +227,12 @@ function draw() {
                     let maxDistance = windowWidth * 0.6;
                     let horizontalDistance = horizontalTravel = ball.speedX * timeOfFlight;
                     let t = horizontalDistance / maxDistance;
-                    
 
-                    let targetY = lerp(windowHeight * 0.42, windowHeight * 0.3, t); 
-                    targetY = constrain(targetY, windowHeight * 0.3, windowHeight * 0.5);
+                    let targetY = lerp(windowHeight * 0.42, windowHeight * 0.3, constrain(t, 0, 1)); 
+                    if (t > 1) {
+                        targetY = windowHeight * 0.3 - (t - 1) * (windowHeight * 0.1); 
+                    }
+                    targetY = constrain(targetY, windowHeight * 0.1, windowHeight * 0.25);
 
                     if (ball.y < targetY) {
                         ball.speedY += gravity * fixedDt;
@@ -255,11 +247,11 @@ function draw() {
                 }
 
                 ball.speedX *= 0.98;
-                if (!ball.inAir && ball.y <= height * 0.4) {
-                    ball.speedX = 0;
-                    ball.speedY = 0;
-                    ball.y = height * 0.4;
-                }
+                // if (!ball.inAir && ball.y <= height * 0.4) {
+                //     ball.speedX = 0;
+                //     ball.speedY = 0;
+                //     ball.y = height * 0.4;
+                // }
 
                 if (abs(ball.speedX) < 0.3 && abs(ball.speedY) < 0.3) {
                     ball.speedX = 0;
@@ -428,7 +420,8 @@ function resetBall() {
         inAir: false,
         advancingRunner: null,
         strikePitch: false,
-        initialSpeedY: 0
+        initialSpeedY: 0,
+        crossedGround: false
     };
     ballMoving = false;
     ballHit = false;
@@ -566,7 +559,7 @@ function drawTopDownPlayers() {
 }
 
 function drawField() {
-    if (DEBUG) {    
+    if (DEBUG) {
         fill(255);
         bases.forEach(base => {
             rect(base.x - 10, base.y - 10, 20, 20);
@@ -581,54 +574,84 @@ function drawField() {
     }
 }
 
+function getScaleFactor(y) {
+    return map(y, height * 0.4, height * 0.9, 0.75, 1.5);
+}
+function getRenderedBallPosition(ball) {
+    const groundY = height * 0.4; // The visual ground level
+    
+    // If the ball is not yet hit, or it hasn't surpassed groundY, display simulation y
+    if (!ball.inAir || ball.y <= groundY) {
+    return { x: ball.x, y: ball.y };
+    } else {
+        // The ball is in the air and its simulation y is above groundY.
+        // If this is the first time it has crossed groundY, compress it and set the flag.
+        if (!ball.crossedGround) {
+            ball.crossedGround = true;
+            // Compress the overshoot (only 20% of the excess) so it appears near the ground
+            return { x: ball.x, y: groundY + (ball.y - groundY) * 0.2 };
+        } else {
+            // After the first crossing, use the simulation y normally.
+            return { x: ball.x, y: ball.y };
+        }
+    }
+}
+
 function drawPlayers() {
     drawUmpire();
+    
     fielders.forEach(fielder => {
+        let drawY = fielder.y;
+        // if (fielder.position == "center field") {
+        //     drawY = Math.max(fielder.y, height * 0.4);
+        // } else if (fielder.position == "left field" || fielder.position == "right field") {
+        //     drawY = Math.max(fielder.y, height * 0.42);
+        // }
+        let scaleFactor = getScaleFactor(drawY);
+        let scaledWidth = PLAYER_WIDTH * scaleFactor;
+        let scaledHeight = PLAYER_HEIGHT * scaleFactor;
+
         if (fielder.state === "running") {
-            image(fielderRunningGif, fielder.x - PLAYER_OFFSET_X, fielder.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+            image(fielderRunningGif, fielder.x - scaledWidth, drawY + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
         } else {
-            image(fielderIdleGif, fielder.x - PLAYER_OFFSET_X, fielder.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+            image(fielderIdleGif, fielder.x - scaledWidth, drawY + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
         }
     });
 
     runners.forEach(runner => {
+        let scaleFactor = getScaleFactor(runner.y);
+        let scaledWidth = PLAYER_WIDTH * scaleFactor;
+        let scaledHeight = PLAYER_HEIGHT * scaleFactor;
         if (runner.running) {
-            image(runnerRunningGif, runner.x - PLAYER_OFFSET_X, runner.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+            image(runnerRunningGif, runner.x - scaledWidth, runner.y + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
         } else {
-            image(runnerIdle, runner.x - PLAYER_OFFSET_X, runner.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+            image(runnerIdle, runner.x - scaledWidth, runner.y + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
         }
     });
 
-    drawPlayer(pitcher, 'red');
+    {    
+        let scaleFactor = getScaleFactor(pitcher.y);
+        let scaledWidth = PLAYER_WIDTH * scaleFactor;
+        let scaledHeight = PLAYER_HEIGHT * scaleFactor;
+        image(fielderIdleGif, pitcher.x - scaledWidth / 2, pitcher.y + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
+    }
 
     if (batter) {
-        image(batterGif, batter.x - PLAYER_OFFSET_X, batter.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+        let scaleFactor = getScaleFactor(batter.y);
+        let scaledWidth = PLAYER_WIDTH * scaleFactor;
+        let scaledHeight = PLAYER_HEIGHT * scaleFactor;
+        image(batterGif, batter.x - scaledWidth / 2, batter.y + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
     }
 
-    drawPlayer(catcherPlayer, 'blue');
-
-    fill(255);
-    image(ballImg, ball.x - 7.5, ball.y - 7.5, 15, 15);
-}
-
-function drawPlayer(player, color) {
-
-    if (player === pitcher) {
-        image(fielderIdleGif, player.x - PLAYER_OFFSET_X, player.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
-        return;
+    {
+        let scaleFactor = getScaleFactor(catcherPlayer.y);
+        let scaledWidth = PLAYER_WIDTH * scaleFactor;
+        let scaledHeight = PLAYER_HEIGHT * scaleFactor;
+        image(catcherImg, catcherPlayer.x - scaledWidth / 2, catcherPlayer.y + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
     }
-    if (player === batter) {
-        image(batterGif, player.x - PLAYER_OFFSET_X, player.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
-        return;
-    }
-    if (player === catcherPlayer) {
-        image(catcherImg, player.x - PLAYER_OFFSET_X, player.y - PLAYER_OFFSET_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
-        return;
-    }
-    fill(color);
-    ellipse(player.x, player.y - 15, 20, 20);
-    fill(0);
-    rect(player.x - 5, player.y, 10, 20);
+
+    let ballPos = getRenderedBallPosition(ball);
+    image(ballImg, ballPos.x - 7.5, ballPos.y - 7.5, 15, 15);
 }
 
 function drawScoreboard() {
@@ -640,6 +663,70 @@ function drawScoreboard() {
     text(`Score - Home: ${score.home}  Away: ${score.away}`, 30, 60);
     text(`Outs: ${outs}`, 30, 80);
     text(`Strikes: ${strikes}`, 30, 100);
+}
+
+function generateFielders() {
+    let newFielders = [];
+    
+    // Infielders
+    // First Baseman 
+    newFielders.push({ 
+        x: bases[1].x * 1.01, 
+        y: bases[1].y * .95,    
+        isInfielder: true,  
+        position: "first"
+    });
+    
+    // Third Baseman
+    newFielders.push({ 
+        x: bases[3].x * .9,
+        y: bases[3].y * .95, 
+        isInfielder: true,  
+        position: "third"
+    });
+    
+    // Second Baseman
+    newFielders.push({ 
+        x: bases[2].x * 1.02, 
+        y: bases[2].y * .975, 
+        isInfielder: true,  
+        position: "second"
+    });
+    
+    // Shortstop
+    newFielders.push({ 
+        x: (bases[2].x + bases[3].x) / 2, 
+        y: (bases[2].y + bases[3].y) / 2 * .925,
+        isInfielder: true,  
+        position: "short"
+    });
+  
+    // Outfielders
+    // Left Field
+    newFielders.push({
+        x: width * 0.15,
+        y: height * 0.38,
+        isInfielder: false,
+        position: "left field"
+    });
+    
+    // Center Field
+    newFielders.push({
+        x: width * 0.5,
+        y: height * 0.35,
+        isInfielder: false,
+        position: "center field"
+    });
+    
+    // Right Field
+    newFielders.push({
+        x: width * 0.85,
+        y: height * 0.38,
+        isInfielder: false,
+        position: "right field"
+    });
+    
+    return newFielders;
 }
 
 // Draw the umpire on the field
@@ -810,14 +897,14 @@ function moveFieldersTowardsBall(dt) {
 
     if (closestFielder) {
         let angleToBall = atan2(ball.y - closestFielder.y, ball.x - closestFielder.x);
-        let speed = 120;
+        let speed = 180;
 
         let newX = closestFielder.x + cos(angleToBall) * speed * dt;
         let newY = closestFielder.y + sin(angleToBall) * speed * dt;
 
-        if ((closestFielder.y <= height * 0.4) && (ball.y <= height * 0.40)) {
-            newY = closestFielder.y; 
-        }
+        // if ((closestFielder.y <= height * 0.4) && (ball.y <= height * 0.40)) {
+        //     newY = closestFielder.y; 
+        // }
 
         closestFielder.x = newX;
         closestFielder.y = newY;
@@ -837,10 +924,6 @@ function moveFieldersTowardsBall(dt) {
             }
         }
     });
-}
-
-function isWithinCatchingArea(fielder) {
-    return dist(fielder.x, fielder.y, ball.x, ball.y) < catchingRadius;
 }
 
 function getClosestFielderToBase(runner) {
