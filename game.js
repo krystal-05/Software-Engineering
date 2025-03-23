@@ -31,6 +31,9 @@ let popupMessage = "";
 
 let topDownCamera;
 
+let audioSelectionMenu = false;
+let audioButton;
+
 
 function preload() {
     bgSideImage = loadImage('assets/bat_field1.png');
@@ -45,7 +48,12 @@ function preload() {
 
     currSong = loadSound('sounds/gamesong.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
-    soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3');
+    soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3'); 
+    audio1 = loadSound('sounds/gamesong.mp3');
+    audio2 = loadSound('sounds/audio2.mp3');
+    audio3 = loadSound('sounds/audio3.mp3');
+    audio4 = loadSound('sounds/audio4.mp3');
+    audio5 = loadSound('sounds/audio5.mp3');
 }
 
 function setup() {
@@ -131,8 +139,9 @@ function setup() {
     settingButton = new Button("Settings", width - 80, 40, 120, 40, null, null, () => settingsClick());
     returnButton = new Button("Menu", width - 80, 90, 120, 40, null, null, () => returnToMenu());
     tempSwapPerspective = new Button("Perspective", width - 80, 140, 120, 40, null, null, () => togglePerspective());
+    audioButton = new Button("Audio", width - 80, 190, 120, 40, null, null, () => audioClick());
     createModal();
-
+    createAudioMenu();
     inputEnabled = true;
 }
 
@@ -176,6 +185,9 @@ function draw() {
     settingButton.display();
     returnButton.display();
     tempSwapPerspective.display();
+     if (DEBUG === true){
+        audioButton.display();
+         }
     pop();
 
     push();
@@ -1214,7 +1226,8 @@ function loadVolumeSetting() {
 
     if (currSong) {
         currSong.amp(isMuted ? 0 : currVolume);
-    }
+     }
+    
     Object.values(soundEffects).forEach((sound) => {
         sound.amp(isMuted ? 0 : currEffectsVolume);
     });
@@ -1234,11 +1247,16 @@ function mousePressed() {
             buttonClick();
             setTimeout(() => tempSwapPerspective.action(), 200);
         }
+        if (audioButton.isHovered()) {
+            buttonClick();
+            setTimeout(() => audioButton.action(), 200);
+        }
     }
     if (!currSong.isPlaying()) {
         currSong.loop();
     }
 }
+
 
 function togglePerspective() {
     currentPerspective = currentPerspective === "side" ? "topDown" : "side";
@@ -1254,4 +1272,10 @@ function buttonClick() {
 function returnToMenu() {
     localStorage.setItem("gameState", "menu");
     window.location.href = "index.html";
+}
+function audioClick(){
+    audioSelectionMenu = true;
+    showAudioMenu();
+    console.log("Button clicked!");  // To check if the button event runs
+    console.log("audioMenu:", audioMenu);  // To check if audioMenu exists
 }

@@ -5,6 +5,7 @@ let isLoad1 = "false";
 let settingMenu = false;
 let bgImage, titleIcon;
 let settingsImg, settingsImgHover, creditsImg, creditsImgHover;
+let audioSelectionMenu = false;
 
 function preload() {
     bgImage = loadImage('assets/roughititlescreen4.png');
