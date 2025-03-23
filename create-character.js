@@ -16,9 +16,10 @@ function setup() {
     rectMode(CENTER);
     textSize(32);
 
-    if (currSong.isLoaded() && !currSong.isPlaying()) {
+    if (!currSong.isPlaying()) {
         currSong.loop();
         loadVolumeSetting();
+        currSong.play();
     }
     localStorage.setItem("characterTag", null);
 
@@ -27,7 +28,6 @@ function setup() {
     buttons.push(new Button("Character 2", width / 2, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 2")));
     buttons.push(new Button("Character 3", width / 2 + 230, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 3")));
     confirmButton = new Button("Confirm Character", width - 175, height - 50, 200, 50, null, null, () => confirmCharacter());
-
 }
 
 function draw() {
@@ -75,6 +75,7 @@ function mousePressed() {
         buttonClick();
         setTimeout(() => confirmButton.action(), 200);
     }
+    
     if (!currSong.isPlaying()) {
         currSong.loop();
     }
@@ -110,12 +111,14 @@ function loadVolumeSetting() {
     isMuted = savedMute !== null ? (savedMute === "true") : false;
 
     if (currSong) {
-        currSong.setVolume(isMuted ? 0 : currVolume);
+        currSong.amp(isMuted ? 0 : currVolume);
     }
     Object.values(soundEffects).forEach((sound) => {
-        sound.setVolume(isMuted ? 0 : currEffectsVolume);
+        sound.amp(isMuted ? 0 : currEffectsVolume);
     });
 }
+
+
 function goBack() {
     localStorage.setItem("gameState", "loadGame");
     window.location.href = "index.html";

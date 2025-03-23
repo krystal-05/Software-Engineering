@@ -128,10 +128,10 @@ function createModal() {
         isMuted = savedMute === "true";
         muteButton.textContent = isMuted ? "Unmute" : "Mute";
         if (currSong) {
-            currSong.setVolume(isMuted ? 0 : currVolume);
+            currSong.amp(isMuted ? 0 : currVolume);
         }
         if (buttonSound) {
-            buttonSound.setVolume(isMuted ? 0 : currVolume);
+            buttonSound.amp(isMuted ? 0 : currVolume);
         }
     }
 }
@@ -151,7 +151,7 @@ function toggleMute() {
     muteButton.textContent = isMuted ? "Unmute" : "Mute";
 
     if (currSong) {
-        currSong.setVolume(isMuted ? 0 : currVolume);
+        currSong.amp(isMuted ? 0 : currVolume);
     }
     localStorage.setItem("volume", currVolume);
     localStorage.setItem("isMuted", isMuted.toString());
@@ -160,16 +160,16 @@ function toggleMute() {
 
 function updateVolume() {
     currVolume = parseFloat(volumeSlider.value);
-    localStorage.setItem("volume", volume);
+    localStorage.setItem("volume", currVolume);
     if (!isMuted && currSong) {
-        currSong.setVolume(volume);
+        currSong.amp(currVolume);
     }
 }
 
 
 function playSoundEffect(effect) {
-    if (soundEffects[effect] && soundEffects[effect].isLoaded()) {
-        soundEffects[effect].setVolume(isMuted ? 0 : currEffectsVolume);
+    if (soundEffects[effect]) {
+        soundEffects[effect].amp(isMuted ? 0 : currEffectsVolume);
         soundEffects[effect].play();
     }
 }
@@ -181,7 +181,7 @@ function updateEffectsVolume() {
 
     if (!isMuted) {
         Object.values(soundEffects).forEach((sound) => {
-            sound.setVolume(currEffectsVolume);
+            sound.amp(currEffectsVolume);
         });
     }
 }

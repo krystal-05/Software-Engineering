@@ -61,7 +61,8 @@ function setup() {
     canvas.getContext('2d', { willReadFrequently: true });
 
     loadVolumeSetting();
-    if (currSong.isLoaded() && !currSong.isPlaying()) {
+    if (!currSong.isPlaying()) {
+        currSong.play();
         currSong.loop();
     }
 
@@ -1212,10 +1213,10 @@ function loadVolumeSetting() {
     isMuted = savedMute !== null ? (savedMute === "true") : false;
 
     if (currSong) {
-        currSong.setVolume(isMuted ? 0 : currVolume);
+        currSong.amp(isMuted ? 0 : currVolume);
     }
     Object.values(soundEffects).forEach((sound) => {
-        sound.setVolume(isMuted ? 0 : currEffectsVolume);
+        sound.amp(isMuted ? 0 : currEffectsVolume);
     });
 }
 
