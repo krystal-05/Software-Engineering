@@ -3,6 +3,7 @@ const PLAYER_OFFSET_Y = 80;
 const PLAYER_WIDTH = 80;
 const PLAYER_HEIGHT = 120;
 const SPRITE_Y_OFFSET = 20;
+const MAX_POWER = 1600;
 
 let hitZoneWidth, hitZoneHeight, catchDistance, groundDistance, runnerProximity;
 let pitcher, batter, ball, bases, fielders, runners = [];
@@ -76,19 +77,19 @@ function setup() {
 
     // Calculate positions based on canvas size
     bases = [
-        { x: width * 0.5, y: height * 0.88 },   // Home plate
-        { x: width * 0.91, y: height * 0.52 },  // 1st base
-        { x: width * 0.5, y: height * 0.45 },   // 2nd base
-        { x: width * 0.09, y: height * 0.52 }    // 3rd base
+        { x: width * 0.5,   y: height * 0.88 },  // Home plate
+        { x: width * 0.86,  y: height * 0.52 },  // 1st base
+        { x: width * 0.5,   y: height * 0.4 },   // 2nd base
+        { x: width * 0.14,  y: height * 0.52 }   // 3rd base
     ];
 
     pitcher = { x: width * 0.5, y: height * 0.50, armAngle: 0 };
     let transformedPitcher = sideToTopDown(pitcher.x, pitcher.y);
     topDownCamera = {
         worldAnchor: { x: transformedPitcher.x, y: transformedPitcher.y },
-        screenAnchor: { x: width * 0.5, y: height * 0.73 },
-        scaleX: .275,
-        scaleY: .85
+        screenAnchor: { x: width * 0.5, y: height * .565 },
+        scaleX: .45,
+        scaleY: 1.25
     };
 
     ball = {
@@ -185,9 +186,9 @@ function draw() {
     settingButton.display();
     returnButton.display();
     tempSwapPerspective.display();
-     if (DEBUG === true){
+    if (DEBUG){
         audioButton.display();
-         }
+    }
     pop();
 
     push();
@@ -195,13 +196,6 @@ function draw() {
         drawOutPopup();
     }
     pop();
-    if (DEBUG) {
-        push();
-        stroke(255, 0, 0);  // red, for visibility
-        strokeWeight(2);
-        line(10, height * 0.4, width, height * 0.4);
-        pop();
-    }
     
     drawPopup();
 
@@ -229,43 +223,49 @@ function draw() {
 
         if (ballMoving && !ball.throwing) {
             if (ballHit) {
+                let normalizedPower = constrain(abs(ball.initialSpeedY) / MAX_POWER, 0, 1);
+                let maxDistance = windowWidth * 0.6;
+                let t_flight = maxDistance / abs(ball.speedX);
+
+                let t = (ball.speedX * t_flight) / maxDistance;
+                let targetY = lerp(windowHeight * 0.42, windowHeight * 0.3, constrain(t, 0, 1))
+                if (t > 1) {
+                    targetY = windowHeight * 0.3 - (t - 1) * (windowHeight * 0.1); 
+                }
+
+                let minTargetY = lerp(windowHeight * 0.2, windowHeight * 0.05, normalizedPower);
+                let maxTargetY = lerp(windowHeight * 0.3, windowHeight * 0.15, normalizedPower);
+                targetY = constrain(targetY, minTargetY, maxTargetY);
+                
+                let requiredG = (2 * (targetY - ball.y - ball.initialSpeedY * t_flight)) / (t_flight * t_flight);
+                requiredG = constrain(requiredG, windowHeight * 1.0, windowHeight * 1.8);
+                let gravityScale = 1.6;
+                requiredG *= gravityScale;
+
                 ball.x += ball.speedX * fixedDt;
                 ball.y += ball.speedY * fixedDt;
 
-                let gravity = windowHeight * 1.2;
                 if (ball.speedY < 0) {
-                    ball.speedY += gravity * fixedDt;
+                    //ball.speedY += dynamicGravity * fixedDt;
+                    ball.speedY += requiredG * fixedDt;
                 } else {
-                    let timeOfFlight = (2 * abs(ball.initialSpeedY)) / gravity;
-                    let maxDistance = windowWidth * 0.6;
-                    let horizontalDistance = horizontalTravel = ball.speedX * timeOfFlight;
-                    let t = horizontalDistance / maxDistance;
-
-                    let targetY = lerp(windowHeight * 0.42, windowHeight * 0.3, constrain(t, 0, 1)); 
-                    if (t > 1) {
-                        targetY = windowHeight * 0.3 - (t - 1) * (windowHeight * 0.1); 
-                    }
-                    targetY = constrain(targetY, windowHeight * 0.1, windowHeight * 0.25);
+                    //let timeOfFlight = (2 * abs(ball.initialSpeedY)) / dynamicGravity;
+                    //let horizontalDistance = horizontalTravel = ball.speedX * timeOfFlight;
+                    //let t = horizontalDistance / maxDistance;
 
                     if (ball.y < targetY) {
-                        ball.speedY += gravity * fixedDt;
+                        ball.speedY += requiredG * fixedDt;
                     } else {
-                        ball.y = lerp(ball.y, targetY, 0.1);
-                        ball.speedY *= 0.9;
+                        ball.y = lerp(ball.y, targetY, 0.01);
+                        ball.speedY *= 0.5;
 
-                        if (abs(ball.y - targetY) < catchDistance) {
+                        if (abs(ball.speedY) < 5 || abs(ball.y - targetY) < catchDistance) {
                             ball.inAir = false;
                         }
                     }
                 }
 
                 ball.speedX *= 0.98;
-                // if (!ball.inAir && ball.y <= height * 0.4) {
-                //     ball.speedX = 0;
-                //     ball.speedY = 0;
-                //     ball.y = height * 0.4;
-                // }
-
                 if (abs(ball.speedX) < 0.3 && abs(ball.speedY) < 0.3) {
                     ball.speedX = 0;
                     ball.speedY = 0;
@@ -297,6 +297,8 @@ function draw() {
 
             if (targetFielder && dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < catchDistance) {
                 if (DEBUG) console.log(`Fielder targeting base ${chosenRunner.base + 1} catches the ball`);
+                if (DEBUG) console.log(`runner's base: ${chosenRunner.base} `);
+                if (DEBUG) console.log(`runner is safe: ${chosenRunner.safe} `);
                 ball.throwing = false;
 
 
@@ -447,8 +449,8 @@ function resetBall() {
 function sideToTopDown(worldX, worldY) {
     let centerX = width / 2;
     let dx = worldX - centerX;
-    // adjust this to control how much the vertical shift is affected
-    let perspectiveFactor = 0.18;
+    //  vertical shift
+    let perspectiveFactor = 0.16;
     
     let newY = worldY + Math.abs(dx) * perspectiveFactor;
     return { x: worldX, y: newY };
@@ -462,10 +464,12 @@ function perspectiveToTopDown(worldX, worldY, offsetUpY = 0) {
         y: (adjusted.y - topDownCamera.worldAnchor.y) * topDownCamera.scaleY + topDownCamera.screenAnchor.y - offsetUpY
     };
 }
-function perspectiveToTopDownBall(worldX, worldY, offsetUpY = 0, anchor = pitcher) {
+function perspectiveToTopDownBall(worldX, worldY, offsetUpY = 0, anchor = pitcher, useSlowFactor = true) {
     let adjusted = sideToTopDown(worldX, worldY);
     let anchorTopDown = sideToTopDown(anchor.x, anchor.y);
-    let ballTopDownSlowFactor = 0.6;
+    
+    let ballTopDownSlowFactor = 1;
+    if (useSlowFactor) { ballTopDownSlowFactor = 0.66; }
     adjusted.y = anchorTopDown.y + (adjusted.y - anchorTopDown.y) * ballTopDownSlowFactor;
 
     return {
@@ -521,12 +525,14 @@ function drawTopDownField() {
 }
 
 function drawTopDownPlayers() {
+    let verticalOffset = height * 0.14;
+    let ballOffset = !ballHit ? 0 : verticalOffset;
+    let pitcherOffsetY = 40;
     let pitcherPos = perspectiveToTopDown(pitcher.x, pitcher.y);
+    pitcherPos.y += pitcherOffsetY;
     fill('red');
     ellipse(pitcherPos.x, pitcherPos.y, 15, 15);
     
-    let verticalOffset = height * 0.14;
-    let ballOffset = !ballHit ? 0 : verticalOffset;
     if (ball.throwing && ball.throwingFielder && ball.targetFielder) {
         // thrower as the anchor and targetFielder as the target
         let ballPos = perspectiveToTopDownForThrownBall(
@@ -539,7 +545,9 @@ function drawTopDownPlayers() {
         fill('white');
         ellipse(ballPos.x, ballPos.y, 10, 10);
     } else {
-        let ballPos = perspectiveToTopDownBall(ball.x, ball.y, ballOffset, pitcher);
+        if (!ballHit) ballOffset -= pitcherOffsetY;
+        let useSlowFactor = !ballHit;
+        let ballPos = perspectiveToTopDownBall(ball.x, ball.y, ballOffset, pitcher, useSlowFactor);
         fill('white');
         ellipse(ballPos.x, ballPos.y, 10, 10);
     }
@@ -590,21 +598,20 @@ function drawField() {
 function getScaleFactor(y) {
     return map(y, height * 0.4, height * 0.9, 0.75, 1.5);
 }
+function getBallScaleFactor(y) {
+    return map(y, height * 0.4, height * 0.9, 0.0125, 0.02);
+  }
 function getRenderedBallPosition(ball) {
-    const groundY = height * 0.4; // The visual ground level
+    const groundY = height * 0.4;
     
-    // If the ball is not yet hit, or it hasn't surpassed groundY, display simulation y
+    
     if (!ball.inAir || ball.y <= groundY) {
     return { x: ball.x, y: ball.y };
     } else {
-        // The ball is in the air and its simulation y is above groundY.
-        // If this is the first time it has crossed groundY, compress it and set the flag.
         if (!ball.crossedGround) {
             ball.crossedGround = true;
-            // Compress the overshoot (only 20% of the excess) so it appears near the ground
             return { x: ball.x, y: groundY + (ball.y - groundY) * 0.2 };
         } else {
-            // After the first crossing, use the simulation y normally.
             return { x: ball.x, y: ball.y };
         }
     }
@@ -625,9 +632,9 @@ function drawPlayers() {
         let scaledHeight = PLAYER_HEIGHT * scaleFactor;
 
         if (fielder.state === "running") {
-            image(fielderRunningGif, fielder.x - scaledWidth, drawY + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
+            image(fielderRunningGif, fielder.x - scaledWidth/2, drawY + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
         } else {
-            image(fielderIdleGif, fielder.x - scaledWidth, drawY + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
+            image(fielderIdleGif, fielder.x - scaledWidth/2, drawY + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
         }
     });
 
@@ -636,9 +643,9 @@ function drawPlayers() {
         let scaledWidth = PLAYER_WIDTH * scaleFactor;
         let scaledHeight = PLAYER_HEIGHT * scaleFactor;
         if (runner.running) {
-            image(runnerRunningGif, runner.x - scaledWidth, runner.y + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
+            image(runnerRunningGif, runner.x - scaledWidth/2, runner.y + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
         } else {
-            image(runnerIdle, runner.x - scaledWidth, runner.y + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
+            image(runnerIdle, runner.x - scaledWidth/2, runner.y + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
         }
     });
 
@@ -664,7 +671,10 @@ function drawPlayers() {
     }
 
     let ballPos = getRenderedBallPosition(ball);
-    image(ballImg, ballPos.x - 7.5, ballPos.y - 7.5, 15, 15);
+    let ballScale = getBallScaleFactor(ballPos.y);
+    let ballWidth = ballImg.width * ballScale;
+    let ballHeight = ballImg.height * ballScale;
+    image(ballImg, ballPos.x - ballWidth / 2, ballPos.y - ballHeight / 2, ballWidth, ballHeight);
 }
 
 function drawScoreboard() {
@@ -690,26 +700,26 @@ function generateFielders() {
         position: "first"
     });
     
+    // Second Baseman
+    newFielders.push({ 
+        x: bases[2].x * 1.025, 
+        y: bases[2].y * .975, 
+        isInfielder: true,  
+        position: "second"
+    });
+
     // Third Baseman
     newFielders.push({ 
-        x: bases[3].x * .9,
+        x: bases[3].x * 1.2,
         y: bases[3].y * .95, 
         isInfielder: true,  
         position: "third"
     });
     
-    // Second Baseman
-    newFielders.push({ 
-        x: bases[2].x * 1.02, 
-        y: bases[2].y * .975, 
-        isInfielder: true,  
-        position: "second"
-    });
-    
     // Shortstop
     newFielders.push({ 
-        x: (bases[2].x + bases[3].x) / 2, 
-        y: (bases[2].y + bases[3].y) / 2 * .925,
+        x: (bases[2].x + bases[3].x) / 2 * 1.2, 
+        y: (bases[2].y + bases[3].y) / 2 * .9,
         isInfielder: true,  
         position: "short"
     });
@@ -718,7 +728,7 @@ function generateFielders() {
     // Left Field
     newFielders.push({
         x: width * 0.15,
-        y: height * 0.38,
+        y: height * 0.3,
         isInfielder: false,
         position: "left field"
     });
@@ -726,7 +736,7 @@ function generateFielders() {
     // Center Field
     newFielders.push({
         x: width * 0.5,
-        y: height * 0.35,
+        y: height * 0.27,
         isInfielder: false,
         position: "center field"
     });
@@ -734,7 +744,7 @@ function generateFielders() {
     // Right Field
     newFielders.push({
         x: width * 0.85,
-        y: height * 0.38,
+        y: height * 0.3,
         isInfielder: false,
         position: "right field"
     });
@@ -866,8 +876,22 @@ function moveRunners(dt) {
               }
 
             if (dist(runner.x, runner.y, targetBase.x, targetBase.y) < 12) {
-                runner.x = targetBase.x - width*.01;
-                runner.y = targetBase.y - height*.02;
+                let baseScale;
+                switch(targetBase) {
+                    case bases[1]:
+                        baseScale = 0.975;
+                        break;
+                    case bases[2]:
+                        baseScale = 0.975;
+                        break;
+                    case bases[3]:
+                        baseScale = 1.025;
+                        break;
+                    default:
+                        baseScale = 1;
+                }
+                runner.x = targetBase.x * baseScale;
+                runner.y = targetBase.y;
 
                 if (runner.backtracking) {
                     runner.running = false;
@@ -959,7 +983,6 @@ function getClosestFielderToBase(runner) {
 
 function handleGroundThrow(catcher) {
     ball.throwingFielder = catcher;
-    ball.wasAirCatch = false;
 
     let unsafeRunners = runners.filter(runner => !runner.safe);
     if (unsafeRunners.length > 0) {
@@ -975,7 +998,6 @@ function handleGroundThrow(catcher) {
 
 function handleThrow(catcher) {
     ball.throwingFielder = catcher;
-    ball.wasAirCatch = true;
     ball.caught = true;
 
     let batterOut = ball.advancingRunner;
@@ -1029,9 +1051,11 @@ function throwToNextRunner(currentFielder) {
         resetBatter();
         return;
     }
+    
 
     let tBase = nextRunner.base;
-    const targetBaseIndex = nextRunner.backtracking ? tBase : (tBase + 1) % 4;
+    const targetBaseIndex = nextRunner.backtracking ? tBase : (tBase + 1) % bases.length;
+
 
     let targetBase = bases[targetBaseIndex];
     let targetFielder = getFielderForBase(targetBaseIndex);
@@ -1081,11 +1105,10 @@ function getNearestUnsafedRunner(catcher) {
     let targetRunner = null;
     let minDistance = Infinity;
     for (let runner of runners) {
-
-        if (runner.safe || !runner.running) {
+        let currTargetBase = (runner.base + 1) % 4
+        if (runner.safe || !runner.running || !runners.includes(runner)) { 
             continue;
         }
-        if (!runners.includes(runner)) { continue; }
 
         let targetBaseIndex = (runner.base + 1) % bases.length;
         let targetBase = bases[targetBaseIndex];
@@ -1155,8 +1178,8 @@ function keyPressed() {
 
                 let xPower = windowWidth / 200;
                 let yPower = windowHeight / 200;
-                ball.speedX = random(-xPower * 1.5, xPower * 1.5) * 60;
-                ball.speedY = random(-yPower * 5, -yPower * 5) * 60;
+                ball.speedX = random(-xPower * 2, xPower * 2) * 60;
+                ball.speedY = random(-yPower * 5, -yPower * 5.6) * 60;
                 ball.initialSpeedY = ball.speedY;
 
                 batter.running = true;
@@ -1200,6 +1223,7 @@ function resetBatter() {
         currentBatter++;
     }
     strikes = 0;
+    console.log(ball.initialSpeedY);
     resetBall();
     resetFieldersPosition();
 }
@@ -1234,7 +1258,7 @@ function loadVolumeSetting() {
 }
 
 function mousePressed() {
-    if (!settingMenu) {
+    if (!settingMenu && !audioSelectionMenu) {
         if (settingButton.isHovered()) {
             buttonClick();
             setTimeout(() => settingButton.action(), 200);
@@ -1248,8 +1272,10 @@ function mousePressed() {
             setTimeout(() => tempSwapPerspective.action(), 200);
         }
         if (audioButton.isHovered()) {
-            buttonClick();
-            setTimeout(() => audioButton.action(), 200);
+            if (DEBUG) {
+                buttonClick();
+                setTimeout(() => audioButton.action(), 200);
+            }
         }
     }
     if (!currSong.isPlaying()) {

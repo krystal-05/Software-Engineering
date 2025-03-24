@@ -7,7 +7,8 @@ let muteButton;
 let currSong, buttonSound;
 let currEffectsVolume = 0.5;
 let soundEffects = {};
-let DEBUG = false;
+//changing to true for 3/24 presentation
+let DEBUG = true;
 
 function createModal() {
     const style = document.createElement("style");
