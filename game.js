@@ -239,7 +239,7 @@ function draw() {
             ball.x += ball.speedX * fixedDt;
             ball.y += ball.speedY * fixedDt;
            
-            // determine runner to try and out
+            // determine runner to try and get out
             let targetFielder = ball.targetFielder;
             let advancingRunner = ball.advancingRunner;
             let targetRunner = getNearestUnsafeRunner(targetFielder);
