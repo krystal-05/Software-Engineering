@@ -60,3 +60,24 @@ function drawSkillCheckBar(dt) {
     fill('red');
     image(ballImg, barX + sliderX - barHeight/2, barY, barHeight, barHeight);
 }
+
+function userPitch() {
+    if (pitchSkillCheckActive) {
+        let pitchMultiplier = evaluatePitchMultiplier();
+        if (DEBUG) console.log("Pitch multiplier:", pitchMultiplier);
+
+        ball.speedY *= pitchMultiplier;
+        pitchSkillCheckActive = false;
+        pitchAnimation = true;
+        botAttemptHit(ball.speedY);
+        return;
+    }
+    if (!ballMoving && inputEnabled && !pitchSkillCheckActive) {
+        startPitch();
+        return;
+    }
+    if (!ballMoving && inputEnabled) {
+        pitchAnimation = true;
+        swingAttempt = false;
+    }
+}

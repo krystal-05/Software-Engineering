@@ -7,7 +7,8 @@ let muteButton;
 let currSong, buttonSound;
 let currEffectsVolume = 0.5;
 let soundEffects = {};
-let DEBUG = false;
+//changing to true for 3/24 presentation
+let DEBUG = true;
 
 function createModal() {
     const style = document.createElement("style");
@@ -108,13 +109,14 @@ function createModal() {
 
     debugButton.addEventListener("change", (event) => {
         DEBUG = event.target.checked;
+        localStorage.setItem("debugMode", DEBUG.toString());
         console.log("debug mode: ", DEBUG);
     });
 
     const savedVolume = localStorage.getItem("volume");
     const savedEffectsVolume = localStorage.getItem("effectsVolume");
     const savedMute = localStorage.getItem("isMuted");
-
+    const savedDebug = localStorage.getItem("debugMode");
 
     if (savedVolume !== null) {
         currVolume = parseFloat(savedVolume);
@@ -133,6 +135,14 @@ function createModal() {
         if (buttonSound) {
             buttonSound.amp(isMuted ? 0 : currVolume);
         }
+    }
+    if(savedDebug !== null) {
+        DEBUG = savedDebug === "true";
+        debugButton.checked = DEBUG;
+    }
+    else {
+        DEBUG = false;
+        debugButton.checked = false;
     }
 }
 

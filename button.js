@@ -15,7 +15,7 @@ class Button {
     display() {
         push();
             let showHover = this.isHovered();
-            if (settingMenu && !this.isSettingsButton) {
+            if ((settingMenu && !this.isSettingsButton) || (audioSelectionMenu && !this.isAudioMenuButton)) {
                 showHover = false;
             }   
             if (this.img && this.imgHover) {
