@@ -6,7 +6,7 @@ function botAttemptHit(pitchSpeed) {
     if(DEBUG) console.log("HITCHANCE", hitChance);
     if(DEBUG) console.log("PITCH SPEED", pitchSpeed);
     if(pitchSpeed <= 430) { // 50% chance to hit
-        if(hitChance >= 0.50) {
+        if(hitChance >= 0.90) {
             setTimeout(() => {
                 botHitBall();
             }, delay);
@@ -18,7 +18,7 @@ function botAttemptHit(pitchSpeed) {
                 botHitBall();
             }, delay);    }
     else if(pitchSpeed <= 731) { // 10% chance
-        if(hitChance >= 0.90) {
+        if(hitChance >= 0.50) {
             setTimeout(() => {
                 botHitBall();
             }, delay);

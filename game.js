@@ -36,44 +36,23 @@ let audioSelectionMenu = false;
 let audioButton;
 let level;
 
-// function preload() {
-//     bgSideImage = loadImage('assets/bat_field1.png');
-//     bgTopImage = loadImage('assets/flat_field1.png');
-//     batterGif = loadImage('assets/temp_assets/BATTER.gif');
-//     fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
-//     runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
-//     fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
-//     runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
-//     catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
-//     ballImg = loadImage('assets/Baseball1.png');
+function setup() {
+    createCanvas(windowWidth, windowHeight);
 
-//     currSong = loadSound('sounds/gamesong.mp3');
-//     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
-//     soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3'); 
-//     audio1 = loadSound('sounds/gamesong.mp3');
-//     audio2 = loadSound('sounds/audio2.mp3');
-//     audio3 = loadSound('sounds/audio3.mp3');
-//     audio4 = loadSound('sounds/audio4.mp3');
-//     audio5 = loadSound('sounds/audio5.mp3');
-// }
+    hitZoneWidth = windowWidth * 0.05;
+    hitZoneHeight = windowHeight * 0.04;
+    catchDistance = windowWidth * 0.015;
+    groundDistance = windowWidth * 0.005;
+    runnerProximity = windowWidth * 0.01;
+    strikeCatchThreshold = windowWidth * 0.01;
 
-// function setup() {
-//     createCanvas(windowWidth, windowHeight);
+    canvas.getContext('2d', { willReadFrequently: true });
 
-//     hitZoneWidth = windowWidth * 0.05;
-//     hitZoneHeight = windowHeight * 0.04;
-//     catchDistance = windowWidth * 0.015;
-//     groundDistance = windowWidth * 0.005;
-//     runnerProximity = windowWidth * 0.01;
-//     strikeCatchThreshold = windowWidth * 0.01;
-
-//     canvas.getContext('2d', { willReadFrequently: true });
-
-//     loadVolumeSetting();
-//     if (!currSong.isPlaying()) {
-//         currSong.play();
-//         currSong.loop();
-//     }
+    loadVolumeSetting();
+    if (!currSong.isPlaying()) {
+        currSong.play();
+        currSong.loop();
+    }
 
     // Calculate positions based on canvas size
     bases = [
@@ -128,58 +107,58 @@ let level;
     fielders = generateFielders();
 
 
-//     initialFielderPositions = fielders.map(fielder => ({ x: fielder.x, y: fielder.y }));
+    initialFielderPositions = fielders.map(fielder => ({ x: fielder.x, y: fielder.y }));
 
-//     lineup = [batter];
-//     resetBall();
+    lineup = [batter];
+    resetBall();
 
-//     fielders.forEach(fielder => {
-//         fielder.state = "idle";
-//     });
+    fielders.forEach(fielder => {
+        fielder.state = "idle";
+    });
 
-//     settingButton = new Button("Settings", width - 80, 40, 120, 40, null, null, () => settingsClick());
-//     returnButton = new Button("Menu", width - 80, 90, 120, 40, null, null, () => returnToMenu());
-//     tempSwapPerspective = new Button("Perspective", width - 80, 140, 120, 40, null, null, () => togglePerspective());
-//     audioButton = new Button("Audio", width - 80, 190, 120, 40, null, null, () => audioClick());
-//     createModal();
-//     createAudioMenu();
-//     inputEnabled = true;
-// }
+    settingButton = new Button("Settings", width - 80, 40, 120, 40, null, null, () => settingsClick());
+    returnButton = new Button("Menu", width - 80, 90, 120, 40, null, null, () => returnToMenu());
+    tempSwapPerspective = new Button("Perspective", width - 80, 140, 120, 40, null, null, () => togglePerspective());
+    audioButton = new Button("Audio", width - 80, 190, 120, 40, null, null, () => audioClick());
+    createModal();
+    createAudioMenu();
+    inputEnabled = true;
+}
 
-// function draw() {
-//     updateUmpire();
-//     ballCaughtThisFrame = false;
-//     let dt = deltaTime / 1000;
-//     dt = min(dt, 0.05);
-//     accumulator += dt;
+function draw() {
+    updateUmpire();
+    ballCaughtThisFrame = false;
+    let dt = deltaTime / 1000;
+    dt = min(dt, 0.05);
+    accumulator += dt;
 
-//     push();
-//     if (currentPerspective === "topDown") {
-//         image(bgTopImage, 0, 0, width, height);
-//         drawTopDownField();
-//         drawTopDownPlayers();
-//     }
-//     else {
-//         // batter-view
-//         image(bgSideImage, 0, 0, width, height);
-//         drawField();
-//         drawPlayers();
-//         // draw hitzone
-//         if (batter) {
-//             stroke(255, 0, 0);
-//             strokeWeight(2);
-//             noFill();
-//             rectMode(CENTER);
-//             rect(batter.x, batter.y - 15, 30, 20);
-//         }
-//     }
+    push();
+    if (currentPerspective === "topDown") {
+        image(bgTopImage, 0, 0, width, height);
+        drawTopDownField();
+        drawTopDownPlayers();
+    }
+    else {
+        // batter-view
+        image(bgSideImage, 0, 0, width, height);
+        drawField();
+        drawPlayers();
+        // draw hitzone
+        if (batter) {
+            stroke(255, 0, 0);
+            strokeWeight(2);
+            noFill();
+            rectMode(CENTER);
+            rect(batter.x, batter.y - 15, 30, 20);
+        }
+    }
     
-//     pop();
+    pop();
 
-//     // pitch skill-ckeck
-//     if (pitchSkillCheckActive) {
-//         drawSkillCheckBar(dt);
-//     }
+    // pitch skill-ckeck
+    if (pitchSkillCheckActive) {
+        drawSkillCheckBar(dt);
+    }
 
     // Draw the HUD
     push();
@@ -205,7 +184,7 @@ let level;
         pop();
     }
     
-//     drawPopup();
+    drawPopup();
 
     // Game logic
     while (accumulator >= fixedDt) {
@@ -273,10 +252,10 @@ let level;
                     ball.speedY = 0;
                 }
 
-//                 moveFieldersTowardsBall(fixedDt);
-//             }
-//             checkFielderCatch();
-//         }
+                moveFieldersTowardsBall(fixedDt);
+            }
+            checkFielderCatch();
+        }
 
         if (ball.throwing) {
             ball.x += ball.speedX * fixedDt;
@@ -287,48 +266,48 @@ let level;
             let targetRunner = getNearestUnsafedRunner(targetFielder);
             let chosenRunner = targetRunner || advancingRunner;
 
-//             if (!advancingRunner) {
-//                 advancingRunner = targetRunner;
-//             }
-//             if (!chosenRunner) {
-//                 console.error("No valid runner found! Stopping play.");
-//                 ball.throwing = false;
-//                 resetBatter();
-//                 return;
-//             }
+            if (!advancingRunner) {
+                advancingRunner = targetRunner;
+            }
+            if (!chosenRunner) {
+                console.error("No valid runner found! Stopping play.");
+                ball.throwing = false;
+                resetBatter();
+                return;
+            }
 
             if (targetFielder && dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < catchDistance) {
                 if (DEBUG) console.log(`Fielder targeting base ${chosenRunner.base + 1} catches the ball`);
                 ball.throwing = false;
 
 
-//                 if (targetFielder.isInfielder) {
-//                     let runnerAtFielderBase = runners.find(runner => runner.base === chosenRunner.base);
-//                     let baseVal = chosenRunner.base;
+                if (targetFielder.isInfielder) {
+                    let runnerAtFielderBase = runners.find(runner => runner.base === chosenRunner.base);
+                    let baseVal = chosenRunner.base;
 
-//                     let backtrackFielder = getFielderForBase(baseVal);
+                    let backtrackFielder = getFielderForBase(baseVal);
 
-//                     if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
-//                         if (runnerAtFielderBase.backtracking && backtrackFielder === targetFielder) {
-//                             outs++;
-//                             ball.throwing = false;
-//                             ball.caught = true;
-//                             resetBatter();
-//                             if (DEBUG) console.log("outs to", outs);
-//                             runners = runners.filter(r => r !== runnerAtFielderBase);
-//                             if (outs >= 3) {
-//                                 nextInning();
-//                                 return;
-//                             }
-//                             return;
-//                         }
-//                     }
-//                 }
+                    if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
+                        if (runnerAtFielderBase.backtracking && backtrackFielder === targetFielder) {
+                            outs++;
+                            ball.throwing = false;
+                            ball.caught = true;
+                            resetBatter();
+                            if (DEBUG) console.log("outs to", outs);
+                            runners = runners.filter(r => r !== runnerAtFielderBase);
+                            if (outs >= 3) {
+                                nextInning();
+                                return;
+                            }
+                            return;
+                        }
+                    }
+                }
 
-//                 if (outs >= 3) {
-//                     nextInning();
-//                     return;
-//                 }
+                if (outs >= 3) {
+                    nextInning();
+                    return;
+                }
 
                 let targetRunner = getNearestUnsafedRunner(targetFielder);
                 if (targetRunner) {
@@ -668,24 +647,24 @@ function drawPopup() {
     }
 }
 
-// Set field up for next inning
-function nextInning() {
-    inputEnabled = false;
-    outs = 0;
-    runners = [];
-    resetFieldersPosition()
-    if (!topInning) inning++;
-    topInning = !topInning;
+// // Set field up for next inning
+// function nextInning() {
+//     inputEnabled = false;
+//     outs = 0;
+//     runners = [];
+//     resetFieldersPosition()
+//     if (!topInning) inning++;
+//     topInning = !topInning;
 
-    showOutPopup = true;
-    resetBatter();
-    runners = [];
+//     showOutPopup = true;
+//     resetBatter();
+//     runners = [];
 
-    setTimeout(() => {
-        showOutPopup = false;
-        inputEnabled = true;
-    }, 1500);
-}
+//     setTimeout(() => {
+//         showOutPopup = false;
+//         inputEnabled = true;
+//     }, 1500);
+// }
 
 // Handle response to user key input
 function keyPressed() {
@@ -862,3 +841,4 @@ function audioClick(){
     console.log("Button clicked!");  // To check if the button event runs
     console.log("audioMenu:", audioMenu);  // To check if audioMenu exists
 }
+    
