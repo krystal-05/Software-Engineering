@@ -50,8 +50,8 @@ function moveRunners(dt) {
                     runner.backtracking = false;
                     runner.safe = true;
                 } else {
-                    runner.base++;
-                    if (runner.base >= 4) {
+                    runner.base = (runner.base + 1) % 4;
+                    if (runner.base == 0) {
                         score[topInning ? 'away' : 'home']++;
                         
                         popupMessage = "RUN SCORED!";

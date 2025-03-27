@@ -241,61 +241,62 @@ function draw() {
            
             // determine runner to try and get out
             let targetFielder = ball.targetFielder;
-            let advancingRunner = ball.advancingRunner;
-            let targetRunner = getNearestUnsafeRunner(targetFielder);
-            // let chosenRunner = targetRunner || advancingRunner;
-            let chosenRunner = targetRunner;
+            // let advancingRunner = ball.advancingRunner;
+            // let targetRunner = getNearestUnsafeRunner(targetFielder);
+            // // let chosenRunner = targetRunner || advancingRunner;
+            // let chosenRunner = targetRunner;
 
-            if (!advancingRunner) {
-                advancingRunner = targetRunner;
-            }
-            if (!chosenRunner) {
-                console.error("No valid runner found! Stopping play.");
-                ball.throwing = false;
-                resetBatter();
-                return;
-            }
+            // if (!advancingRunner) {
+            //     advancingRunner = targetRunner;
+            // }
+            // if (!chosenRunner) {
+            //     console.error("No valid runner found! Stopping play.");
+            //     ball.throwing = false;
+            //     resetBatter();
+            //     return;
+            // }
 
             // Fielder caught ball in attempt to out a runner
             if (targetFielder && dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < catchDistance) {
-                if (DEBUG) console.log(`Fielder for holding/running runner of base ${chosenRunner.base}, catches the ball`);
-                ball.throwing = false;
+                //if (DEBUG) console.log(`Fielder for holding/running runner of base ${chosenRunner.base}, catches the ball`);
+                // ball.throwing = false;
 
-                if (targetFielder.isInfielder) {
-                    let runnerAtFielderBase = runners.find(runner => runner.base === chosenRunner.base);
-                    let baseVal = chosenRunner.base;
+                // if (targetFielder.isInfielder) {
+                //     let runnerAtFielderBase = runners.find(runner => runner.base === chosenRunner.base);
+                //     let baseVal = chosenRunner.base;
 
-                    let backtrackFielder = getFielderForBase(baseVal);
+                //     let backtrackFielder = getFielderForBase(baseVal);
 
-                    if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
-                        if (runnerAtFielderBase.backtracking && backtrackFielder === targetFielder) {
-                            outs++;
-                            ball.throwing = false;
-                            ball.caught = true;
-                            resetBatter();
-                            if (DEBUG) console.log("outs to", outs);
-                            runners = runners.filter(r => r !== runnerAtFielderBase);
-                            if (outs >= 3) {
-                                nextInning();
-                                return;
-                            }
-                            return;
-                        }
-                    }
-                }
+                //     if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
+                //         if (runnerAtFielderBase.backtracking && backtrackFielder === targetFielder) {
+                //             outs++;
+                //             ball.throwing = false;
+                //             ball.caught = true;
+                //             resetBatter();
+                //             if (DEBUG) console.log("outs to", outs);
+                //             runners = runners.filter(r => r !== runnerAtFielderBase);
+                //             if (outs >= 3) {
+                //                 nextInning();
+                //                 return;
+                //             }
+                //             return;
+                //         }
+                //     }
+                // }
 
-                if (outs >= 3) {
-                    nextInning();
-                    return;
-                }
+                // if (outs >= 3) {
+                //     nextInning();
+                //     return;
+                // }
+                handleCatch(targetFielder);
 
-                let targetRunner = getNearestUnsafeRunner(targetFielder);
-                if (targetRunner) {
-                    if (DEBUG) console.log(`Throwing to next unsafe runner to base ${targetRunner.base + 1}`);
-                    handleGroundThrow(targetFielder);
-                } else {
-                    resetBatter();
-                }
+                // let targetRunner = getNearestUnsafeRunner(targetFielder);
+                // if (targetRunner) {
+                //     if (DEBUG) console.log(`Throwing to next unsafe runner to base ${targetRunner.base + 1}`);
+                //     handleGroundThrow(targetFielder);
+                // } else {
+                //     resetBatter();
+                // }
             }
         }
         moveRunners(fixedDt);
