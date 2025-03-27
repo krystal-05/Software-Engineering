@@ -11,20 +11,18 @@ function botAttemptHit(pitchSpeed) {
                 botHitBall();
             }, delay);
         }
-    }
-    else if(pitchSpeed <= 559) { // 25% chance to hit
+    } else if(pitchSpeed <= 559) { // 25% chance to hit
         if(hitChance >= 0.75)
             setTimeout(() => {
                 botHitBall();
-            }, delay);    }
-    else if(pitchSpeed <= 731) { // 10% chance
+            }, delay);    
+    } else if(pitchSpeed <= 731) { // 10% chance
         if(hitChance >= 0.90) {
             setTimeout(() => {
                 botHitBall();
             }, delay);
         }
-    }
-    else {
+    } else {
         if(DEBUG) console.log("bot missed STRIKE", strikes);
     }
 }
