@@ -5,7 +5,7 @@ let audio2Button;
 let audio3Button;
 let audio4Button;
 let audio5Button;
-
+let savedAudio = false;
 
 function createAudioMenu(){
 const style = document.createElement("style")
@@ -123,6 +123,8 @@ audio5Button.addEventListener("click", (event) => {
     updateAudio(event);
    
 });
+
+
 }
 function showAudioMenu() {
     audioMenu.style.display = "flex";
@@ -160,6 +162,16 @@ function updateAudio(event){
     if (currSong) {
         currSong.play();
         currSong.loop();
+        localStorage.setItem("audio", action);
+        console.log(`Saved and playing: ${action}`);
+        savedAudio = true;
+} 
 }
 }
+
+function playUpdatedAudio() {
+    currSong = localStorage.getItem("audio");
+    console.log(`Saved audio: ${action}`);
+    currSong.play();
+    currSong.loop();
 }

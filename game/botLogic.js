@@ -18,7 +18,7 @@ function botAttemptHit(pitchSpeed) {
                 botHitBall();
             }, delay);    }
     else if(pitchSpeed <= 731) { // 10% chance
-        if(hitChance >= 0.50) {
+        if(hitChance >= 1.00) {
             setTimeout(() => {
                 botHitBall();
             }, delay);

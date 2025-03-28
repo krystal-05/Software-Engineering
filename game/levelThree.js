@@ -1,3 +1,4 @@
+let level = 3;
 function preload() {
     bgSideImage = loadImage('assets/field3.png');
     bgTopImage = loadImage('assets/flat_field1.png');
@@ -19,6 +20,10 @@ function preload() {
     audio5 = loadSound('sounds/audio5.mp3');
 }
 
+//something needs done with audio so the same audio will play across files
+
+
+
 // Set field up for next inning
 function nextInning() {
     inputEnabled = false;
@@ -37,7 +42,14 @@ function nextInning() {
         inputEnabled = true;
     }, 1500);
 
-    if (inning === 2){
-        window.location.href = "gameTwo.html";
+    
+    if (inning === 4 && score.home > score.away){
+        showWinPopup();
+    }
+    if (inning === 4 && score.home <= score.away){
+        showLosePopup();
     }
 }
+
+
+

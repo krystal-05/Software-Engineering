@@ -34,7 +34,8 @@ let topDownCamera;
 
 let audioSelectionMenu = false;
 let audioButton;
-let level;
+
+let winDemo, loseDemo;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -50,9 +51,17 @@ function setup() {
 
     loadVolumeSetting();
     if (!currSong.isPlaying()) {
+        if(savedAudio === true){
+        playUpdatedAudio();
+        console.log("Saved audio found, attempting to play.");
+        }
+        else{
         currSong.play();
         currSong.loop();
+        console.log("No saved audio, playing current song.");
+        }
     }
+
 
     // Calculate positions based on canvas size
     bases = [
@@ -120,8 +129,13 @@ function setup() {
     returnButton = new Button("Menu", width - 80, 90, 120, 40, null, null, () => returnToMenu());
     tempSwapPerspective = new Button("Perspective", width - 80, 140, 120, 40, null, null, () => togglePerspective());
     audioButton = new Button("Audio", width - 80, 190, 120, 40, null, null, () => audioClick());
+    loseDemo = new Button("Lose Demo", width - 80, 740, 120, 40, null, null, () => loseClick());
+    winDemo = new Button("Win Demo", width - 80, 790, 120, 40, null, null, () => winClick());
     createModal();
     createAudioMenu();
+    createWinPopup();
+    createLosePopup();
+    createDonePopup();
     inputEnabled = true;
 }
 
@@ -168,6 +182,8 @@ function draw() {
     tempSwapPerspective.display();
      if (DEBUG === true){
         audioButton.display();
+        loseDemo.display();
+        winDemo.display();
          }
     pop();
 
@@ -810,9 +826,31 @@ function mousePressed() {
                 setTimeout(() => audioButton.action(), 200);
             }
         }
+        if (loseDemo.isHovered()) {
+            if (DEBUG) {
+                buttonClick();
+                setTimeout(() => loseDemo.action(), 200);
+            }
+        }
+        if (winDemo.isHovered()) {
+            if (DEBUG) {
+                buttonClick();
+                setTimeout(() => winDemo.action(), 200);
+            }
+        }
     }
     if (!currSong.isPlaying()) {
-        currSong.loop();
+        if (!currSong.isPlaying()) {
+            if(savedAudio === true){
+            playUpdatedAudio();
+            console.log("Saved audio found, attempting to play.");
+            }
+            else{
+            currSong.play();
+            currSong.loop();
+            console.log("No saved audio, playing current song.");
+            }
+        }
     }
 }
 
@@ -841,4 +879,15 @@ function audioClick(){
     console.log("Button clicked!");  // To check if the button event runs
     console.log("audioMenu:", audioMenu);  // To check if audioMenu exists
 }
-    
+
+function loseClick(){
+    showLosePopup();
+}
+function winClick(){
+    if (level === 3){
+        showDonePopup();
+    }
+    else{
+    showWinPopup();
+    }
+}

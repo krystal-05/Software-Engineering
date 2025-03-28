@@ -1,3 +1,4 @@
+let level = 1;
 function preload() {
     bgSideImage = loadImage('assets/bat_field1.png');
     bgTopImage = loadImage('assets/flat_field1.png');
@@ -38,7 +39,11 @@ function nextInning() {
         inputEnabled = true;
     }, 1500);
 
-    if (inning === 2){
-        window.location.href = "gameTwo.html";
+    if (inning === 4 && score.home > score.away){
+        showWinPopup();
+    }
+    if (inning === 4 && score.home <= score.away){
+        showLosePopup();
     }
 }
+
