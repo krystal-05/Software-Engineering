@@ -30,14 +30,28 @@ function botAttemptHit(pitchSpeed) {
 
 function botHitBall() {
     //console.log("bot hit the ball");
+    let softHitPower = 5;
+    let hardHitPower = 5.6;
+    let homeRunPower = 8;
+
     ballHit = true;
     ball.inAir = true;
     playSoundEffect("hitBall");
 
-    let xPower = windowWidth / 200;
-    let yPower = windowHeight / 200;
-    ball.speedX = random(-xPower * 2, xPower * 2) * 60;
-    ball.speedY = random(-yPower * 5, -yPower * 5.6) * 60;
+    powerXSaveVal = random(-xPower * 2, xPower * 2)
+    ball.speedX = powerXSaveVal * 60;
+
+    let temp = floor(random(1,10));
+    if (temp === 1) {
+        if (DEBUG) console.log("HOME RUN AT POWER");
+        homeRunHit = true;
+    }
+
+    if (homeRunHit) {
+        ball.speedY = (-yPower * homeRunPower) * 60;
+    } else {
+        ball.speedY = random(-yPower * softHitPower, -yPower * hardHitPower) * 60;
+    }
     ball.initialSpeedY = ball.speedY;
 
     batter.running = true;

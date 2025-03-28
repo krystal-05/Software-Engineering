@@ -1,4 +1,6 @@
 let lastNearestRunner;
+let lastClosestFielder;
+
 function generateFielders() {
     let newFielders = [];
     
@@ -62,9 +64,21 @@ function generateFielders() {
     
     return newFielders;
 }
-
+// Scale speed based on y-value 
+function getFielderSpeedScale(y) {
+    return map(y, height * 0.4, height * 0.9, 0.75, 1.5);
+}
 // Logic for moving fielders
 function moveFieldersTowardsBall(dt) {
+    if (ball.homeRun) {
+        fielders.forEach(fielder => {
+            if (fielder === lastClosestFielder) {
+                fielder.state = "idle";
+            }
+        });
+        return;
+    }
+    
     let closestFielder = null;
     let minDistance = Infinity;
 
@@ -74,6 +88,7 @@ function moveFieldersTowardsBall(dt) {
         if (d < minDistance) {
             minDistance = d;
             closestFielder = fielder;
+            lastClosestFielder = closestFielder;
         }
     }
     // Move that closest fielder to the ball
@@ -219,7 +234,7 @@ function throwToNextRunner(currentFielder) {
 }
 
 function handleCatch(currentFielder) {
-    if (DEBUG) console.log("currentFielder.x 1: ", currentFielder.x)
+    //if (DEBUG) console.log("currentFielder.x 1: ", currentFielder.x)
     ball.throwing = false;
     let baseVal;
     let targetRunner = getNearestUnsafeRunner(currentFielder);
@@ -266,7 +281,7 @@ function handleCatch(currentFielder) {
 
 // Find closest unsafe runner to current holder of the ball
 function getNearestUnsafeRunner(catcher) {
-    if (DEBUG) console.log("catcher.x 1: ", catcher.x)
+    //if (DEBUG) console.log("catcher.x 1: ", catcher.x)
     let targetRunner = null;
     let minDistance = Infinity;
     for (let runner of runners) {
@@ -337,6 +352,7 @@ function resetInfielders() {
 }
 
 function checkFielderCatch() {
+    if (ball.homeRun) return;
     if (ballCaughtThisFrame) return;
     if (ball.caught) return;
 
@@ -366,7 +382,7 @@ function checkFielderCatch() {
     // Any fielder catches the ball
     for (let fielder of fielders) {
         if ((fielder.state === "idle" || fielder.state === "running") &&
-            dist(ball.x, ball.y, fielder.x, fielder.y) < catchDistance) {
+                dist(ball.x, ball.y, fielder.x, fielder.y) < catchDistance) {
             // Fielder catches the ball:
             fielder.state = "hasBall";
             resetInfielders();

@@ -1,8 +1,13 @@
+// Scale speed based on y-value
+function getRunnerSpeedScale(y) {
+    return map(y, height * 0.4, height * 0.9, 0.9, 1.5);
+}
 // Logic for moving runners on the field
 function moveRunners(dt) {
     runners = runners.filter(runner => {
         if (runner.running) {
             let targetIndex = runner.base + 1;
+            let speedScale = getRunnerSpeedScale(runner.y);
             // If runner is turning back from running to the next base,
             // reset their target
             if (runner.backtracking) {
@@ -16,7 +21,7 @@ function moveRunners(dt) {
 
             // Calculate each step as distance per time and once the step is larger than 
             // the distance to the base, assign them their target base
-            let step = runner.speed * dt;
+            let step = runner.speed * dt * speedScale;
             if (step >= distance) {
                 runner.x = targetBase.x;
                 runner.y = targetBase.y;
@@ -55,13 +60,13 @@ function moveRunners(dt) {
                         score[topInning ? 'away' : 'home']++;
                         
                         popupMessage = "RUN SCORED!";
-                        showHomerunPopup = true;
+                        showRunPopup = true;
                         popupTimer = millis();
 
                         if (DEBUG) console.log(`Runner scored! Updated Score - Home: ${score.home}, Away: ${score.away}`);
                         return false;
                     } else {
-                        runner.running = false;
+                        if (!ball.homeRun) runner.running = false;
                         runner.safe = true;
                         if (DEBUG) console.log(`Runner reached base ${runner.base} and is holding.`);
                     }

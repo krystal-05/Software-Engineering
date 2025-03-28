@@ -1,12 +1,32 @@
+let homeRunHit = false;
+let powerXSaveVal;
+
 function playerHit() {
+    let softHitPower = 5;
+    let hardHitPower = 5.6;
+    let homeRunPower = 8;
+
     ballHit = true;
     ball.inAir = true;
     playSoundEffect("hitBall");
 
-    let xPower = windowWidth / 200;
-    let yPower = windowHeight / 200;
-    ball.speedX = random(-xPower * 2, xPower * 2) * 60;
-    ball.speedY = random(-yPower * 5, -yPower * 5.6) * 60;
+    // x-value left/right power
+    powerXSaveVal = random(-xPower * 2, xPower * 2)
+    ball.speedX = powerXSaveVal * 60;
+
+    // determine homerun or normal
+    let temp = floor(random(1,10));
+    if (temp === 1) {
+        if (DEBUG) console.log("HOME RUN AT POWER");
+        homeRunHit = true;
+    }
+
+    // y-value up power
+    if (homeRunHit) {
+        ball.speedY = (-yPower * homeRunPower) * 60;
+    } else {
+        ball.speedY = random(-yPower * softHitPower, -yPower * hardHitPower) * 60;
+    }
     ball.initialSpeedY = ball.speedY;
 
     batter.running = true;
@@ -16,13 +36,6 @@ function playerHit() {
     runners.push(batter);
     ball.advancingRunner = batter;
     batter = null;
-}
-
-function playerMiss() {
-    ball.strikePitch = true;
-    strikes++;
-    handleStrikeCall();
-    if (DEBUG) console.log("Swing missed! Strike " + strikes);
 }
 
 function playerStrike() {
@@ -37,7 +50,7 @@ function userBatting() {
         // Successful swing/hit.
         playerHit()
     } else {
-        playerMiss();
+        playerStrike();
     }
     swingAttempt = true;
 }
