@@ -135,7 +135,7 @@ function loadCharacterSelect() {
 }
 function loadGame() {
     if (isLoad1 === "true") {
-        window.location.href = "game.html";
+        window.location.href = "map.html";
     } else {
         loadCharacterSelect();
     }

@@ -15,7 +15,7 @@ function generateFielders() {
     
     // Second Baseman
     newFielders.push({ 
-        x: bases[2].x * 1.025, 
+        x: bases[2].x * 1.05, 
         y: bases[2].y * .975, 
         isInfielder: true,  
         position: "second"
@@ -23,7 +23,7 @@ function generateFielders() {
 
     // Third Baseman
     newFielders.push({ 
-        x: bases[3].x * 1.2,
+        x: bases[3].x * 1.15,
         y: bases[3].y * .95, 
         isInfielder: true,  
         position: "third"
@@ -31,8 +31,8 @@ function generateFielders() {
     
     // Shortstop
     newFielders.push({ 
-        x: (bases[2].x + bases[3].x) / 2 * 1.2, 
-        y: (bases[2].y + bases[3].y) / 2 * .9,
+        x: (bases[2].x + bases[3].x) / 2 * 1.15, 
+        y: (bases[2].y + bases[3].y) / 2 * .85,
         isInfielder: false,  
         position: "short"
     });
