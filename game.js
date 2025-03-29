@@ -39,9 +39,11 @@ let topDownCamera;
 let audioSelectionMenu = false;
 let audioButton;
 
+// Difficulty
+let generalDifficultyScale = 1;
 
 function preload() {
-    bgSideImage = loadImage('assets/bat_field1.png');
+    bgSideImage = loadImage('assets/newFieldSide.png');
     bgTopImage = loadImage('assets/flat_field1.png');
     batterGif = loadImage('assets/temp_assets/BATTER.gif');
     fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
@@ -85,9 +87,9 @@ function setup() {
     let transformedPitcher = sideToTopDown(pitcher.x, pitcher.y);
     topDownCamera = {
         worldAnchor: { x: transformedPitcher.x, y: transformedPitcher.y },
-        screenAnchor: { x: width * 0.5, y: height * .64 },
-        scaleX: .375,
-        scaleY: 1.1
+        screenAnchor: { x: width * 0.5, y: height * .75 },
+        scaleX: .4,
+        scaleY: 1
     };
 
     initialFielderPositions = fielders.map(fielder => ({ x: fielder.x, y: fielder.y }));
@@ -353,7 +355,7 @@ function sideToTopDown(worldX, worldY) {
     let centerX = width / 2;
     let dx = worldX - centerX;
     //  vertical shift
-    let perspectiveFactor = 0.16;
+    let perspectiveFactor = 0.08;
     
     let newY = worldY + Math.abs(dx) * perspectiveFactor;
     return { x: worldX, y: newY };
@@ -373,7 +375,7 @@ function perspectiveToTopDownBall(worldX, worldY, offsetUpY = 0, anchor = pitche
     let anchorTopDown = sideToTopDown(anchor.x, anchor.y);
     
     let ballTopDownSlowFactor = 1;
-    if (useSlowFactor) { ballTopDownSlowFactor = 0.66; }
+    if (useSlowFactor) { ballTopDownSlowFactor = 0.8; }
     adjusted.y = anchorTopDown.y + (adjusted.y - anchorTopDown.y) * ballTopDownSlowFactor;
 
     return {
@@ -423,7 +425,7 @@ function drawTopDownField() {
 function drawTopDownPlayers() {
     let verticalOffset = height * 0.14;
     let ballOffset = !ballHit ? 0 : verticalOffset;
-    let pitcherOffsetY = 20;
+    let pitcherOffsetY = -65;
     let pitcherPos = perspectiveToTopDown(pitcher.x, pitcher.y);
     pitcherPos.y += pitcherOffsetY;
     fill('red');
@@ -725,12 +727,12 @@ function resetBatter() {
 function assignEnitities() {
     bases = [
         { x: width * 0.5,   y: height * 0.88 },  // Home plate
-        { x: width * 0.86,  y: height * 0.52 },  // 1st base
+        { x: width * 0.83,  y: height * 0.58 },  // 1st base
         { x: width * 0.5,   y: height * 0.4 },   // 2nd base
-        { x: width * 0.14,  y: height * 0.52 }   // 3rd base
+        { x: width * 0.17,  y: height * 0.58 }   // 3rd base
     ];
 
-    pitcher = { x: width * 0.5, y: height * 0.50, armAngle: 0 };
+    pitcher = { x: width * 0.5, y: height * 0.575, armAngle: 0 };
 
     ball = {
         x: pitcher.x,

@@ -41,7 +41,7 @@ function generateFielders() {
     // Left Field
     newFielders.push({
         x: width * 0.15,
-        y: height * 0.3,
+        y: height * 0.35,
         isInfielder: false,
         position: "left field"
     });
@@ -57,7 +57,7 @@ function generateFielders() {
     // Right Field
     newFielders.push({
         x: width * 0.85,
-        y: height * 0.3,
+        y: height * 0.35,
         isInfielder: false,
         position: "right field"
     });
