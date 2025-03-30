@@ -36,6 +36,8 @@ let audioSelectionMenu = false;
 let audioButton;
 
 let winDemo, loseDemo;
+let startGameButton;
+
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -51,16 +53,9 @@ function setup() {
 
     loadVolumeSetting();
     if (!currSong.isPlaying()) {
-        if(savedAudio === true){
-        playUpdatedAudio();
-        console.log("Saved audio found, attempting to play.");
-        }
-        else{
         currSong.play();
         currSong.loop();
-        console.log("No saved audio, playing current song.");
         }
-    }
 
 
     // Calculate positions based on canvas size
@@ -199,7 +194,6 @@ function draw() {
         line(10, height * 0.4, width, height * 0.4);
         pop();
     }
-    
     drawPopup();
 
     // Game logic
@@ -840,20 +834,10 @@ function mousePressed() {
         }
     }
     if (!currSong.isPlaying()) {
-        if (!currSong.isPlaying()) {
-            if(savedAudio === true){
-            playUpdatedAudio();
-            console.log("Saved audio found, attempting to play.");
-            }
-            else{
             currSong.play();
             currSong.loop();
-            console.log("No saved audio, playing current song.");
-            }
-        }
-    }
 }
-
+}
 // Handle change of perspective
 function togglePerspective() {
     currentPerspective = currentPerspective === "side" ? "topDown" : "side";
@@ -890,4 +874,7 @@ function winClick(){
     else{
     showWinPopup();
     }
+}
+function startGameClick(){
+    buttonClick();
 }

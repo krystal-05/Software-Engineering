@@ -1,6 +1,6 @@
 let level = 2;
 function preload() {
-    bgSideImage = loadImage('assets/field2.png');
+    bgSideImage = loadImage('assets/bat_field1.png');
     bgTopImage = loadImage('assets/flat_field1.png');
     batterGif = loadImage('assets/temp_assets/BATTER.gif');
     fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
