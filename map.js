@@ -1,8 +1,70 @@
 let map;
+let char;
 let buttons= [];
 let levelOneImg, levelTwoImg, levelThreeImg, secretLevelImg;
 let settingMenu = false;
 let audioSelectionMenu = false;
+
+    class character {
+        constructor() {
+            // Change this to change the character sprite I didn't know what quite to use for it
+            this.img = loadImage('assets/temp_assets/sprites/02_idle.png');
+            this.x = windowWidth / 2 + 150;
+            this.y = windowHeight / 2 - 150; 
+            this.width = 100;
+            this.height = 100;
+            this.levelPosition = '1';
+        }
+
+        // contains logic for how character can move depending on where they are currently
+        move(input) {
+            switch(this.levelPosition) {
+                case '1': {
+                    if(input === 'a') {
+                        this.x = windowWidth / 2 - 200;
+                        this.y = windowHeight / 2 - 150;
+                        this.levelPosition = '2';
+                    }
+                    break;
+                } 
+                case '2': {
+                    if(input === 'a') {
+                        this.x = windowWidth / 2 - 450;
+                        this.y = windowHeight /2 - 190;
+                        this.levelPosition = '1s';
+                    } else if(input === 's') {
+                        this.x = windowWidth / 2 - 150;
+                        this.y = windowHeight / 2 + 150;
+                        this.levelPosition = '3'; 
+                    } else if(input === 'd') {
+                        this.x = windowWidth / 2 + 150;
+                        this.y = windowHeight / 2 - 150;
+                        this.levelPosition = '1';
+                    }
+                    break;
+                }
+                case '3': {
+                    if(input === 'w') {
+                        this.x = windowWidth / 2 - 200;
+                        this.y = windowHeight / 2 - 150;
+                        this.levelPosition = '2';
+                    }
+                    break;
+                }
+                case '1s': {
+                    if(input === 'd') {
+                        this.x = windowWidth / 2 - 200;
+                        this.y = windowHeight / 2 - 150;
+                        this.levelPosition = '2';
+                    }
+                    break;
+                }
+            }
+        }
+
+
+    }
+
 
     function preload() {
       map = loadImage('assets/map.png');
@@ -15,6 +77,7 @@ let audioSelectionMenu = false;
       levelTwoHover= loadImage('assets/level2Hover.png');
       levelThreeHover= loadImage('assets/level3Hover.png');
       secretLevelHover = loadImage('assets/secretlevelhover.png');
+      char = new character();
     }
 
     function setup(){
@@ -22,9 +85,8 @@ let audioSelectionMenu = false;
         buttons.push(new Button("", windowWidth / 2 + 150, windowHeight /2 - 150 , 80, 100, levelOneImg, levelOneHover, cityOne));
         buttons.push(new Button("", windowWidth / 2 - 200, windowHeight /2 - 150, 80, 100, levelTwoImg, levelTwoHover, cityTwo));
         buttons.push(new Button("", windowWidth / 2 - 150, windowHeight /2 + 150 , 80, 100, levelThreeImg, levelThreeHover, cityThree));
-        buttons.push(new Button("", windowWidth / 2 - 450 , windowHeight /2 - 190 , 80, 100, secretLevelImg, secretLevelHover, dawgs));
+        buttons.push(new Button("", windowWidth / 2 - 450 , windowHeight /2 - 190, 80, 100, secretLevelImg, secretLevelHover, dawgs));
         loadVolumeSetting();
-        
     }
 
     function draw(){
@@ -33,6 +95,7 @@ let audioSelectionMenu = false;
         for (let btn of buttons) {
             btn.display();
         }
+        image(char.img, char.x, char.y, char.width, char.height);
 
     }
     
@@ -75,12 +138,41 @@ let audioSelectionMenu = false;
             sound.amp(isMuted ? 0 : currEffectsVolume);
         });
     }
-    function mousePressed() {
-        for(let btn of buttons){
-            if (btn.isHovered() && btn.action) {
-                buttonClick();
-                setTimeout(() => btn.action(), 200);
+
+
+    function keyPressed() {
+        switch(keyCode) {
+            // 'w'
+            case 87: {
+                char.move('w');
+            break;
+            }
+            // 'a'
+            case 65: {
+                char.move('a');
+            break;
+            }
+            // 's'
+            case 83: {
+                char.move('s');
+            break;
+            } 
+            // 'd'
+            case 68: {
+                char.move('d');
+            break;
+            }
+            // 'enter'
+            case 13: {
+                for(let btn of buttons) {
+                    if(btn.isHovered() && btn.action) {
+                        buttonClick();
+                        setTimeout(() => btn.action(), 200);
+                    }
+                }
+            break;
             }
         }
-        }
-    
+
+        return false;
+    }
