@@ -3,50 +3,72 @@ function botAttemptHit(pitchSpeed) {
     let travelDistance = (batter.y - hitZoneHeight) - ball.y;
     let delay = (travelDistance / pitchSpeed) * 1000; // gets delay for ball to reach hitting zone
 
-    if(DEBUG) console.log("HITCHANCE", hitChance);
-    if(DEBUG) console.log("PITCH SPEED", pitchSpeed);
+    // if(DEBUG) console.log("HITCHANCE", hitChance);
+    // if(DEBUG) console.log("PITCH SPEED", pitchSpeed);
+    let baseAntiChance;
     if(pitchSpeed <= 430) { // 50% chance to hit
-        if(hitChance >= 0.50) {
-            setTimeout(() => {
-                botHitBall();
-            }, delay);
-        }
-    }
-    else if(pitchSpeed <= 559) { // 25% chance to hit
-        if(hitChance >= 0.75)
-            setTimeout(() => {
-                botHitBall();
-            }, delay);    }
-    else if(pitchSpeed <= 731) { // 10% chance
-        if(hitChance >= 1.00) {
-            setTimeout(() => {
-                botHitBall();
-            }, delay);
-        }
-    }
-    else {
+        baseAntiChance = .5;
+    } else if(pitchSpeed <= 559) { // 25% chance to hit
+        baseAntiChance = .75;  
+    } else if(pitchSpeed <= 731) { // 10% chance
+        baseAntiChance = .9;
+    } else {
         if(DEBUG) console.log("bot missed STRIKE", strikes);
+    }
+
+    let difficultyModifier = (generalDifficultyScale - 1) * 0.1;
+    let adjustedAntiChance = baseAntiChance - difficultyModifier;
+    
+    // if (DEBUG) {
+    //     console.log("Base Threshold:", baseAntiChance);
+    //     console.log("Adjusted Threshold:", adjustedAntiChance);
+    // }
+    if (hitChance >= adjustedAntiChance) {
+        setTimeout(() => {
+            botHitBall();
+        }, delay);
     }
 }
 
 
 function botHitBall() {
     //console.log("bot hit the ball");
+    let softHitPower = 5;
+    let hardHitPower = 5.6;
+    let homeRunPower = 8;
+
     ballHit = true;
     ball.inAir = true;
     playSoundEffect("hitBall");
 
-    let xPower = windowWidth / 200;
-    let yPower = windowHeight / 200;
-    ball.speedX = random(-xPower * 2, xPower * 2) * 60;
-    ball.speedY = random(-yPower * 5, -yPower * 5.6) * 60;
+    powerXSaveVal = random(-xPower * 2, xPower * 2)
+    ball.speedX = powerXSaveVal * 60;
+
+    homeRunScale = generalDifficultyScale * .8;
+    let baseHomeRunChance = .1;
+    let modHomeRunChance = 0.10 * (generalDifficultyScale - 1);
+    let homeRunChance = baseHomeRunChance + modHomeRunChance;
+
+    if (Math.random() < homeRunChance) {
+        if (DEBUG) console.log("HOME RUN AT POWER");
+        homeRunHit = true;
+    }
+
+    if (homeRunHit) {
+        ball.speedY = (-yPower * homeRunPower) * 60;
+    } else {
+        ball.speedY = random(-yPower * softHitPower, -yPower * hardHitPower) * 60;
+    }
     ball.initialSpeedY = ball.speedY;
 
     batter.running = true;
     runners.forEach(runner => runner.running = true);
-    runners.push(batter);
-    ball.advancingRunner = batter;
-    batter = null;
+    setTimeout(() => {
+        batter.x = batter.x - width * .05;
+        runners.push(batter);
+        ball.advancingRunner = batter;
+        batter = null;
+    }, 75);
 }
 
 
@@ -57,13 +79,27 @@ function botPitch() {
     if(pitchChance >= 0.60) { // 40% chance to get 1.3 multiplier
         botPitchMultiplier = 1.3;
     }
-    else if(pitchChance >= 0.80) { // 20% chance to get 1.3 multiplier
+    else if(pitchChance >= 0.80) { // 20% chance to get 1.7 multiplier
         botPitchMultiplier = 1.7;
     }
     else {
         botPitchMultiplier = 1.0;
     }
-    console.log("BOT PITCH MULTIPLIER", botPitchMultiplier);
-    ball.speedY *= botPitchMultiplier;
+
+    difficultyModifier = (generalDifficultyScale - 1) * 0.2;
+    let finalMultiplier = botPitchMultiplier + difficultyModifier;
+
+    console.log("BOT PITCH MULTIPLIER", finalMultiplier);
+    ball.speedY *= finalMultiplier;
     pitchAnimation = true;    
+}
+
+function changeDifficulty(difficultyValue) {
+    if (difficultyValue < 1 || difficultyValue > 3){
+        generalDifficultyScale = 1;
+        if (DEBUG) console.log("generalDifficultyScale: ", generalDifficultyScale);
+        return;
+    }
+    generalDifficultyScale = difficultyValue;
+    if (DEBUG) console.log("generalDifficultyScale: ", generalDifficultyScale);
 }

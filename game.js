@@ -11,14 +11,15 @@ let lineup, currentBatter = 0;
 let score = { home: 0, away: 0 }, outs = 0, strikes = 0, inning = 1, topInning = true;
 let ballMoving = false, ballHit = false, pitchAnimation = false, swingAttempt = false;
 let settingMenu = false, inputEnabled = false;
-let showOutPopup = false, ballCaughtThisFrame = false;
+let ballCaughtThisFrame = false;
 let outPopupTime = 0;
 let currentPerspective = "side";
 
 let initialFielderPositions = [];
-const catchingRadius = 100;
 let accumulator = 0;
 const fixedDt = 1/60;
+let xPower;
+let yPower;
 
 let bgImage, batterGif;
 let settingButton, returnButton;
@@ -26,7 +27,10 @@ let tempSwapPerspective;
 
 let umpire;
 let showStrikePopup = false;
+let showRunPopup = false;
+let showOutPopup = false;
 let showHomerunPopup = false;
+let showFoulPopup = false;
 let popupTimer = 0;
 let popupMessage = "";
 
@@ -35,19 +39,42 @@ let topDownCamera;
 let audioSelectionMenu = false;
 let audioButton;
 
-let winDemo, loseDemo;
-let startGameButton;
+// Difficulty
+let generalDifficultyScale = 1;
 
+function preload() {
+    bgSideImage = loadImage('assets/newFieldSide.png');
+    bgTopImage = loadImage('assets/flat_field1.png');
+    batterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
+    batterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
+    fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
+    runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
+    fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
+    runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
+    catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
+    ballImg = loadImage('assets/Baseball1.png');
+
+    currSong = loadSound('sounds/gamesong.mp3');
+    soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
+    soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3'); 
+    audio1 = loadSound('sounds/gamesong.mp3');
+    audio2 = loadSound('sounds/audio2.mp3');
+    audio3 = loadSound('sounds/audio3.mp3');
+    audio4 = loadSound('sounds/audio4.mp3');
+    audio5 = loadSound('sounds/audio5.mp3');
+}
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
-    hitZoneWidth = windowWidth * 0.05;
-    hitZoneHeight = windowHeight * 0.04;
+    hitZoneWidth = windowWidth * 0.03;
+    hitZoneHeight = hitZoneWidth;
     catchDistance = windowWidth * 0.015;
     groundDistance = windowWidth * 0.005;
     runnerProximity = windowWidth * 0.01;
     strikeCatchThreshold = windowWidth * 0.01;
+    xPower = windowWidth / 200;
+    yPower = windowHeight / 200;
 
     canvas.getContext('2d', { willReadFrequently: true });
 
@@ -70,9 +97,9 @@ function setup() {
     let transformedPitcher = sideToTopDown(pitcher.x, pitcher.y);
     topDownCamera = {
         worldAnchor: { x: transformedPitcher.x, y: transformedPitcher.y },
-        screenAnchor: { x: width * 0.5, y: height * 0.73 },
-        scaleX: .275,
-        scaleY: .85
+        screenAnchor: { x: width * 0.5, y: height * .75 },
+        scaleX: .4,
+        scaleY: 1
     };
 
     ball = {
@@ -120,12 +147,16 @@ function setup() {
         fielder.state = "idle";
     });
 
-    settingButton = new Button("Settings", width - 80, 40, 120, 40, null, null, () => settingsClick());
-    returnButton = new Button("Menu", width - 80, 90, 120, 40, null, null, () => returnToMenu());
-    tempSwapPerspective = new Button("Perspective", width - 80, 140, 120, 40, null, null, () => togglePerspective());
-    audioButton = new Button("Audio", width - 80, 190, 120, 40, null, null, () => audioClick());
+    settingButton = new Button("Settings", width - 80, 40, 125, 40, null, null, () => settingsClick());
+    returnButton = new Button("Menu", width - 80, 90, 125, 40, null, null, () => returnToMenu());
+    tempSwapPerspective = new Button("Perspective", width - 80, 140, 125, 40, null, null, () => togglePerspective());
+    audioButton = new Button("Audio", width - 80, 190, 125, 40, null, null, () => audioClick());
     loseDemo = new Button("Lose Demo", width - 80, 740, 120, 40, null, null, () => loseClick());
     winDemo = new Button("Win Demo", width - 80, 790, 120, 40, null, null, () => winClick());
+
+    Difficulty1 = new Button("make Normal", width - 80, 240, 125, 40, null, null, () => changeDifficulty(1));
+    Difficulty2 = new Button("make Hard", width - 80, 290, 125, 40, null, null, () => changeDifficulty(2));
+    Difficulty3 = new Button("make Impossible", width - 80, 340, 125, 40, null, null, () => changeDifficulty(3));
     createModal();
     createAudioMenu();
     createWinPopup();
@@ -158,7 +189,7 @@ function draw() {
             strokeWeight(2);
             noFill();
             rectMode(CENTER);
-            rect(batter.x, batter.y - 15, 30, 20);
+            rect(batter.x, batter.y - hitZoneHeight / 2, hitZoneWidth, hitZoneHeight);
         }
     }
     
@@ -166,6 +197,11 @@ function draw() {
 
     // pitch skill-ckeck
     if (pitchSkillCheckActive) {
+        drawPitcherSkillCheckBar(dt);
+    }
+
+    if(hitPowerSlider || hitDirectionSlider) {
+        updateHitSkillBar(dt);
         drawSkillCheckBar(dt);
     }
 
@@ -177,25 +213,18 @@ function draw() {
     tempSwapPerspective.display();
      if (DEBUG === true){
         audioButton.display();
+        Difficulty1.display();
+        Difficulty2.display();
+        Difficulty3.display();
         loseDemo.display();
         winDemo.display();
          }
     pop();
 
     push();
-    if (showOutPopup) {
-        drawOutPopup();
-    }
-    pop();
-    if (DEBUG) {
-        push();
-        stroke(255, 0, 0);  // red, for visibility
-        strokeWeight(2);
-        line(10, height * 0.4, width, height * 0.4);
-        pop();
-    }
     drawPopup();
-
+    pop();
+    
     // Game logic
     while (accumulator >= fixedDt) {
         if (pitchAnimation) {
@@ -219,25 +248,53 @@ function draw() {
         }
 
         if (ballMoving && !ball.throwing) {
-            if (ballHit) {
+            if (ballHit && ball.homeRun) {
+                let unsafeRunners = runners.filter(runner => runner.running);
+                if (unsafeRunners.length === 0) resetBatter();
+            } 
+            else if(ballHit && !ball.homeRun) {
+                // calculate normalizedPower value based on power used to hit the ball 
+                let normalizedPower = constrain(abs(ball.initialSpeedY) / MAX_POWER, 0, 1);
+                let maxDistance = windowWidth * 0.6;
+                let t_flight = maxDistance / abs(ball.speedX);
+
+                let t = (ball.speedX * t_flight) / maxDistance;
+                let targetY = lerp(windowHeight * 0.42, windowHeight * 0.3, constrain(t, 0, 1))
+                if (t > 1) {
+                    targetY = windowHeight * 0.3 - (t - 1) * (windowHeight * 0.1); 
+                }
+
+                // based on normalizedPower determine target area
+                let minTargetY = lerp(windowHeight * 0.2, windowHeight * 0.05, normalizedPower);
+                let maxTargetY = lerp(windowHeight * 0.3, windowHeight * 0.15, normalizedPower);
+                targetY = constrain(targetY, minTargetY, maxTargetY);
+                
+                // required gravity value to allow for ball to land normally
+                let requiredG = (2 * (targetY - ball.y - ball.initialSpeedY * t_flight)) / (t_flight * t_flight);
+                requiredG = constrain(requiredG, windowHeight * 1.0, windowHeight * 1.8); 
+
+                // When the ball is hit too hard straight, but not enough for home run
+                let gravityScale = 1.6;
+                let xCheck = -3.67 < powerXSaveVal < 3.67;
+                let powerYCheckVal = abs(ball.initialSpeedY) / MAX_POWER;
+                if (xCheck && powerYCheckVal > .93) gravityScale = 1.65;
+                requiredG *= gravityScale;
+
                 ball.x += ball.speedX * fixedDt;
                 ball.y += ball.speedY * fixedDt;
-
-                let gravity = windowHeight * 1.2;
+                // Home Run height reached
+                if (!ball.foul && ball.y < 0 && homeRunHit) {
+                    ball.homeRun = true;
+                    showHomerunPopup = true;
+                    popupMessage = "HOME RUN!"
+                    popupTimer = millis();
+                }
+                // apply gravity when ball is going up
                 if (ball.speedY < 0) {
-                    ball.speedY += gravity * fixedDt;
-                } else {
-                    let timeOfFlight = (2 * abs(ball.initialSpeedY)) / gravity;
-                    let maxDistance = windowWidth * 0.6;
-                    let horizontalDistance = horizontalTravel = ball.speedX * timeOfFlight;
-                    let t = horizontalDistance / maxDistance;
-
-                    let targetY = lerp(windowHeight * 0.42, windowHeight * 0.3, constrain(t, 0, 1)); 
-                    if (t > 1) {
-                        targetY = windowHeight * 0.3 - (t - 1) * (windowHeight * 0.1); 
-                    }
-                    targetY = constrain(targetY, windowHeight * 0.1, windowHeight * 0.25);
-
+                    ball.speedY += requiredG * fixedDt;
+                } 
+                else { // ball going down
+                    // ball has not reached target, keep applying gravity
                     if (ball.y < targetY) {
                         ball.speedY += gravity * fixedDt;
                     } else {
@@ -248,6 +305,11 @@ function draw() {
                             ball.inAir = false;
                         }
                     }
+                }
+                if (ball.foul && millis() - ball.foulSince > 1500) {
+                    ball.foul = false;
+                    resetBall();
+                    return;
                 }
 
                 ball.speedX *= 0.98;
@@ -261,10 +323,11 @@ function draw() {
                     ball.speedX = 0;
                     ball.speedY = 0;
                 }
-
-                moveFieldersTowardsBall(fixedDt);
+                if(!ball.foul) moveFieldersTowardsBall(fixedDt);
             }
-            checkFielderCatch();
+            if (!homeRunHit && !ball.foul) {
+                checkFielderCatch();
+            }
         }
 
         if (ball.throwing) {
@@ -272,60 +335,62 @@ function draw() {
             ball.y += ball.speedY * fixedDt;
            
             let targetFielder = ball.targetFielder;
-            let advancingRunner = ball.advancingRunner;
-            let targetRunner = getNearestUnsafedRunner(targetFielder);
-            let chosenRunner = targetRunner || advancingRunner;
+            // let advancingRunner = ball.advancingRunner;
+            // let targetRunner = getNearestUnsafeRunner(targetFielder);
+            // // let chosenRunner = targetRunner || advancingRunner;
+            // let chosenRunner = targetRunner;
 
-            if (!advancingRunner) {
-                advancingRunner = targetRunner;
-            }
-            if (!chosenRunner) {
-                console.error("No valid runner found! Stopping play.");
-                ball.throwing = false;
-                resetBatter();
-                return;
-            }
+            // if (!advancingRunner) {
+            //     advancingRunner = targetRunner;
+            // }
+            // if (!chosenRunner) {
+            //     console.error("No valid runner found! Stopping play.");
+            //     ball.throwing = false;
+            //     resetBatter();
+            //     return;
+            // }
 
-            if (targetFielder && dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < catchDistance) {
-                if (DEBUG) console.log(`Fielder targeting base ${chosenRunner.base + 1} catches the ball`);
-                ball.throwing = false;
+            // Fielder caught ball in attempt to out a runner
+            if (targetFielder && dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < targetFielder.catchRadius) {
+                //if (DEBUG) console.log(`Fielder for holding/running runner of base ${chosenRunner.base}, catches the ball`);
+                // ball.throwing = false;
 
+                // if (targetFielder.isInfielder) {
+                //     let runnerAtFielderBase = runners.find(runner => runner.base === chosenRunner.base);
+                //     let baseVal = chosenRunner.base;
 
-                if (targetFielder.isInfielder) {
-                    let runnerAtFielderBase = runners.find(runner => runner.base === chosenRunner.base);
-                    let baseVal = chosenRunner.base;
+                //     let backtrackFielder = getFielderForBase(baseVal);
 
-                    let backtrackFielder = getFielderForBase(baseVal);
+                //     if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
+                //         if (runnerAtFielderBase.backtracking && backtrackFielder === targetFielder) {
+                //             outs++;
+                //             ball.throwing = false;
+                //             ball.caught = true;
+                //             resetBatter();
+                //             if (DEBUG) console.log("outs to", outs);
+                //             runners = runners.filter(r => r !== runnerAtFielderBase);
+                //             if (outs >= 3) {
+                //                 nextInning();
+                //                 return;
+                //             }
+                //             return;
+                //         }
+                //     }
+                // }
 
-                    if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
-                        if (runnerAtFielderBase.backtracking && backtrackFielder === targetFielder) {
-                            outs++;
-                            ball.throwing = false;
-                            ball.caught = true;
-                            resetBatter();
-                            if (DEBUG) console.log("outs to", outs);
-                            runners = runners.filter(r => r !== runnerAtFielderBase);
-                            if (outs >= 3) {
-                                nextInning();
-                                return;
-                            }
-                            return;
-                        }
-                    }
-                }
+                // if (outs >= 3) {
+                //     nextInning();
+                //     return;
+                // }
+                handleCatch(targetFielder);
 
-                if (outs >= 3) {
-                    nextInning();
-                    return;
-                }
-
-                let targetRunner = getNearestUnsafedRunner(targetFielder);
-                if (targetRunner) {
-                    if (DEBUG) console.log(`Throwing to next unsafe runner to base ${targetRunner.base + 1}`);
-                    handleGroundThrow(targetFielder);
-                } else {
-                    resetBatter();
-                }
+                // let targetRunner = getNearestUnsafeRunner(targetFielder);
+                // if (targetRunner) {
+                //     if (DEBUG) console.log(`Throwing to next unsafe runner to base ${targetRunner.base + 1}`);
+                //     handleGroundThrow(targetFielder);
+                // } else {
+                //     resetBatter();
+                // }
             }
         }
         moveRunners(fixedDt);
@@ -337,7 +402,7 @@ function draw() {
 function resetBall() {
     ball = {
         x: pitcher.x,
-        y: pitcher.y,
+        y: pitcher.y - height*.05,
         speedY: 430,
         speedX: 0,
         throwing: false,
@@ -345,7 +410,10 @@ function resetBall() {
         advancingRunner: null,
         strikePitch: false,
         initialSpeedY: 0,
-        crossedGround: false
+        crossedGround: false,
+        homeRun: false,
+        foul: false,
+        foulSince: null
     };
     ballMoving = false;
     ballHit = false;
@@ -353,6 +421,9 @@ function resetBall() {
     runners.forEach(runner => {
         runner.safe = false;
     });
+    hitSkillCheckComplete = false; 
+    hitDirectionSlider = false; 
+    hitPowerSlider = false;
 }
 
 // Scales side view entities to top down visual
@@ -360,7 +431,7 @@ function sideToTopDown(worldX, worldY) {
     let centerX = width / 2;
     let dx = worldX - centerX;
     //  vertical shift
-    let perspectiveFactor = 0.16;
+    let perspectiveFactor = 0.08;
     
     let newY = worldY + Math.abs(dx) * perspectiveFactor;
     return { x: worldX, y: newY };
@@ -380,7 +451,7 @@ function perspectiveToTopDownBall(worldX, worldY, offsetUpY = 0, anchor = pitche
     let anchorTopDown = sideToTopDown(anchor.x, anchor.y);
     
     let ballTopDownSlowFactor = 1;
-    if (useSlowFactor) { ballTopDownSlowFactor = 0.66; }
+    if (useSlowFactor) { ballTopDownSlowFactor = 0.7; }
     adjusted.y = anchorTopDown.y + (adjusted.y - anchorTopDown.y) * ballTopDownSlowFactor;
 
     return {
@@ -430,7 +501,7 @@ function drawTopDownField() {
 function drawTopDownPlayers() {
     let verticalOffset = height * 0.14;
     let ballOffset = !ballHit ? 0 : verticalOffset;
-    let pitcherOffsetY = 40;
+    let pitcherOffsetY = -0.075 * height;
     let pitcherPos = perspectiveToTopDown(pitcher.x, pitcher.y);
     pitcherPos.y += pitcherOffsetY;
     fill('red');
@@ -448,7 +519,7 @@ function drawTopDownPlayers() {
         fill('white');
         ellipse(ballPos.x, ballPos.y, 10, 10);
     } else {
-        if (!ballHit) ballOffset -= pitcherOffsetY;
+        if (!ballHit) ballOffset -= pitcherOffsetY + .04 * height;
         let useSlowFactor = !ballHit;
         let ballPos = perspectiveToTopDownBall(ball.x, ball.y, ballOffset, pitcher, useSlowFactor);
         fill('white');
@@ -501,7 +572,7 @@ function drawField() {
 
 // Scale the size based on y value of the canvas (players)
 function getScaleFactor(y) {
-    return map(y, height * 0.4, height * 0.9, 0.75, 1.5);
+    return map(y, height * 0.4, height * 0.9, .9, 2);
 }
 // Scale the size based on y value of the canvas (Ball)
 function getBallScaleFactor(y) {
@@ -514,7 +585,11 @@ function drawScaledPlayer(entity, img, yOverride = null) {
     let scaleFactor = getScaleFactor(yPos);
     let scaledWidth = PLAYER_WIDTH * scaleFactor;
     let scaledHeight = PLAYER_HEIGHT * scaleFactor;
-    image(img, entity.x - scaledWidth / 2, yPos + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
+    if (entity !== batter) {
+        image(img, entity.x - scaledWidth / 2, yPos + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
+        return;
+    }
+    image(img, entity.x - scaledWidth / 2 - width * .05, yPos + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
 }
 
 // Draw function for side view player entities
@@ -534,11 +609,13 @@ function drawPlayers() {
     drawScaledPlayer(pitcher, fielderIdleGif);
 
     if (batter) {
-        drawScaledPlayer(batter, batterGif);
+        if (swingAttempt) drawScaledPlayer(batter, batterSwung);
+        else drawScaledPlayer(batter, batterIdle);
     }
 
-    drawScaledPlayer(catcherPlayer, catcherImg);
+    drawScaledPlayer(catcherPlayer, catcherImg, catcherPlayer.y + height * .025);
 
+    if (ball.homeRun) return;
     let ballScale = getBallScaleFactor(ball.y);
     let ballWidth = ballImg.width * ballScale;
     let ballHeight = ballImg.height * ballScale;
@@ -638,7 +715,7 @@ function handleStrikeCall() {
 
 // Logic handling in-play event popups
 function drawPopup() {
-    if (showStrikePopup || showHomerunPopup) {
+    if (showStrikePopup || showHomerunPopup || showOutPopup || showRunPopup || showFoulPopup) {
         inputEnabled = false;
 
         push();
@@ -652,7 +729,10 @@ function drawPopup() {
         if (millis() - popupTimer > 1500) {
             inputEnabled = true;
             showStrikePopup = false;
+            showRunPopup = false;
             showHomerunPopup = false;
+            showOutPopup = false;
+            showFoulPopup = false;
         }
     }
 }
@@ -666,9 +746,11 @@ function drawPopup() {
 //     if (!topInning) inning++;
 //     topInning = !topInning;
 
-//     showOutPopup = true;
-//     resetBatter();
-//     runners = [];
+    showOutPopup = true;
+    popupMessage = "3 Outs!\nSwitching Sides"
+    popupTimer = millis();
+    resetBatter();
+    runners = [];
 
 //     setTimeout(() => {
 //         showOutPopup = false;
@@ -680,18 +762,41 @@ function drawPopup() {
 function keyPressed() {
     // Start pitch/skill-check input/swing bat
     if (key === ' ') {
-        // Start pitch
-        if(!topInning) { // user pitches
-            userPitch(); 
+        if(topInning) {
+            if(!hitPowerSlider && !hitDirectionSlider && !hitSkillCheckComplete) {
+                startHitSkillCheck();
+            }
+            else if (hitPowerSlider) {
+                powerMultiplier = evaluatePowerMultiplier();
+                powerSliderFinalX = hitSliderX;
+                hitPowerSlider = false;
+                
+                setTimeout(() => { 
+                    if (powerZoneLevel === "high") directionSliderSpeed = 700;
+                    else if (powerZoneLevel === "medium") directionSliderSpeed = 500;
+                    else directionSliderSpeed = 300;
+                    if(DEBUG) directionSliderSpeed = 100; // for demo and debugging
+
+                    startDirectionSlider();
+                }, 300);
+
+                return;
+            } 
+            else if (hitDirectionSlider) {
+                directionValue = evaluateDirectionValue();
+                directionSliderFinalX = hitSliderX;
+                hitDirectionSlider = false;
+                finishHitSkillCheck(); // pitch is triggered
+            }
         }
-        else { // bot is pitching
-            if(!ballMoving && inputEnabled) {
-                botPitch();
-            }
-            // user batting logic
-            if (ballMoving && !ballHit && !swingAttempt && inputEnabled) {
-                userBatting();
-            }
+
+        if (hitSkillCheckComplete && ballMoving && !ballHit && !swingAttempt && inputEnabled) {
+            userBatting();
+        }
+
+        // If user is pitching
+        if (!topInning && inputEnabled) {
+            userPitch();
         }
     }
 }
@@ -717,32 +822,28 @@ function resetBatter() {
         lineup[currentBatter % lineup.length] = batter;
         currentBatter++;
     }
-    strikes = 0;
-    console.log(ball.initialSpeedY);
+    if(!ball.foul) {
+        strikes = 0;
+    } 
+    homeRunHit = false;
+    //if (DEBUG) console.log(ball.initialSpeedY);
     resetBall();
     resetFieldersPosition();
-}
-// Pop up for 3 outs
-function drawOutPopup() {
-    fill(0);
-    textAlign(CENTER, CENTER);
-    textSize(64);
-    text("3 Outs!\nSwitching Sides", width / 2, height * 0.2);
 }
 
 function assignEnitities() {
     bases = [
         { x: width * 0.5,   y: height * 0.88 },  // Home plate
-        { x: width * 0.86,  y: height * 0.52 },  // 1st base
+        { x: width * 0.83,  y: height * 0.58 },  // 1st base
         { x: width * 0.5,   y: height * 0.4 },   // 2nd base
-        { x: width * 0.14,  y: height * 0.52 }   // 3rd base
+        { x: width * 0.17,  y: height * 0.58 }   // 3rd base
     ];
 
-    pitcher = { x: width * 0.5, y: height * 0.50, armAngle: 0 };
+    pitcher = { x: width * 0.5, y: height * 0.575, armAngle: 0 };
 
     ball = {
         x: pitcher.x,
-        y: pitcher.y,
+        y: pitcher.y - height*.05,
         speedY: 430,
         speedX: 0,
         throwing: false,
@@ -750,7 +851,8 @@ function assignEnitities() {
         advancingRunner: null,
         strikePitch: false,
         initialSpeedY: 0,
-        crossedGround: false
+        crossedGround: false,
+        homeRun: false
     };
 
     batter = {
@@ -818,6 +920,25 @@ function mousePressed() {
             if (DEBUG) {
                 buttonClick();
                 setTimeout(() => audioButton.action(), 200);
+            }
+        }
+        // temp
+        if (Difficulty1.isHovered()) {
+            if (DEBUG) {
+                buttonClick();
+                setTimeout(() => Difficulty1.action(), 200);
+            }
+        }
+        if (Difficulty2.isHovered()) {
+            if (DEBUG) {
+                buttonClick();
+                setTimeout(() => Difficulty2.action(), 200);
+            }
+        }
+        if (Difficulty3.isHovered()) {
+            if (DEBUG) {
+                buttonClick();
+                setTimeout(() => Difficulty3.action(), 200);
             }
         }
         if (loseDemo.isHovered()) {

@@ -1,4 +1,6 @@
 let lastNearestRunner;
+let lastClosestFielder;
+
 function generateFielders() {
     let newFielders = [];
     
@@ -13,7 +15,7 @@ function generateFielders() {
     
     // Second Baseman
     newFielders.push({ 
-        x: bases[2].x * 1.025, 
+        x: bases[2].x * 1.05, 
         y: bases[2].y * .975, 
         isInfielder: true,  
         position: "second"
@@ -21,7 +23,7 @@ function generateFielders() {
 
     // Third Baseman
     newFielders.push({ 
-        x: bases[3].x * 1.2,
+        x: bases[3].x * 1.15,
         y: bases[3].y * .95, 
         isInfielder: true,  
         position: "third"
@@ -29,8 +31,8 @@ function generateFielders() {
     
     // Shortstop
     newFielders.push({ 
-        x: (bases[2].x + bases[3].x) / 2 * 1.2, 
-        y: (bases[2].y + bases[3].y) / 2 * .9,
+        x: (bases[2].x + bases[3].x) / 2 * 1.15, 
+        y: (bases[2].y + bases[3].y) / 2 * .85,
         isInfielder: false,  
         position: "short"
     });
@@ -39,7 +41,7 @@ function generateFielders() {
     // Left Field
     newFielders.push({
         x: width * 0.15,
-        y: height * 0.3,
+        y: height * 0.35,
         isInfielder: false,
         position: "left field"
     });
@@ -47,7 +49,7 @@ function generateFielders() {
     // Center Field
     newFielders.push({
         x: width * 0.5,
-        y: height * 0.27,
+        y: height * 0.25,
         isInfielder: false,
         position: "center field"
     });
@@ -55,16 +57,42 @@ function generateFielders() {
     // Right Field
     newFielders.push({
         x: width * 0.85,
-        y: height * 0.3,
+        y: height * 0.35,
         isInfielder: false,
         position: "right field"
+    });
+
+    newFielders.forEach(fielder => {
+        let scale = getScaleFactor(fielder.y);
+        fielder.catchRadius = catchDistance * scale;
     });
     
     return newFielders;
 }
-
+// Scale speed based on y-value 
+function getFielderSpeedScale(y) {
+    return map(y, height * 0.4, height * 0.9, 0.75, 1.5);
+}
 // Logic for moving fielders
 function moveFieldersTowardsBall(dt) {
+    if (ball.homeRun) {
+        fielders.forEach(fielder => {
+            if (fielder === lastClosestFielder) {
+                fielder.state = "idle";
+            }
+        });
+        return;
+    }
+
+    if (ball.foul) {
+        fielders.forEach(fielder => {
+            if (fielder === lastClosestFielder) {
+                fielder.state = "idle";
+            }
+        });
+        return;
+    }
+    
     let closestFielder = null;
     let minDistance = Infinity;
 
@@ -74,6 +102,7 @@ function moveFieldersTowardsBall(dt) {
         if (d < minDistance) {
             minDistance = d;
             closestFielder = fielder;
+            lastClosestFielder = closestFielder;
         }
     }
     // Move that closest fielder to the ball
@@ -98,7 +127,7 @@ function moveFieldersTowardsBall(dt) {
     fielders.forEach(fielder => {
         if (fielder !== closestFielder) {
             let d = dist(fielder.x, fielder.y, ball.x, ball.y);
-            if (d > catchingRadius) {
+            if (d > catchDistance) {
                 fielder.state = "idle";
             }
         }
@@ -112,6 +141,7 @@ function handleGroundThrow(catcher) {
     // Check for any remaining unsafe runners
     let unsafeRunners = runners.filter(runner => !runner.safe);
     // Throw if any unsafe runners
+    console.log("Unsafe runners length", unsafeRunners.length);
     if (unsafeRunners.length > 0) {
         throwToNextRunner(catcher);
         return;
@@ -166,6 +196,7 @@ function handleThrow(catcher) {
 // Determine which fielder to throw to 
 function throwToNextRunner(currentFielder) {
     let nextRunner = getNearestUnsafeRunner(currentFielder);
+    if (DEBUG) console.log("next runner's base from throwToNextRunner: ", nextRunner.base);
     if (!nextRunner) {
         if (DEBUG) console.log("No more unsafe runners left.");
         resetBatter();
@@ -179,13 +210,27 @@ function throwToNextRunner(currentFielder) {
     let targetBase = bases[targetBaseIndex];
     let targetFielder = getFielderForBase(targetBaseIndex);
     // When infielder of target runner's target base has the ball - out
-    if (!nextRunner.safe && targetFielder === currentFielder && !nextRunner.backtracking) {
-        outs++;
-        if (DEBUG) console.log("outs is now", outs);
-        runners = runners.filter(r => r !== nextRunner);
-        if (outs >= 3) {
-            nextInning();
-            return;
+    if (!nextRunner.safe && targetFielder === currentFielder) {
+        if (nextRunner.backtracking) {
+            nextRunner.safe = true;
+            nextRunner = getNearestUnsafeRunner(currentFielder);
+            if (!nextRunner) {
+                if (DEBUG) console.log("No more unsafe runners left.");
+                resetBatter();
+                return;
+            }
+            tBase = nextRunner.base;
+            targetBaseIndex = nextRunner.backtracking ? tBase : (tBase + 1) % bases.length;
+            targetBase = bases[targetBaseIndex];
+            targetFielder = getFielderForBase(targetBaseIndex);
+        } else {
+            outs++;
+            if (DEBUG) console.log("outs is now", outs);
+            runners = runners.filter(r => r !== nextRunner);
+            if (outs >= 3) {
+                nextInning();
+                return;
+            }
         }
         handleGroundThrow(targetFielder);
         return;
@@ -213,8 +258,55 @@ function throwToNextRunner(currentFielder) {
     currentFielder.state = "throwing";
 }
 
+function handleCatch(currentFielder) {
+    //if (DEBUG) console.log("currentFielder.x 1: ", currentFielder.x)
+    ball.throwing = false;
+    let baseVal;
+    let targetRunner = getNearestUnsafeRunner(currentFielder);
+    if (targetRunner === null) {
+        if (DEBUG) console.log("no unsafe runners");
+        handleGroundThrow(currentFielder);
+        return;
+    }
+    if (currentFielder.isInfielder) {
+        let runnerAtFielderBase = runners.find(runner => runner.base === targetRunner.base);
+        baseVal = targetRunner.base;
+        let backtrackFielder = getFielderForBase(baseVal);
+        if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
+            if (runnerAtFielderBase.backtracking && backtrackFielder === currentFielder) {
+                outs++;
+                ball.throwing = false;
+                ball.caught = true;
+                resetBatter();
+                if (DEBUG) console.log("outs to", outs);
+                runners = runners.filter(r => r !== runnerAtFielderBase);
+                if (outs >= 3) {
+                    nextInning();
+                    return;
+                }
+                return;
+            }
+        }
+    }
+    if (outs >= 3) {
+        nextInning();
+        return;
+    }
+    // targetRunner = getNearestUnsafeRunner(targetFielder);
+    baseVal = (targetRunner.base + 1) % 4;
+    let targetFielder = getFielderForBase(baseVal);
+    ball.targetFielder = targetFielder;
+    if (targetRunner) {
+        if (DEBUG) console.log(`Throwing to next unsafe runner to base ${targetRunner.base + 1}`);
+        handleGroundThrow(currentFielder);
+    } else {
+        resetBatter();
+    }
+}
+
 // Find closest unsafe runner to current holder of the ball
 function getNearestUnsafeRunner(catcher) {
+    //if (DEBUG) console.log("catcher.x 1: ", catcher.x)
     let targetRunner = null;
     let minDistance = Infinity;
     for (let runner of runners) {
@@ -222,7 +314,10 @@ function getNearestUnsafeRunner(catcher) {
             continue;
         }
 
-        let targetBaseIndex = (runner.base + 1) % bases.length;
+        let targetBaseIndex;
+        if (!runner.backtracking) targetBaseIndex = (runner.base + 1) % bases.length;
+        else targetBaseIndex = runner.base;
+        
         let targetBase = bases[targetBaseIndex];
         let d = dist(catcher.x, catcher.y, targetBase.x, targetBase.y);
         if (d < minDistance) {
@@ -231,7 +326,6 @@ function getNearestUnsafeRunner(catcher) {
             targetRunner = runner;
         }
     }
-    if (targetRunner === null) targetRunner = lastNearestRunner;
     return targetRunner;
 }
 
@@ -283,6 +377,7 @@ function resetInfielders() {
 }
 
 function checkFielderCatch() {
+    if (ball.homeRun) return;
     if (ballCaughtThisFrame) return;
     if (ball.caught) return;
 
@@ -312,7 +407,7 @@ function checkFielderCatch() {
     // Any fielder catches the ball
     for (let fielder of fielders) {
         if ((fielder.state === "idle" || fielder.state === "running") &&
-            dist(ball.x, ball.y, fielder.x, fielder.y) < catchDistance) {
+                dist(ball.x, ball.y, fielder.x, fielder.y) < fielder.catchRadius) {
             // Fielder catches the ball:
             fielder.state = "hasBall";
             resetInfielders();
