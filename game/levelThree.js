@@ -20,7 +20,7 @@ function preload() {
     audio5 = loadSound('sounds/audio5.mp3');
 }
 
-//something needs done with audio so the same audio will play across files
+//something needs done with audio so the same audio will play across files.
 
 
 
