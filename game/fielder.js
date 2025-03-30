@@ -200,21 +200,31 @@ function throwToNextRunner(currentFielder) {
     let targetBase = bases[targetBaseIndex];
     let targetFielder = getFielderForBase(targetBaseIndex);
     // When infielder of target runner's target base has the ball - out
-    if (!nextRunner.safe && targetFielder === currentFielder && !nextRunner.backtracking) {
-        outs++;
-        if (DEBUG) console.log("outs is now", outs);
-        runners = runners.filter(r => r !== nextRunner);
-        if (outs >= 3) {
-            nextInning();
-            return;
+    if (!nextRunner.safe && targetFielder === currentFielder) {
+        if (nextRunner.backtracking) {
+            nextRunner.safe = true;
+            nextRunner = getNearestUnsafeRunner(currentFielder);
+            if (!nextRunner) {
+                if (DEBUG) console.log("No more unsafe runners left.");
+                resetBatter();
+                return;
+            }
+            tBase = nextRunner.base;
+            targetBaseIndex = nextRunner.backtracking ? tBase : (tBase + 1) % bases.length;
+            targetBase = bases[targetBaseIndex];
+            targetFielder = getFielderForBase(targetBaseIndex);
+        } else {
+            outs++;
+            if (DEBUG) console.log("outs is now", outs);
+            runners = runners.filter(r => r !== nextRunner);
+            if (outs >= 3) {
+                nextInning();
+                return;
+            }
         }
         handleGroundThrow(targetFielder);
         return;
     }
-    //
-    
-
-    //
     if (!targetFielder) {
         if (DEBUG) console.log("targetfielder returned null");
         targetFielder = getClosestFielderToBase(nextRunner);
