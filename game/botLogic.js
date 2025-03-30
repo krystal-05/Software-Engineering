@@ -63,9 +63,12 @@ function botHitBall() {
 
     batter.running = true;
     runners.forEach(runner => runner.running = true);
-    runners.push(batter);
-    ball.advancingRunner = batter;
-    batter = null;
+    setTimeout(() => {
+        batter.x = batter.x - width * .05;
+        runners.push(batter);
+        ball.advancingRunner = batter;
+        batter = null;
+    }, 75);
 }
 
 

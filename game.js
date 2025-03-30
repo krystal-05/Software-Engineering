@@ -40,12 +40,13 @@ let audioSelectionMenu = false;
 let audioButton;
 
 // Difficulty
-let generalDifficultyScale = 2;
+let generalDifficultyScale = 1;
 
 function preload() {
     bgSideImage = loadImage('assets/newFieldSide.png');
     bgTopImage = loadImage('assets/flat_field1.png');
-    batterGif = loadImage('assets/temp_assets/BATTER.gif');
+    batterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
+    batterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
     fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
     runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
     fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
@@ -66,8 +67,8 @@ function preload() {
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
-    hitZoneWidth = windowWidth * 0.05;
-    hitZoneHeight = windowHeight * 0.04;
+    hitZoneWidth = windowWidth * 0.03;
+    hitZoneHeight = hitZoneWidth;
     catchDistance = windowWidth * 0.015;
     groundDistance = windowWidth * 0.005;
     runnerProximity = windowWidth * 0.01;
@@ -137,7 +138,7 @@ function draw() {
             strokeWeight(2);
             noFill();
             rectMode(CENTER);
-            rect(batter.x, batter.y - 15, 30, 20);
+            rect(batter.x, batter.y - hitZoneHeight / 2, hitZoneWidth, hitZoneHeight);
         }
     }
     
@@ -222,7 +223,7 @@ function draw() {
                 ball.x += ball.speedX * fixedDt;
                 ball.y += ball.speedY * fixedDt;
                 // Home Run height reached
-                if (ball.y < 0) {
+                if (ball.y < 0 && homeRunHit) {
                     ball.homeRun = true;
                     showHomerunPopup = true;
                     popupMessage = "HOME RUN!"
@@ -501,7 +502,7 @@ function drawField() {
 
 // Scale the size based on y value of the canvas (players)
 function getScaleFactor(y) {
-    return map(y, height * 0.4, height * 0.9, 0.75, 1.5);
+    return map(y, height * 0.4, height * 0.9, .9, 2);
 }
 // Scale the size based on y value of the canvas (Ball)
 function getBallScaleFactor(y) {
@@ -514,7 +515,11 @@ function drawScaledPlayer(entity, img, yOverride = null) {
     let scaleFactor = getScaleFactor(yPos);
     let scaledWidth = PLAYER_WIDTH * scaleFactor;
     let scaledHeight = PLAYER_HEIGHT * scaleFactor;
-    image(img, entity.x - scaledWidth / 2, yPos + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
+    if (entity !== batter) {
+        image(img, entity.x - scaledWidth / 2, yPos + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
+        return;
+    }
+    image(img, entity.x - scaledWidth / 2 - width * .05, yPos + SPRITE_Y_OFFSET - scaledHeight, scaledWidth, scaledHeight);
 }
 
 // Draw function for side view player entities
@@ -534,16 +539,17 @@ function drawPlayers() {
     drawScaledPlayer(pitcher, fielderIdleGif);
 
     if (batter) {
-        drawScaledPlayer(batter, batterGif);
+        if (swingAttempt) drawScaledPlayer(batter, batterSwung);
+        else drawScaledPlayer(batter, batterIdle);
     }
 
-    drawScaledPlayer(catcherPlayer, catcherImg);
+    drawScaledPlayer(catcherPlayer, catcherImg, catcherPlayer.y + height * .025);
 
     if (ball.homeRun) return;
     let ballScale = getBallScaleFactor(ball.y);
     let ballWidth = ballImg.width * ballScale;
     let ballHeight = ballImg.height * ballScale;
-    image(ballImg, ball.x - ballWidth / 2, ball.y - ballHeight / 2, ballWidth, ballHeight);
+    image(ballImg, ball.x - ballWidth / 2, ball.y - ballHeight / 2- height * .04, ballWidth, ballHeight);
 }
 
 function drawScoreboard() {
