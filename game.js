@@ -40,7 +40,7 @@ let audioSelectionMenu = false;
 let audioButton;
 
 // Difficulty
-let generalDifficultyScale = 1;
+let generalDifficultyScale = 2;
 
 function preload() {
     bgSideImage = loadImage('assets/newFieldSide.png');
@@ -101,10 +101,14 @@ function setup() {
         fielder.state = "idle";
     });
 
-    settingButton = new Button("Settings", width - 80, 40, 120, 40, null, null, () => settingsClick());
-    returnButton = new Button("Menu", width - 80, 90, 120, 40, null, null, () => returnToMenu());
-    tempSwapPerspective = new Button("Perspective", width - 80, 140, 120, 40, null, null, () => togglePerspective());
-    audioButton = new Button("Audio", width - 80, 190, 120, 40, null, null, () => audioClick());
+    settingButton = new Button("Settings", width - 80, 40, 125, 40, null, null, () => settingsClick());
+    returnButton = new Button("Menu", width - 80, 90, 125, 40, null, null, () => returnToMenu());
+    tempSwapPerspective = new Button("Perspective", width - 80, 140, 125, 40, null, null, () => togglePerspective());
+    audioButton = new Button("Audio", width - 80, 190, 125, 40, null, null, () => audioClick());
+
+    Difficulty1 = new Button("make Normal", width - 80, 240, 125, 40, null, null, () => changeDifficulty(1));
+    Difficulty2 = new Button("make Hard", width - 80, 290, 125, 40, null, null, () => changeDifficulty(2));
+    Difficulty3 = new Button("make Impossible", width - 80, 340, 125, 40, null, null, () => changeDifficulty(3));
     createModal();
     createAudioMenu();
     inputEnabled = true;
@@ -152,6 +156,9 @@ function draw() {
     tempSwapPerspective.display();
     if (DEBUG){
         audioButton.display();
+        Difficulty1.display();
+        Difficulty2.display();
+        Difficulty3.display();
     }
     pop();
 
@@ -159,8 +166,6 @@ function draw() {
     drawPopup();
     pop();
     
-    
-
     // Game logic
     while (accumulator >= fixedDt) {
         // pitch animation
@@ -813,6 +818,25 @@ function mousePressed() {
             if (DEBUG) {
                 buttonClick();
                 setTimeout(() => audioButton.action(), 200);
+            }
+        }
+        // temp
+        if (Difficulty1.isHovered()) {
+            if (DEBUG) {
+                buttonClick();
+                setTimeout(() => Difficulty1.action(), 200);
+            }
+        }
+        if (Difficulty2.isHovered()) {
+            if (DEBUG) {
+                buttonClick();
+                setTimeout(() => Difficulty2.action(), 200);
+            }
+        }
+        if (Difficulty3.isHovered()) {
+            if (DEBUG) {
+                buttonClick();
+                setTimeout(() => Difficulty3.action(), 200);
             }
         }
     }

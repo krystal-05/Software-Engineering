@@ -49,7 +49,7 @@ function generateFielders() {
     // Center Field
     newFielders.push({
         x: width * 0.5,
-        y: height * 0.27,
+        y: height * 0.25,
         isInfielder: false,
         position: "center field"
     });
