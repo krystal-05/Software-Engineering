@@ -10,7 +10,8 @@ const perfectZoneWidth = 10;
 const goodZoneWidth = 40;
 
 function preload() {
-    ballImg = loadImage('assets/Baseball1.png');}
+    ballImg = loadImage('assets/Baseball1.png');
+}
 
 function startPitch() {
     pitchSkillCheckActive = true;

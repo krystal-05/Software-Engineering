@@ -83,6 +83,15 @@ function moveFieldersTowardsBall(dt) {
         });
         return;
     }
+
+    if (ball.foul) {
+        fielders.forEach(fielder => {
+            if (fielder === lastClosestFielder) {
+                fielder.state = "idle";
+            }
+        });
+        return;
+    }
     
     let closestFielder = null;
     let minDistance = Infinity;
@@ -132,6 +141,7 @@ function handleGroundThrow(catcher) {
     // Check for any remaining unsafe runners
     let unsafeRunners = runners.filter(runner => !runner.safe);
     // Throw if any unsafe runners
+    console.log("Unsafe runners length", unsafeRunners.length);
     if (unsafeRunners.length > 0) {
         throwToNextRunner(catcher);
         return;

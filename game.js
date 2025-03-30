@@ -30,6 +30,7 @@ let showStrikePopup = false;
 let showRunPopup = false;
 let showOutPopup = false;
 let showHomerunPopup = false;
+let showFoulPopup = false;
 let popupTimer = 0;
 let popupMessage = "";
 
@@ -148,6 +149,11 @@ function draw() {
         drawPitcherSkillCheckBar(dt);
     }
 
+    if(hitPowerSlider || hitDirectionSlider) {
+        updateHitSkillBar(dt);
+        drawSkillCheckBar(dt);
+    }
+
     // Draw the HUD
     push();
     drawScoreboard();
@@ -190,8 +196,8 @@ function draw() {
             if (ballHit && ball.homeRun) {
                 let unsafeRunners = runners.filter(runner => runner.running);
                 if (unsafeRunners.length === 0) resetBatter();
-                
-            } else if (ballHit && !ball.homeRun) {
+            } 
+            else if(ballHit && !ball.homeRun) {
                 // calculate normalizedPower value based on power used to hit the ball 
                 let normalizedPower = constrain(abs(ball.initialSpeedY) / MAX_POWER, 0, 1);
                 let maxDistance = windowWidth * 0.6;
@@ -222,7 +228,7 @@ function draw() {
                 ball.x += ball.speedX * fixedDt;
                 ball.y += ball.speedY * fixedDt;
                 // Home Run height reached
-                if (ball.y < 0 && homeRunHit) {
+                if (!ball.foul && ball.y < 0 && homeRunHit) {
                     ball.homeRun = true;
                     showHomerunPopup = true;
                     popupMessage = "HOME RUN!"
@@ -231,9 +237,8 @@ function draw() {
                 // apply gravity when ball is going up
                 if (ball.speedY < 0) {
                     ball.speedY += requiredG * fixedDt;
-
-                // ball going down
-                } else {
+                } 
+                else { // ball going down
                     // ball has not reached target, keep applying gravity
                     if (ball.y < targetY) {
                         ball.speedY += requiredG * fixedDt;
@@ -248,16 +253,20 @@ function draw() {
                         }
                     }
                 }
+                if (ball.foul && millis() - ball.foulSince > 1500) {
+                    ball.foul = false;
+                    resetBall();
+                    return;
+                }
 
                 ball.speedX *= 0.98;
                 if (abs(ball.speedX) < 0.3 && abs(ball.speedY) < 0.3) {
                     ball.speedX = 0;
                     ball.speedY = 0;
                 }
-
-                moveFieldersTowardsBall(fixedDt);
+                if(!ball.foul) moveFieldersTowardsBall(fixedDt);
             }
-            if (!homeRunHit) {
+            if (!homeRunHit && !ball.foul) {
                 checkFielderCatch();
             }
         }
@@ -345,7 +354,9 @@ function resetBall() {
         strikePitch: false,
         initialSpeedY: 0,
         crossedGround: false,
-        homeRun: false
+        homeRun: false,
+        foul: false,
+        foulSince: null
     };
     ballMoving = false;
     ballHit = false;
@@ -353,6 +364,9 @@ function resetBall() {
     runners.forEach(runner => {
         runner.safe = false;
     });
+    hitSkillCheckComplete = false; 
+    hitDirectionSlider = false; 
+    hitPowerSlider = false;
 }
 
 // Scales side view entities to top down visual
@@ -644,7 +658,7 @@ function handleStrikeCall() {
 
 // Logic handling in-play event popups
 function drawPopup() {
-    if (showStrikePopup || showHomerunPopup || showOutPopup || showRunPopup) {
+    if (showStrikePopup || showHomerunPopup || showOutPopup || showRunPopup || showFoulPopup) {
         inputEnabled = false;
 
         push();
@@ -661,6 +675,7 @@ function drawPopup() {
             showRunPopup = false;
             showHomerunPopup = false;
             showOutPopup = false;
+            showFoulPopup = false;
         }
     }
 }
@@ -690,18 +705,41 @@ function nextInning() {
 function keyPressed() {
     // Start pitch/skill-check input/swing bat
     if (key === ' ') {
-        // Start pitch
-        if(!topInning) { // user pitches
-            userPitch(); 
+        if(topInning) {
+            if(!hitPowerSlider && !hitDirectionSlider && !hitSkillCheckComplete) {
+                startHitSkillCheck();
+            }
+            else if (hitPowerSlider) {
+                powerMultiplier = evaluatePowerMultiplier();
+                powerSliderFinalX = hitSliderX;
+                hitPowerSlider = false;
+                
+                setTimeout(() => { 
+                    if (powerZoneLevel === "high") directionSliderSpeed = 700;
+                    else if (powerZoneLevel === "medium") directionSliderSpeed = 500;
+                    else directionSliderSpeed = 300;
+                    if(DEBUG) directionSliderSpeed = 100; // for demo and debugging
+
+                    startDirectionSlider();
+                }, 300);
+
+                return;
+            } 
+            else if (hitDirectionSlider) {
+                directionValue = evaluateDirectionValue();
+                directionSliderFinalX = hitSliderX;
+                hitDirectionSlider = false;
+                finishHitSkillCheck(); // pitch is triggered
+            }
         }
-        else { // bot is pitching
-            if(!ballMoving && inputEnabled) {
-                botPitch();
-            }
-            // user batting logic
-            if (ballMoving && !ballHit && !swingAttempt && inputEnabled) {
-                userBatting();
-            }
+
+        if (hitSkillCheckComplete && ballMoving && !ballHit && !swingAttempt && inputEnabled) {
+            userBatting();
+        }
+
+        // If user is pitching
+        if (!topInning && inputEnabled) {
+            userPitch();
         }
     }
 }
@@ -727,8 +765,10 @@ function resetBatter() {
         lineup[currentBatter % lineup.length] = batter;
         currentBatter++;
     }
+    if(!ball.foul) {
+        strikes = 0;
+    } 
     homeRunHit = false;
-    strikes = 0;
     //if (DEBUG) console.log(ball.initialSpeedY);
     resetBall();
     resetFieldersPosition();
