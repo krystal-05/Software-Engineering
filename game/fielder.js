@@ -61,6 +61,11 @@ function generateFielders() {
         isInfielder: false,
         position: "right field"
     });
+
+    newFielders.forEach(fielder => {
+        let scale = getScaleFactor(fielder.y);
+        fielder.catchRadius = catchDistance * scale;
+    });
     
     return newFielders;
 }
@@ -113,7 +118,7 @@ function moveFieldersTowardsBall(dt) {
     fielders.forEach(fielder => {
         if (fielder !== closestFielder) {
             let d = dist(fielder.x, fielder.y, ball.x, ball.y);
-            if (d > catchingRadius) {
+            if (d > catchDistance) {
                 fielder.state = "idle";
             }
         }
@@ -382,7 +387,7 @@ function checkFielderCatch() {
     // Any fielder catches the ball
     for (let fielder of fielders) {
         if ((fielder.state === "idle" || fielder.state === "running") &&
-                dist(ball.x, ball.y, fielder.x, fielder.y) < catchDistance) {
+                dist(ball.x, ball.y, fielder.x, fielder.y) < fielder.catchRadius) {
             // Fielder catches the ball:
             fielder.state = "hasBall";
             resetInfielders();

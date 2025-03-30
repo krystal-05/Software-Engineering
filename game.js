@@ -16,7 +16,6 @@ let outPopupTime = 0;
 let currentPerspective = "side";
 
 let initialFielderPositions = [];
-const catchingRadius = 100;
 let accumulator = 0;
 const fixedDt = 1/60;
 let xPower;
@@ -286,7 +285,7 @@ function draw() {
             // }
 
             // Fielder caught ball in attempt to out a runner
-            if (targetFielder && dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < catchDistance) {
+            if (targetFielder && dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < targetFielder.catchRadius) {
                 //if (DEBUG) console.log(`Fielder for holding/running runner of base ${chosenRunner.base}, catches the ball`);
                 // ball.throwing = false;
 
@@ -337,7 +336,7 @@ function draw() {
 function resetBall() {
     ball = {
         x: pitcher.x,
-        y: pitcher.y,
+        y: pitcher.y - height*.05,
         speedY: 430,
         speedX: 0,
         throwing: false,
@@ -381,7 +380,7 @@ function perspectiveToTopDownBall(worldX, worldY, offsetUpY = 0, anchor = pitche
     let anchorTopDown = sideToTopDown(anchor.x, anchor.y);
     
     let ballTopDownSlowFactor = 1;
-    if (useSlowFactor) { ballTopDownSlowFactor = 0.8; }
+    if (useSlowFactor) { ballTopDownSlowFactor = 0.7; }
     adjusted.y = anchorTopDown.y + (adjusted.y - anchorTopDown.y) * ballTopDownSlowFactor;
 
     return {
@@ -431,7 +430,7 @@ function drawTopDownField() {
 function drawTopDownPlayers() {
     let verticalOffset = height * 0.14;
     let ballOffset = !ballHit ? 0 : verticalOffset;
-    let pitcherOffsetY = -65;
+    let pitcherOffsetY = -0.075 * height;
     let pitcherPos = perspectiveToTopDown(pitcher.x, pitcher.y);
     pitcherPos.y += pitcherOffsetY;
     fill('red');
@@ -449,7 +448,7 @@ function drawTopDownPlayers() {
         fill('white');
         ellipse(ballPos.x, ballPos.y, 10, 10);
     } else {
-        if (!ballHit) ballOffset -= pitcherOffsetY;
+        if (!ballHit) ballOffset -= pitcherOffsetY + .04 * height;
         let useSlowFactor = !ballHit;
         let ballPos = perspectiveToTopDownBall(ball.x, ball.y, ballOffset, pitcher, useSlowFactor);
         fill('white');
@@ -549,7 +548,7 @@ function drawPlayers() {
     let ballScale = getBallScaleFactor(ball.y);
     let ballWidth = ballImg.width * ballScale;
     let ballHeight = ballImg.height * ballScale;
-    image(ballImg, ball.x - ballWidth / 2, ball.y - ballHeight / 2- height * .04, ballWidth, ballHeight);
+    image(ballImg, ball.x - ballWidth / 2, ball.y - ballHeight / 2, ballWidth, ballHeight);
 }
 
 function drawScoreboard() {
@@ -747,7 +746,7 @@ function assignEnitities() {
 
     ball = {
         x: pitcher.x,
-        y: pitcher.y,
+        y: pitcher.y - height*.05,
         speedY: 430,
         speedX: 0,
         throwing: false,
