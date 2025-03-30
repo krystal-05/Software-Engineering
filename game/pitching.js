@@ -17,7 +17,7 @@ function startPitch() {
     sliderX = random(0, barWidth);
 
     barX = width / 2 - barWidth / 2;
-    barY = height - 100;
+    barY = pitcher.y + height * .05;
 }
 
 function evaluatePitchMultiplier() {
@@ -39,7 +39,7 @@ function evaluatePitchMultiplier() {
     return multiplier;
 }
 
-function drawSkillCheckBar(dt) {
+function drawPitcherSkillCheckBar(dt) {
     fill(100);
     rect(barX, barY, barWidth, barHeight);
     

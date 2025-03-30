@@ -146,7 +146,7 @@ function draw() {
 
     // pitch skill-ckeck
     if (pitchSkillCheckActive) {
-        drawSkillCheckBar(dt);
+        drawPitcherSkillCheckBar(dt);
     }
 
     // Draw the HUD
