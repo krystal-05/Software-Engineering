@@ -1,7 +1,9 @@
 let level = 2;
 function preload() {
-    bgSideImage = loadImage('assets/bat_field1.png');
+    bgSideImage = loadImage('assets/newFieldSide.png');
     bgTopImage = loadImage('assets/flat_field1.png');
+    batterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
+    batterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
     batterGif = loadImage('assets/temp_assets/BATTER.gif');
     fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
     runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
