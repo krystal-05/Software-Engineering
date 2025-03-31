@@ -83,13 +83,13 @@ let audioSelectionMenu = false;
     // }
 
     function cityOne() {
-        window.location.href = "game.html";
+        window.location.href = "gameOne.html";
     }
     function cityTwo() {
-        window.location.href = "game.html";
+        window.location.href = "gameTwo.html";
     }
     function cityThree() {
-        window.location.href = "game.html";
+        window.location.href = "gameThree.html";
     }
 
     function dawgs() {
