@@ -109,8 +109,8 @@ function setup() {
     Difficulty1 = new Button("make Normal", width - 80, 240, 125, 40, null, null, () => changeDifficulty(1));
     Difficulty2 = new Button("make Hard", width - 80, 290, 125, 40, null, null, () => changeDifficulty(2));
     Difficulty3 = new Button("make Impossible", width - 80, 340, 125, 40, null, null, () => changeDifficulty(3));
-    loseDemo = new Button("Lose Demo", width - 80, 740, 120, 40, null, null, () => loseClick());
-    winDemo = new Button("Win Demo", width - 80, 790, 120, 40, null, null, () => winClick());
+    loseDemo = new Button("Lose Demo", width - 80, 640, 120, 40, null, null, () => loseClick());
+    winDemo = new Button("Win Demo", width - 80, 690, 120, 40, null, null, () => winClick());
 
     createModal();
     createAudioMenu();
