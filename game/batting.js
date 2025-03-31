@@ -184,9 +184,6 @@ function checkFoulByAngle(ballVec) {
     const angleToThird = vThird.heading();
     const hitAngle = hitVec.heading();
 
-    //const minAngle = min(angleToFirst, angleToThird);
-    //const maxAngle = max(angleToFirst, angleToThird);
-
     const leftLine = angleToThird;
     const rightLine = angleToFirst;
     let isFoul = hitAngle < leftLine || hitAngle > rightLine;

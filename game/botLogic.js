@@ -3,8 +3,6 @@ function botAttemptHit(pitchSpeed) {
     let travelDistance = (batter.y - hitZoneHeight) - ball.y;
     let delay = (travelDistance / pitchSpeed) * 1000; // gets delay for ball to reach hitting zone
 
-    // if(DEBUG) console.log("HITCHANCE", hitChance);
-    // if(DEBUG) console.log("PITCH SPEED", pitchSpeed);
     let baseAntiChance;
     if(pitchSpeed <= 430) { // 50% chance to hit
         baseAntiChance = .5;
@@ -19,10 +17,6 @@ function botAttemptHit(pitchSpeed) {
     let difficultyModifier = (generalDifficultyScale - 1) * 0.1;
     let adjustedAntiChance = baseAntiChance - difficultyModifier;
     
-    // if (DEBUG) {
-    //     console.log("Base Threshold:", baseAntiChance);
-    //     console.log("Adjusted Threshold:", adjustedAntiChance);
-    // }
     if (hitChance >= adjustedAntiChance) {
         setTimeout(() => {
             botHitBall();
@@ -32,7 +26,6 @@ function botAttemptHit(pitchSpeed) {
 
 
 function botHitBall() {
-    //console.log("bot hit the ball");
     let softHitPower = 5;
     let hardHitPower = 5.6;
     let homeRunPower = 8;
