@@ -2,67 +2,66 @@ let map;
 let char;
 let buttons= [];
 let levelOneImg, levelTwoImg, levelThreeImg, secretLevelImg;
+let cityOneLocation = [windowWidth / 2 + 150, windowHeight / 2 - 150];
+let cityTwoLocation = [windowWidth / 2 - 200, windowHeight / 2 - 150];
+let cityThreeLocation = [windowWidth / 2 - 150, windowHeight /2 + 150];
+let citySecretLocation = [windowWidth / 2 - 450, windowHeight /2 - 190];
 let settingMenu = false;
 let audioSelectionMenu = false;
+let animFinished = true;
+let wasd = [87, 65, 83, 68];
 
     class character {
         constructor() {
             // Change this to change the character sprite I didn't know what quite to use for it
             this.img = loadImage('assets/temp_assets/sprites/02_idle.png');
-            this.x = windowWidth / 2 + 150;
-            this.y = windowHeight / 2 - 150; 
+            this.x = cityOneLocation[0];
+            this.y = cityOneLocation[1]; 
             this.width = 100;
             this.height = 100;
             this.levelPosition = '1';
         }
 
-        // contains logic for how character can move depending on where they are currently
+        // returns location of city to be moved to if a move can be made
         move(input) {
             switch(this.levelPosition) {
                 case '1': {
                     if(input === 'a') {
-                        this.x = windowWidth / 2 - 200;
-                        this.y = windowHeight / 2 - 150;
-                        this.levelPosition = '2';
+                        let cityTwoLocationLocal = cityTwoLocation.concat(['1']);
+                        return cityTwoLocationLocal;
                     }
                     break;
                 } 
                 case '2': {
                     if(input === 'a') {
-                        this.x = windowWidth / 2 - 450;
-                        this.y = windowHeight /2 - 190;
-                        this.levelPosition = '1s';
+                        let citySecretLocationLocal = citySecretLocation.concat(['1s']);
+                        return citySecretLocationLocal;
                     } else if(input === 's') {
-                        this.x = windowWidth / 2 - 150;
-                        this.y = windowHeight / 2 + 150;
-                        this.levelPosition = '3'; 
+                        let cityThreeLocationLocal = cityThreeLocation.concat(['3']);
+                        return cityThreeLocationLocal;
                     } else if(input === 'd') {
-                        this.x = windowWidth / 2 + 150;
-                        this.y = windowHeight / 2 - 150;
-                        this.levelPosition = '1';
+                        let cityOneLocationLocal = cityOneLocation.concat(['1']);
+                        return cityOneLocationLocal;
                     }
                     break;
                 }
                 case '3': {
                     if(input === 'w') {
-                        this.x = windowWidth / 2 - 200;
-                        this.y = windowHeight / 2 - 150;
-                        this.levelPosition = '2';
+                        let cityTwoLocationLocal = cityTwoLocation.concat(['1']); 
+                        return cityTwoLocationLocal;
                     }
                     break;
                 }
                 case '1s': {
                     if(input === 'd') {
-                        this.x = windowWidth / 2 - 200;
-                        this.y = windowHeight / 2 - 150;
-                        this.levelPosition = '2';
+                        let cityTwoLocationLocal = cityTwoLocation.concat(['2']);
+                        return cityTwoLocationLocal;
                     }
                     break;
                 }
             }
+            return false;
         }
-
-
     }
 
 
@@ -82,10 +81,10 @@ let audioSelectionMenu = false;
 
     function setup(){
         createCanvas(windowWidth, windowHeight);
-        buttons.push(new Button("", windowWidth / 2 + 150, windowHeight /2 - 150 , 80, 100, levelOneImg, levelOneHover, cityOne));
-        buttons.push(new Button("", windowWidth / 2 - 200, windowHeight /2 - 150, 80, 100, levelTwoImg, levelTwoHover, cityTwo));
-        buttons.push(new Button("", windowWidth / 2 - 150, windowHeight /2 + 150 , 80, 100, levelThreeImg, levelThreeHover, cityThree));
-        buttons.push(new Button("", windowWidth / 2 - 450 , windowHeight /2 - 190, 80, 100, secretLevelImg, secretLevelHover, dawgs));
+        buttons.push(new Button("", cityOneLocation[0], cityOneLocation[1], 80, 100, levelOneImg, levelOneHover, cityOne));
+        buttons.push(new Button("", cityTwoLocation[0], cityTwoLocation[1], 80, 100, levelTwoImg, levelTwoHover, cityTwo));
+        buttons.push(new Button("", cityThreeLocation[0], cityThreeLocation[1], 80, 100, levelThreeImg, levelThreeHover, cityThree));
+        buttons.push(new Button("", citySecretLocation[0], citySecretLocation[1], 80, 100, secretLevelImg, secretLevelHover, dawgs));
         loadVolumeSetting();
     }
 
@@ -95,8 +94,30 @@ let audioSelectionMenu = false;
         for (let btn of buttons) {
             btn.display();
         }
+        // Draws character
         image(char.img, char.x, char.y, char.width, char.height);
 
+
+        // Animates character
+        if(!animFinished) {
+            let pos = char.move(keyCode);
+            if(pos[0] - char.x > 0) {
+                ++char.x;
+            } else if (pos[0] - char.x < 0) {
+                --char.x;
+            }
+
+            if(pos[1] - char.y > 0) {
+                ++char.y;
+            } else if (pos[1] - char.y < 0) {
+                --char.y;
+            }
+
+            if(pos[0] - char.x === 0 && pos[1] - char.y === 0) {
+                animFinished = true;
+                char.levelPosition = pos[2];
+            }
+        }
     }
     
 
@@ -111,7 +132,7 @@ let audioSelectionMenu = false;
     }
 
     function dawgs() {
-        window.open('https://www.youtube.com/watch?v=RQmEERvqq70&ab_channel=Generuu')
+        window.open('https://www.youtube.com/watch?v=RQmEERvqq70&ab_channel=Generuu');
     }
 
     function buttonClick() {
@@ -141,36 +162,15 @@ let audioSelectionMenu = false;
 
 
     function keyPressed() {
-        switch(keyCode) {
-            // 'w'
-            case 87: {
-                char.move('w');
-            break;
-            }
-            // 'a'
-            case 65: {
-                char.move('a');
-            break;
-            }
-            // 's'
-            case 83: {
-                char.move('s');
-            break;
-            } 
-            // 'd'
-            case 68: {
-                char.move('d');
-            break;
-            }
-            // 'enter'
-            case 13: {
-                for(let btn of buttons) {
-                    if(btn.isHovered() && btn.action) {
-                        buttonClick();
-                        setTimeout(() => btn.action(), 200);
-                    }
+
+        if(wasd.includes(keyCode) && char.move(keyCode)) {
+            animFinished = false;
+        } else if (keyCode === ENTER) {
+            for(let btn of buttons) {
+                if(btn.isHovered() && btn.action) {
+                    buttonClick();
+                    setTimeout(() => btn.action(), 200);
                 }
-            break;
             }
         }
 
