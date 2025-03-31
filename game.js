@@ -84,7 +84,7 @@ function setup() {
         currSong.loop();
     }
 
-    assignEnitities();
+    assignEntities();
     let transformedPitcher = sideToTopDown(pitcher.x, pitcher.y);
     topDownCamera = {
         worldAnchor: { x: transformedPitcher.x, y: transformedPitcher.y },
@@ -721,7 +721,7 @@ function resetBatter() {
     resetFieldersPosition();
 }
 
-function assignEnitities() {
+function assignEntities() {
     bases = [
         { x: width * 0.5,   y: height * 0.88 },  // Home plate
         { x: width * 0.83,  y: height * 0.58 },  // 1st base
