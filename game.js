@@ -763,6 +763,8 @@ function assignEntities() {
     };
 
     catcherPlayer = { x: width * 0.5, y: height * 0.95, state: "idle", isCatcher: true };
+    let scale = getScaleFactor(catcherPlayer.y);
+    catcherPlayer.catchRadius = catchDistance * scale;
 
     // Fielders positioned at default
     fielders = generateFielders();
