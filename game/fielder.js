@@ -259,7 +259,6 @@ function throwToNextRunner(currentFielder) {
 }
 
 function handleCatch(currentFielder) {
-    //if (DEBUG) console.log("currentFielder.x 1: ", currentFielder.x)
     ball.throwing = false;
     let baseVal;
     let targetRunner = getNearestUnsafeRunner(currentFielder);
@@ -292,7 +291,6 @@ function handleCatch(currentFielder) {
         nextInning();
         return;
     }
-    // targetRunner = getNearestUnsafeRunner(targetFielder);
     baseVal = (targetRunner.base + 1) % 4;
     let targetFielder = getFielderForBase(baseVal);
     ball.targetFielder = targetFielder;
@@ -306,7 +304,6 @@ function handleCatch(currentFielder) {
 
 // Find closest unsafe runner to current holder of the ball
 function getNearestUnsafeRunner(catcher) {
-    //if (DEBUG) console.log("catcher.x 1: ", catcher.x)
     let targetRunner = null;
     let minDistance = Infinity;
     for (let runner of runners) {

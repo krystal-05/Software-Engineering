@@ -84,16 +84,7 @@ function setup() {
         currSong.loop();
         }
 
-
-    // Calculate positions based on canvas size
-    bases = [
-        { x: width * 0.5, y: height * 0.88 },   // Home plate
-        { x: width * 0.91, y: height * 0.52 },  // 1st base
-        { x: width * 0.5, y: height * 0.45 },   // 2nd base
-        { x: width * 0.09, y: height * 0.52 }    // 3rd base
-    ];
-
-    pitcher = { x: width * 0.5, y: height * 0.50, armAngle: 0 };
+    assignEntities();
     let transformedPitcher = sideToTopDown(pitcher.x, pitcher.y);
     topDownCamera = {
         worldAnchor: { x: transformedPitcher.x, y: transformedPitcher.y },
@@ -335,62 +326,10 @@ function draw() {
             ball.y += ball.speedY * fixedDt;
            
             let targetFielder = ball.targetFielder;
-            // let advancingRunner = ball.advancingRunner;
-            // let targetRunner = getNearestUnsafeRunner(targetFielder);
-            // // let chosenRunner = targetRunner || advancingRunner;
-            // let chosenRunner = targetRunner;
-
-            // if (!advancingRunner) {
-            //     advancingRunner = targetRunner;
-            // }
-            // if (!chosenRunner) {
-            //     console.error("No valid runner found! Stopping play.");
-            //     ball.throwing = false;
-            //     resetBatter();
-            //     return;
-            // }
 
             // Fielder caught ball in attempt to out a runner
             if (targetFielder && dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < targetFielder.catchRadius) {
-                //if (DEBUG) console.log(`Fielder for holding/running runner of base ${chosenRunner.base}, catches the ball`);
-                // ball.throwing = false;
-
-                // if (targetFielder.isInfielder) {
-                //     let runnerAtFielderBase = runners.find(runner => runner.base === chosenRunner.base);
-                //     let baseVal = chosenRunner.base;
-
-                //     let backtrackFielder = getFielderForBase(baseVal);
-
-                //     if (runnerAtFielderBase && !runnerAtFielderBase.safe) {
-                //         if (runnerAtFielderBase.backtracking && backtrackFielder === targetFielder) {
-                //             outs++;
-                //             ball.throwing = false;
-                //             ball.caught = true;
-                //             resetBatter();
-                //             if (DEBUG) console.log("outs to", outs);
-                //             runners = runners.filter(r => r !== runnerAtFielderBase);
-                //             if (outs >= 3) {
-                //                 nextInning();
-                //                 return;
-                //             }
-                //             return;
-                //         }
-                //     }
-                // }
-
-                // if (outs >= 3) {
-                //     nextInning();
-                //     return;
-                // }
                 handleCatch(targetFielder);
-
-                // let targetRunner = getNearestUnsafeRunner(targetFielder);
-                // if (targetRunner) {
-                //     if (DEBUG) console.log(`Throwing to next unsafe runner to base ${targetRunner.base + 1}`);
-                //     handleGroundThrow(targetFielder);
-                // } else {
-                //     resetBatter();
-                // }
             }
         }
         moveRunners(fixedDt);
@@ -826,12 +765,11 @@ function resetBatter() {
         strikes = 0;
     } 
     homeRunHit = false;
-    //if (DEBUG) console.log(ball.initialSpeedY);
     resetBall();
     resetFieldersPosition();
 }
 
-function assignEnitities() {
+function assignEntities() {
     bases = [
         { x: width * 0.5,   y: height * 0.88 },  // Home plate
         { x: width * 0.83,  y: height * 0.58 },  // 1st base
@@ -873,6 +811,8 @@ function assignEnitities() {
     };
 
     catcherPlayer = { x: width * 0.5, y: height * 0.95, state: "idle", isCatcher: true };
+    let scale = getScaleFactor(catcherPlayer.y);
+    catcherPlayer.catchRadius = catchDistance * scale;
 
     // Fielders positioned at default
     fielders = generateFielders();

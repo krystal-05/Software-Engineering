@@ -10,55 +10,53 @@ function createAudioMenu(){
 const style = document.createElement("style")
 style.textContent= `
 .audioMenu {
- position: fixed;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
+    position: fixed;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 .audioMenu-content {
-        border: 1px solid #000000;
-        background: #FFFFFF;
-        padding: 20px;
-        border-radius: 8px;
-        text-align: center;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        width: 300px;
-        max-width: 80%;
-   
+    border: 1px solid #000000;
+    background: #FFFFFF;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    max-width: 80%;
 }
 .audioMenu-button {
-        background: #DCDCDC;
-        border: 1px solid #000000;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        border-radius: 5px;
-        margin-top: 5px;
-        font-weight: bold;
-        color: #000000; 
-
-    }
-.audioMenu-button:hover {
-        background-color: #6495FF;
-        color: #000000;
-    }    
-.exit-button {
-        cursor: pointer;
-        color: #000000;
-        font-size: 20px;
-        float: right;
-    }   
- .audio-button {
-        display: flex;
-        flex-direction: column; 
-        align-items: center; 
-        gap: 10px; 
-        width: 100%; 
+    background: #DCDCDC;
+    border: 1px solid #000000;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 5px;
+    font-weight: bold;
+    color: #000000; 
 }
-p{ /* centers title */
+.audioMenu-button:hover {
+    background-color: #6495FF;
+    color: #000000;
+}    
+.exit-button {
+    cursor: pointer;
+    color: #000000;
+    font-size: 20px;
+    float: right;
+}   
+.audio-button {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    gap: 10px; 
+    width: 100%; 
+}
+p { /* centers title */
     font-size: 20px;
     display: flex;
     justify-content: center;
@@ -74,15 +72,16 @@ audioMenu = document.createElement("div");
 audioMenu.classList.add("audioMenu");
 audioMenu.innerHTML = `
 <div class = "audioMenu-content">
-<span class= "exit-button">&times;</span>
-<p><b>Audio Selection</b></p>
-<div class= "audio-button">
-<button id="audio1" class = "audioMenu-button"> Audio 1 </button>
-<button id="audio2" class = "audioMenu-button"> Audio 2 </button>
-<button id="audio3" class = "audioMenu-button"> Audio 3 </button>
-<button id="audio4" class = "audioMenu-button"> Audio 4 </button>
-<button id="audio5" class = "audioMenu-button"> Audio 5 </button>
-</div></div>
+    <span class= "exit-button">&times;</span>
+    <p><b>Audio Selection</b></p>
+    <div class= "audio-button">
+        <button id="audio1" class = "audioMenu-button"> Audio 1 </button>
+        <button id="audio2" class = "audioMenu-button"> Audio 2 </button>
+        <button id="audio3" class = "audioMenu-button"> Audio 3 </button>
+        <button id="audio4" class = "audioMenu-button"> Audio 4 </button>
+        <button id="audio5" class = "audioMenu-button"> Audio 5 </button>
+    </div>
+</div>
 `;
 document.body.appendChild(audioMenu);
 
@@ -138,30 +137,30 @@ function updateAudio(event){
         let action = event.target.id;
         if (currSong) {
             currSong.stop();  // Pause the current song
-     switch (action){
-        case "audio1":
-            currSong = audio1;
-            break;
-        case "audio2":
-            currSong = audio2;
-            break;
-        case "audio3":
-            currSong = audio3;
-            break;
-        case "audio4":
-            currSong = audio4;
-            break;
-        case "audio5":
-            currSong = audio5;
-            break;
-        default:
-            console.log("Unknown selection");
-            return;
+        switch (action) {
+            case "audio1":
+                currSong = audio1;
+                break;
+            case "audio2":
+                currSong = audio2;
+                break;
+            case "audio3":
+                currSong = audio3;
+                break;
+            case "audio4":
+                currSong = audio4;
+                break;
+            case "audio5":
+                currSong = audio5;
+                break;
+            default:
+                console.log("Unknown selection");
+                return;
+        }
+        if (currSong) {
+            currSong.play();
+            currSong.loop();
+        }
     }
-    if (currSong) {
-        currSong.play();
-        currSong.loop();
-} 
-}
 }
 
