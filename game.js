@@ -42,27 +42,27 @@ let audioButton;
 // Difficulty
 let generalDifficultyScale = 1;
 
-function preload() {
-    bgSideImage = loadImage('assets/newFieldSide.png');
-    bgTopImage = loadImage('assets/flat_field1.png');
-    batterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
-    batterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
-    fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
-    runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
-    fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
-    runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
-    catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
-    ballImg = loadImage('assets/Baseball1.png');
+// function preload() {
+//     bgSideImage = loadImage('assets/newFieldSide.png');
+//     bgTopImage = loadImage('assets/flat_field1.png');
+//     batterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
+//     batterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
+//     fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
+//     runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
+//     fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
+//     runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
+//     catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
+//     ballImg = loadImage('assets/Baseball1.png');
 
-    currSong = loadSound('sounds/gamesong.mp3');
-    soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
-    soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3'); 
-    audio1 = loadSound('sounds/gamesong.mp3');
-    audio2 = loadSound('sounds/audio2.mp3');
-    audio3 = loadSound('sounds/audio3.mp3');
-    audio4 = loadSound('sounds/audio4.mp3');
-    audio5 = loadSound('sounds/audio5.mp3');
-}
+//     currSong = loadSound('sounds/gamesong.mp3');
+//     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
+//     soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3'); 
+//     audio1 = loadSound('sounds/gamesong.mp3');
+//     audio2 = loadSound('sounds/audio2.mp3');
+//     audio3 = loadSound('sounds/audio3.mp3');
+//     audio4 = loadSound('sounds/audio4.mp3');
+//     audio5 = loadSound('sounds/audio5.mp3');
+// }
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -106,12 +106,18 @@ function setup() {
     returnButton = new Button("Menu", width - 80, 90, 125, 40, null, null, () => returnToMenu());
     tempSwapPerspective = new Button("Perspective", width - 80, 140, 125, 40, null, null, () => togglePerspective());
     audioButton = new Button("Audio", width - 80, 190, 125, 40, null, null, () => audioClick());
-
     Difficulty1 = new Button("make Normal", width - 80, 240, 125, 40, null, null, () => changeDifficulty(1));
     Difficulty2 = new Button("make Hard", width - 80, 290, 125, 40, null, null, () => changeDifficulty(2));
     Difficulty3 = new Button("make Impossible", width - 80, 340, 125, 40, null, null, () => changeDifficulty(3));
+    loseDemo = new Button("Lose Demo", width - 80, 640, 120, 40, null, null, () => loseClick());
+    winDemo = new Button("Win Demo", width - 80, 690, 120, 40, null, null, () => winClick());
+
     createModal();
     createAudioMenu();
+    createWinPopup();
+    createLosePopup();
+    createDonePopup();
+
     inputEnabled = true;
 }
 
@@ -165,6 +171,8 @@ function draw() {
         Difficulty1.display();
         Difficulty2.display();
         Difficulty3.display();
+        loseDemo.display();
+        winDemo.display();
     }
     pop();
 
@@ -833,6 +841,18 @@ function mousePressed() {
                 setTimeout(() => Difficulty3.action(), 200);
             }
         }
+        if (loseDemo.isHovered()) {
+            if (DEBUG) {
+                buttonClick();
+                setTimeout(() => loseDemo.action(), 200);
+            }
+        }
+        if (winDemo.isHovered()) {
+            if (DEBUG) {
+                buttonClick();
+                setTimeout(() => winDemo.action(), 200);
+            }
+        }
     }
     if (!currSong.isPlaying()) {
         currSong.loop();
@@ -863,4 +883,18 @@ function audioClick(){
     showAudioMenu();
     console.log("Button clicked!");  // To check if the button event runs
     console.log("audioMenu:", audioMenu);  // To check if audioMenu exists
+}
+function loseClick(){
+    showLosePopup();
+}
+function winClick(){
+    if (level === 3){
+        showDonePopup();
+    }
+    else{
+    showWinPopup();
+    }
+}
+function startGameClick(){
+    buttonClick();
 }
