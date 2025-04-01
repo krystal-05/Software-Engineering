@@ -89,8 +89,13 @@ nextLevelButton.addEventListener("click", () => {
 
 function restart(){
     inning = 1;
+<<<<<<< HEAD
     home = 0;
     away = 0;
+=======
+    score.home = 0;
+    score.away = 0;
+>>>>>>> 23e82f4b582938d68570fed3a43b45c21bd445ca
     outs = 0;
     strikes = 0;
     topInning = true;

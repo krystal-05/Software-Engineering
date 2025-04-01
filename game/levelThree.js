@@ -45,13 +45,23 @@ function nextInning() {
     }, 1500);
 
     
+<<<<<<< HEAD
     if (inning === 4 && score.home > score.away){
         showWinPopup();
     }
     if (inning === 4 && score.home <= score.away){
+=======
+    if (inning === 4 && score.home < score.away){
+        showWinPopup();
+    }
+    if (inning === 4 && score.home >= score.away){
+>>>>>>> 23e82f4b582938d68570fed3a43b45c21bd445ca
         showLosePopup();
     }
 }
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 23e82f4b582938d68570fed3a43b45c21bd445ca
