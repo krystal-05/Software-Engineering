@@ -14,6 +14,7 @@ function preload() {
 }
 
 function startPitch() {
+    pitchCanChange = !pitchCanChange;
     pitchSkillCheckActive = true;
     sliderX = random(0, barWidth);
 
@@ -70,7 +71,7 @@ function userPitch() {
         ball.speedY *= pitchMultiplier;
         pitchSkillCheckActive = false;
         pitchAnimation = true;
-        botAttemptHit(ball.speedY);
+        botAttemptHit(pitchMultiplier);
         return;
     }
     if (!ballMoving && inputEnabled && !pitchSkillCheckActive) {
@@ -81,4 +82,42 @@ function userPitch() {
         pitchAnimation = true;
         swingAttempt = false;
     }
+}
+
+function setPitchType(type) {
+    ball.pitchType = type;
+    switch(type) {
+        case 'fastball':
+            initializeFastball();
+            break;
+        case 'curveball':
+            initializeCurveball();
+            break;
+        default:
+            initializeFastball();
+            break;
+    }
+    if (DEBUG) console.log("pitch type selected: ", ball.pitchType);
+}
+
+function initializeCurveball() {
+    sliderSpeed = 600;
+    ball.speedY = 400;
+    ball.curveFactor = 2;
+    ball.originalX = ball.x;
+    ball.startY = ball.y;
+    ball.totalDistance = batter.y - ball.startY;
+    ball.curveAmplitude = 50; // lateral offset
+    ball.curveInitialized = true;
+}
+
+function initializeFastball() {
+    sliderSpeed = 400;
+    ball.speedY = 430;
+    ball.curveFactor = 1;
+    ball.originalX = ball.x;
+    ball.startY = ball.y;
+    ball.totalDistance = batter.y - ball.startY;
+    ball.curveAmplitude = 0; // reset lateral offset
+    ball.curveInitialized = false;
 }

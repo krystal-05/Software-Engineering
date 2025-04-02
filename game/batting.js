@@ -13,10 +13,7 @@ let directionBarX, directionBarY;
 let directionValue = 0.0;
 let powerMultiplier = 1.0;
 let powerZoneLevel = "low";
-
-function preload() {
-    ballImg = loadImage('assets/Baseball1.png');
-}
+let targetImage;
 
 function playerHit() {
     ballHit = true;
@@ -214,5 +211,5 @@ function drawSkillCheckBar(dt) {
     rect(perfectZoneX, hitBarY, perfectZoneWidth, barHeight);
     
     fill('red');
-    image(ballImg, hitBarX + hitSliderX - barHeight/2, hitBarY, barHeight, barHeight);
+    image(targetImage, hitBarX + hitSliderX - barHeight/2, hitBarY, barHeight, barHeight);
 }

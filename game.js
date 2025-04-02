@@ -14,6 +14,7 @@ let settingMenu = false, inputEnabled = false;
 let ballCaughtThisFrame = false;
 let outPopupTime = 0;
 let currentPerspective = "side";
+let pitchCanChange = topInning;
 
 let initialFielderPositions = [];
 let accumulator = 0;
@@ -215,9 +216,18 @@ function draw() {
     push();
     drawPopup();
     pop();
+
+    if (!ballMoving && !topInning && pitchCanChange) {
+        drawPitchSelectionBox();
+    }
     
     // Game logic
     while (accumulator >= fixedDt) {
+        // ball goes off screen
+        if (ball.y > height) {
+            resetBall();
+        }
+        // pitch animation
         if (pitchAnimation) {
             pitcher.armAngle += 0.1 * 60 * fixedDt;
             if (pitcher.armAngle > PI / 2) {
@@ -227,7 +237,22 @@ function draw() {
         }
 
         if (ballMoving && !ballHit && !ball.throwing) {
+            switch(ball.pitchType) {
+                case 'curveball':
+                    let progress = constrain((ball.y - ball.startY) / ball.totalDistance, 0, 1);
+                    ball.x = ball.originalX + ball.curveAmplitude * sin(progress * PI);
+                    break;
+                default:
+                    break;
+            }
             ball.y += ball.speedY * fixedDt;
+            // bot hits ball in hit zone
+            if (botHitScheduled && ball.y >= batter.y - hitZoneHeight * 0.5) {
+                botHitBall();
+                botHitScheduledHit = false;
+            }
+            
+            // Swing before ball in hit zone
             if (ball.y >= batter.y && abs(ball.x - batter.x) < hitZoneWidth && !swingAttempt) {
                 ball.strikePitch = true;
                 swingAttempt = true;
@@ -352,17 +377,20 @@ function resetBall() {
         crossedGround: false,
         homeRun: false,
         foul: false,
-        foulSince: null
+        foulSince: null,
+        pitchType: 'fastball'
     };
     ballMoving = false;
     ballHit = false;
     swingAttempt = false;
+    pitchCanChange = !topInning;
     runners.forEach(runner => {
         runner.safe = false;
     });
     hitSkillCheckComplete = false; 
     hitDirectionSlider = false; 
     hitPowerSlider = false;
+    sliderSpeed = 400;
 }
 
 // Scales side view entities to top down visual
@@ -676,14 +704,42 @@ function drawPopup() {
     }
 }
 
-// // Set field up for next inning
-// function nextInning() {
-//     inputEnabled = false;
-//     outs = 0;
-//     runners = [];
-//     resetFieldersPosition()
-//     if (!topInning) inning++;
-//     topInning = !topInning;
+function drawPitchSelectionBox() {
+    push();
+    // Define the size of the box
+    let boxWidth = 250;
+    let boxHeight = 120;
+    
+    // Position the box relative to the pitcher:
+    // For example, place it to the right of the pitcher and centered vertically on the pitcher.
+    let boxX = pitcher.x + height * 0.1;
+    let boxY = pitcher.y - boxHeight * 0.5;
+    
+    // Draw a half-transparent rectangle for the textbox background
+    fill(0, 0, 0, 127); // Black with 50% opacity
+    stroke(255);
+    strokeWeight(2);
+    rect(boxX, boxY, boxWidth, boxHeight, 10);
+    
+    // Draw the pitch options text inside the box
+    noStroke();
+    fill(255);
+    textSize(16);
+    text("Select Pitch Type:", boxX + 10, boxY + 25);
+    text("1: Fastball", boxX + 10, boxY + 50);
+    text("2: Curveball", boxX + 10, boxY + 75);
+    text("Current: " + (ball.pitchType ? ball.pitchType : "None"), boxX + 10, boxY + 100);
+    pop();
+  }
+
+// Set field up for next inning
+function nextInning() {
+    inputEnabled = false;
+    outs = 0;
+    runners = [];
+    resetFieldersPosition()
+    if (!topInning) inning++;
+    topInning = !topInning;
 
     showOutPopup = true;
     popupMessage = "3 Outs!\nSwitching Sides"
@@ -699,6 +755,22 @@ function drawPopup() {
 
 // Handle response to user key input
 function keyPressed() {
+    // pitch select/infielder select
+    if ((key === '1' || key === '2') && pitchCanChange) {
+        if (topInning) {
+            return;
+        }
+        switch(key) {
+            case '1':
+                setPitchType('fastball');
+                break;
+            case '2':
+                setPitchType('curveball');
+                break;
+            default:
+                break;
+        }
+    }
     // Start pitch/skill-check input/swing bat
     if (key === ' ') {
         if(topInning) {
@@ -763,7 +835,7 @@ function resetBatter() {
     }
     if(!ball.foul) {
         strikes = 0;
-    } 
+    }
     homeRunHit = false;
     resetBall();
     resetFieldersPosition();
@@ -790,7 +862,8 @@ function assignEntities() {
         strikePitch: false,
         initialSpeedY: 0,
         crossedGround: false,
-        homeRun: false
+        homeRun: false,
+        pitchType: 'fastball'
     };
 
     batter = {

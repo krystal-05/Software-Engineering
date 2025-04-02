@@ -1,6 +1,6 @@
 let level = 2;
 function preload() {
-    bgSideImage = loadImage('assets/newFieldSide.png');
+    bgSideImage = loadImage('assets/final_design/batterfield.png');
     bgTopImage = loadImage('assets/flat_field1.png');
     batterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
     batterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
@@ -11,6 +11,7 @@ function preload() {
     runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
     catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
     ballImg = loadImage('assets/Baseball1.png');
+    targetImage = loadImage('assets/final_design/Target.png');
 
     currSong = loadSound('sounds/gamesong.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
@@ -27,11 +28,13 @@ function nextInning() {
     inputEnabled = false;
     outs = 0;
     runners = [];
-    resetFieldersPosition()
+    resetFieldersPosition();
     if (!topInning) inning++;
     topInning = !topInning;
 
     showOutPopup = true;
+    popupMessage = "3 Outs!\nSwitching Sides"
+    popupTimer = millis();
     resetBatter();
     runners = [];
 
