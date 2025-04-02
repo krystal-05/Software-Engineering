@@ -7,6 +7,8 @@ let nextPos = [];
 let levels = [];
 let lvlIndx = {};
 let levelOneImg, levelTwoImg, levelThreeImg, secretLevelImg;
+let idleAnimation, runningAnimation;
+let charMoveSpeed = 7;
 let settingMenu = false;
 let audioSelectionMenu = false;
 let animFinished = true;
@@ -14,6 +16,8 @@ let char;
 
 function preload() {
     map = loadImage('assets/map.png');
+    idleAnimation = loadImage('assets/temp_assets/IDLE1.gif');
+    runningAnimation = loadImage('assets/temp_assets/LRUNGIF.gif');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
     levelOneImg = loadImage('assets/level1.png');
     levelTwoImg = loadImage('assets/level2.png');
@@ -68,6 +72,10 @@ class level {
         this.width = width;
         this.height = height;
     }
+
+    drawLevel(){
+        image(this.img, this.x, this.y, this.width, this.height);
+    }
 }
 
 function setup(){
@@ -96,7 +104,7 @@ function setup(){
 class character {
     constructor() {
         // Change this to change the character sprite I didn't know what quite to use for it
-        this.img = loadImage('assets/temp_assets/sprites/02_idle.png');
+        this.img = idleAnimation;
         this.x = cityOneLocation[0];
         this.y = cityOneLocation[1]; 
         this.width = 100;
@@ -138,64 +146,74 @@ class character {
         }
         return false;
     }
+
+    drawChar() {
+        image(char.img, char.x, char.y, char.width, char.height);
+    }
 }
-    function buttonClick() {
-        playSoundEffect("buttonSound");
+
+function buttonClick() {
+    playSoundEffect("buttonSound");
+}
+    
+function keyPressed() {
+    
+    let tmp = char.move(key);
+    if(tmp && animFinished) {
+        lvlIndx[char.levelPosition][0].img = lvlIndx[char.levelPosition][1];
+        nextPos = tmp;
+        char.img = runningAnimation;
+        if(nextPos[0] - char.x > 0) {
+            char.width = 0 - char.width;
+        }
+        animFinished = false;
+    } else if (keyCode === ENTER) {
+        lvlIndx[char.levelPosition][3]();
     }
     
-    function keyPressed() {
-        
-        let tmp = char.move(key);
-        if(tmp && animFinished) {
-            lvlIndx[char.levelPosition][0].img = lvlIndx[char.levelPosition][1];
-            nextPos = tmp;
-            animFinished = false;
-        } else if (keyCode === ENTER) {
-            lvlIndx[char.levelPosition][3]();
-        }
-        
-        return false;
+    return false;
+}
+
+function draw() {
+    background(0);
+    image(map, 0, 0, windowWidth, windowHeight);
+
+    imageMode(CENTER);
+    for (let lvl of levels) {
+        lvl.drawLevel();
     }
+    imageMode(CORNER);
 
-    function draw() {
-        background(0);
-        image(map, 0, 0, windowWidth, windowHeight);
+    // Draws character
+    char.drawChar();
 
-        imageMode(CENTER);
-        for (let lvl of levels) {
-            image(lvl.img, lvl.x, lvl.y, lvl.width, lvl.height);
+    // Animates character
+    if(!animFinished) {
+        if(nextPos[0] - char.x > 0) {
+            char.x = char.x + charMoveSpeed;
+        } else if (nextPos[0] - char.x < 0) {
+            char.x = char.x - charMoveSpeed;
         }
-        imageMode(CORNER);
 
-        // Draws character
-        image(char.img, char.x, char.y, char.width, char.height);
+        if(nextPos[1] - char.y > 0) {
+            char.y = char.y + charMoveSpeed;
+        } else if (nextPos[1] - char.y < 0) {
+            char.y = char.y - charMoveSpeed;
+        }
 
-        // Animates character
-        if(!animFinished) {
-            if(nextPos[0] - char.x > 0) {
-                char.x = char.x + 7;
-            } else if (nextPos[0] - char.x < 0) {
-                char.x = char.x - 7;
-            }
+        if(abs(nextPos[0] - char.x) < charMoveSpeed) {
+            char.x = nextPos[0];
+        }
 
-            if(nextPos[1] - char.y > 0) {
-                char.y = char.y + 7;
-            } else if (nextPos[1] - char.y < 0) {
-                char.y = char.y - 7;
-            }
+        if(abs(nextPos[1] - char.y) < charMoveSpeed) {
+            char.y = nextPos[1];
+        }
 
-            if(abs(nextPos[0] - char.x) < 7) {
-                char.x = nextPos[0];
-            }
-
-            if(abs(nextPos[1] - char.y) < 7) {
-                char.y = nextPos[1];
-            }
-
-            if(nextPos[0] - char.x === 0 && nextPos[1] - char.y === 0) {
-                animFinished = true;
-                char.levelPosition = nextPos[2];
-                lvlIndx[char.levelPosition][0].img = lvlIndx[char.levelPosition][2]; 
-            }
+        if(nextPos[0] - char.x === 0 && nextPos[1] - char.y === 0) {
+            animFinished = true;
+            char.levelPosition = nextPos[2];
+            lvlIndx[char.levelPosition][0].img = lvlIndx[char.levelPosition][2]; 
+            char.img = idleAnimation;
         }
     }
+}
