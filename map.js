@@ -4,7 +4,8 @@ let cityTwoLocation;
 let cityThreeLocation;
 let citySecretLocation;
 let nextPos = [];
-let buttons = [];
+let levels = [];
+let lvlIndx = {};
 let levelOneImg, levelTwoImg, levelThreeImg, secretLevelImg;
 let settingMenu = false;
 let audioSelectionMenu = false;
@@ -59,6 +60,16 @@ function loadVolumeSetting() {
     });
 }
 
+class level {
+    constructor(img, x, y, width = 80, height = 100) {
+        this.img = img;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+}
+
 function setup(){
     createCanvas(windowWidth, windowHeight);
 
@@ -67,12 +78,18 @@ function setup(){
     cityThreeLocation = [windowWidth / 2 - 150, windowHeight / 2 + 150];
     citySecretLocation = [windowWidth / 2 - 450, windowHeight / 2 - 190];
 
-    char = new character();
+    char = new character;
 
-    buttons.push(new Button("", cityOneLocation[0], cityOneLocation[1], 80, 100, levelOneImg, levelOneHover, cityOne));
-    buttons.push(new Button("", cityTwoLocation[0], cityTwoLocation[1], 80, 100, levelTwoImg, levelTwoHover, cityTwo));
-    buttons.push(new Button("", cityThreeLocation[0], cityThreeLocation[1], 80, 100, levelThreeImg, levelThreeHover, cityThree));
-    buttons.push(new Button("", citySecretLocation[0], citySecretLocation[1], 80, 100, secretLevelImg, secretLevelHover, dawgs));
+    levels.push(new level(levelOneHover, cityOneLocation[0], cityOneLocation[1]));
+    levels.push(new level(levelTwoImg, cityTwoLocation[0], cityTwoLocation[1]));
+    levels.push(new level(levelThreeImg, cityThreeLocation[0], cityThreeLocation[1]));
+    levels.push(new level(secretLevelImg, citySecretLocation[0], citySecretLocation[1]));
+
+    lvlIndx['1'] = [levels[0], levelOneImg, levelOneHover, cityOne];
+    lvlIndx['2'] = [levels[1], levelTwoImg, levelTwoHover, cityTwo];
+    lvlIndx['3'] = [levels[2], levelThreeImg, levelThreeHover, cityThree];
+    lvlIndx['1s'] = [levels[3], secretLevelImg, secretLevelHover, dawgs];
+    
     loadVolumeSetting();
 }
 
@@ -92,7 +109,7 @@ class character {
         switch(this.levelPosition) {
             case '1': {
                 if(input === 'a') {
-                    return cityTwoLocation.concat(['1']);
+                    return cityTwoLocation.concat(['2']);
                 }
                 break;
             } 
@@ -108,7 +125,7 @@ class character {
             }
             case '3': {
                 if(input === 'w') {
-                    return cityTwoLocation.concat(['1']);
+                    return cityTwoLocation.concat(['2']);
                 }
                 break;
             }
@@ -128,17 +145,13 @@ class character {
     
     function keyPressed() {
         
-        let tmp = char.move(keyCode);
+        let tmp = char.move(key);
         if(tmp && animFinished) {
+            lvlIndx[char.levelPosition][0].img = lvlIndx[char.levelPosition][1];
             nextPos = tmp;
             animFinished = false;
         } else if (keyCode === ENTER) {
-            for(let btn of buttons) {
-                if(btn.isHovered() && btn.action) {
-                    buttonClick();
-                    setTimeout(() => btn.action(), 200);
-                }
-            }
+            lvlIndx[char.levelPosition][3]();
         }
         
         return false;
@@ -147,29 +160,42 @@ class character {
     function draw() {
         background(0);
         image(map, 0, 0, windowWidth, windowHeight);
-        for (let btn of buttons) {
-            btn.display();
+
+        imageMode(CENTER);
+        for (let lvl of levels) {
+            image(lvl.img, lvl.x, lvl.y, lvl.width, lvl.height);
         }
+        imageMode(CORNER);
+
         // Draws character
         image(char.img, char.x, char.y, char.width, char.height);
 
         // Animates character
         if(!animFinished) {
             if(nextPos[0] - char.x > 0) {
-                ++char.x;
+                char.x = char.x + 7;
             } else if (nextPos[0] - char.x < 0) {
-                --char.x;
+                char.x = char.x - 7;
             }
 
             if(nextPos[1] - char.y > 0) {
-                ++char.y;
+                char.y = char.y + 7;
             } else if (nextPos[1] - char.y < 0) {
-                --char.y;
+                char.y = char.y - 7;
+            }
+
+            if(abs(nextPos[0] - char.x) < 7) {
+                char.x = nextPos[0];
+            }
+
+            if(abs(nextPos[1] - char.y) < 7) {
+                char.y = nextPos[1];
             }
 
             if(nextPos[0] - char.x === 0 && nextPos[1] - char.y === 0) {
                 animFinished = true;
                 char.levelPosition = nextPos[2];
+                lvlIndx[char.levelPosition][0].img = lvlIndx[char.levelPosition][2]; 
             }
         }
     }
