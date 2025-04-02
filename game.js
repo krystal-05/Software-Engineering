@@ -142,12 +142,6 @@ function setup() {
     returnButton = new Button("Menu", width - 80, 90, 125, 40, null, null, () => returnToMenu());
     tempSwapPerspective = new Button("Perspective", width - 80, 140, 125, 40, null, null, () => togglePerspective());
     audioButton = new Button("Audio", width - 80, 190, 125, 40, null, null, () => audioClick());
-<<<<<<< HEAD
-    loseDemo = new Button("Lose Demo", width - 80, 740, 120, 40, null, null, () => loseClick());
-    winDemo = new Button("Win Demo", width - 80, 790, 120, 40, null, null, () => winClick());
-
-=======
->>>>>>> 23e82f4b582938d68570fed3a43b45c21bd445ca
     Difficulty1 = new Button("make Normal", width - 80, 240, 125, 40, null, null, () => changeDifficulty(1));
     Difficulty2 = new Button("make Hard", width - 80, 290, 125, 40, null, null, () => changeDifficulty(2));
     Difficulty3 = new Button("make Impossible", width - 80, 340, 125, 40, null, null, () => changeDifficulty(3));
@@ -159,10 +153,6 @@ function setup() {
     createWinPopup();
     createLosePopup();
     createDonePopup();
-<<<<<<< HEAD
-=======
-
->>>>>>> 23e82f4b582938d68570fed3a43b45c21bd445ca
     inputEnabled = true;
 }
 
@@ -219,11 +209,7 @@ function draw() {
         Difficulty3.display();
         loseDemo.display();
         winDemo.display();
-<<<<<<< HEAD
-         }
-=======
     }
->>>>>>> 23e82f4b582938d68570fed3a43b45c21bd445ca
     pop();
 
     push();
@@ -938,10 +924,6 @@ function audioClick(){
     console.log("Button clicked!");  // To check if the button event runs
     console.log("audioMenu:", audioMenu);  // To check if audioMenu exists
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> 23e82f4b582938d68570fed3a43b45c21bd445ca
 function loseClick(){
     showLosePopup();
 }
