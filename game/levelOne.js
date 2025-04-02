@@ -29,7 +29,9 @@ function nextInning() {
     inputEnabled = false;
     outs = 0;
     runners = [];
-    resetFieldersPosition()
+    resetFieldersPosition();
+    popupMessage = "3 Outs!\nSwitching Sides"
+    popupTimer = millis();
     if (!topInning) inning++;
     topInning = !topInning;
 

@@ -1,26 +1,29 @@
-function botAttemptHit(pitchSpeed) {
+let botHitScheduled = false;
+
+function botAttemptHit(pitchMultiplier) {
     let hitChance = Math.random(); // gets number between 0 and 1
-    let travelDistance = (batter.y - hitZoneHeight) - ball.y;
-    let delay = (travelDistance / pitchSpeed) * 1000; // gets delay for ball to reach hitting zone
+    
+    // changed to check ball location in draw
+    // let travelDistance = (batter.y - hitZoneHeight) - ball.y;
+    // let delay = (travelDistance / pitchSpeed) * 1000; // gets delay for ball to reach hitting zone
 
     let baseAntiChance;
-    if(pitchSpeed <= 430) { // 50% chance to hit
+    if(pitchMultiplier == 1) { // 50% chance to hit
         baseAntiChance = .5;
-    } else if(pitchSpeed <= 559) { // 25% chance to hit
+    } else if(pitchMultiplier == 1.3) { // 25% chance to hit
         baseAntiChance = .75;  
-    } else if(pitchSpeed <= 731) { // 10% chance
+    } else if(pitchMultiplier == 1.7) { // 10% chance
         baseAntiChance = .9;
     } else {
         if(DEBUG) console.log("bot missed STRIKE", strikes);
     }
+    if (ball.curveInitialized) baseAntiChance += 0.09;
 
     let difficultyModifier = (generalDifficultyScale - 1) * 0.1;
     let adjustedAntiChance = baseAntiChance - difficultyModifier;
     
     if (hitChance >= adjustedAntiChance) {
-        setTimeout(() => {
-            botHitBall();
-        }, delay);
+        botHitScheduled = true;
     }
 }
 
@@ -68,6 +71,15 @@ function botHitBall() {
 function botPitch() {
     let pitchChance = Math.random();
     let botPitchMultiplier;
+
+    if (generalDifficultyScale > 1) {
+        let randomPitch = Math.random();
+        if (randomPitch <= .4) {
+            setPitchType('fastball');
+        } else {
+            setPitchType('curveball');
+        }
+    }
 
     if(pitchChance >= 0.60) { // 40% chance to get 1.3 multiplier
         botPitchMultiplier = 1.3;
