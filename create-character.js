@@ -25,10 +25,15 @@ function setup() {
     localStorage.setItem("characterTag", null);
 
     buttons.push(new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack()));
-    buttons.push(new Button("Character 1", width / 2 - 230, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 1")));
-    buttons.push(new Button("Character 2", width / 2, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 2")));
-    buttons.push(new Button("Character 3", width / 2 + 230, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 3")));
-    confirmButton = new Button("Confirm Character", width - 175, height - 50, 200, 50, null, null, () => confirmCharacter());
+   // buttons.push(new Button("Character 1", width / 2 - 230, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 1")));
+  //  buttons.push(new Button("Character 2", width / 2, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 2")));
+  //  buttons.push(new Button("Character 3", width / 2 + 230, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 3")));
+        
+  buttons.push(new Button("<", width / 2 - 250, height / 2, 50, 50, null, null, () => selectedCharacter("Character 1")));
+  buttons.push(new Button(">", width / 2 + 250, height / 2, 50, 50, null, null, () => selectedCharacter("Character 2")));
+
+
+    confirmButton = new Button("Confirm Character", width - 645, height - 50, 200, 50, null, null, () => confirmCharacter());
 }
 
 function draw() {
@@ -37,11 +42,11 @@ function draw() {
     textSize(64);
     textStyle(BOLD);
     fill('black');
-    text("Select Character", width / 2, 100);
-
-    fill('grey');
-    rect(width / 2, height / 2 + 50, 400, 550, 20);
-
+    text("Select Character", width / 2, 45);
+    
+    fill('rgba(100, 100, 100, 0.8)');
+    rect(width / 2, height / 2 + 50, 400, 450, 20);
+    
     textSize(32);
     fill('black');
     if (localStorage.getItem("characterTag") === "null") {
