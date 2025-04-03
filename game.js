@@ -213,7 +213,7 @@ function draw() {
             // bot hits ball in hit zone
             if (botHitScheduled && ball.y >= batter.y - hitZoneHeight * 0.5) {
                 botHitBall();
-                botHitScheduledHit = false;
+                botHitScheduled = false;
             }
             
             // Swing before ball in hit zone
