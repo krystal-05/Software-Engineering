@@ -97,11 +97,11 @@ function restart(){
 }
 function advance()
 {
-    if(level === 1)
-        window.location.href = "gameTwo.html";
-
-    if(level === 2)
-        window.location.href = "gameThree.html";
+    if(level === 1){
+        window.location.href = "map.html";
+    }
+    else if(level === 2)
+        window.location.href = "map.html";
 }
 function showWinPopup() {
     winPopup.style.display = "flex";

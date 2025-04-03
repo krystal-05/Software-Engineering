@@ -5,6 +5,9 @@ const PLAYER_HEIGHT = 120;
 const SPRITE_Y_OFFSET = 20;
 const MAX_POWER = 1600;
 
+level = localStorage.getItem("level");
+if (level !== null) 
+    level = parseInt(level);
 let hitZoneWidth, hitZoneHeight, catchDistance, groundDistance, runnerProximity;
 let pitcher, batter, ball, bases, fielders, runners = [];
 let lineup, currentBatter = 0;
@@ -43,27 +46,33 @@ let audioButton;
 // Difficulty
 let generalDifficultyScale = 1;
 
-// function preload() {
-//     bgSideImage = loadImage('assets/newFieldSide.png');
-//     bgTopImage = loadImage('assets/flat_field1.png');
-//     batterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
-//     batterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
-//     fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
-//     runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
-//     fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
-//     runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
-//     catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
-//     ballImg = loadImage('assets/Baseball1.png');
+function preload() {
+    bgSideImage = loadImage('assets/final_design/batterfield.png');
+    bgSideImage2 = loadImage('assets/final_design/batterfield.png');
+    bgSideImage3 = loadImage('assets/final_design/batterfield.png');
+    bgTopImage = loadImage('assets/flat_field1.png');
+    batterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
+    batterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
+    batterGif = loadImage('assets/temp_assets/BATTER.gif');
+    fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
+    runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
+    fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
+    runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
+    catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
+    ballImg = loadImage('assets/Baseball1.png');
+    targetImage = loadImage('assets/final_design/Target.png');
 
-//     currSong = loadSound('sounds/gamesong.mp3');
-//     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
-//     soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3'); 
-//     audio1 = loadSound('sounds/gamesong.mp3');
-//     audio2 = loadSound('sounds/audio2.mp3');
-//     audio3 = loadSound('sounds/audio3.mp3');
-//     audio4 = loadSound('sounds/audio4.mp3');
-//     audio5 = loadSound('sounds/audio5.mp3');
-// }
+    currSong = loadSound('sounds/gamesong.mp3');
+    soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
+    soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3'); 
+    audio1 = loadSound('sounds/gamesong.mp3');
+    audio2 = loadSound('sounds/audio2.mp3');
+    audio3 = loadSound('sounds/audio3.mp3');
+    audio4 = loadSound('sounds/audio4.mp3');
+    audio5 = loadSound('sounds/audio5.mp3');
+}
+
+
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -134,18 +143,47 @@ function draw() {
         image(bgTopImage, 0, 0, width, height);
         drawTopDownField();
         drawTopDownPlayers();
-    } else {
+    } 
+    else {
         // batter-view
-        image(bgSideImage, 0, 0, width, height);
-        drawField();
-        drawPlayers();
-        // draw hitzone
-        if (batter) {
-            stroke(255, 0, 0);
-            strokeWeight(2);
-            noFill();
-            rectMode(CENTER);
-            rect(batter.x, batter.y - hitZoneHeight / 2, hitZoneWidth, hitZoneHeight);
+        if (level === 1) {
+            image(bgSideImage, 0, 0, width, height);
+            drawField();
+            drawPlayers();
+    
+            if (batter) {
+                stroke(255, 0, 0);
+                strokeWeight(2);
+                noFill();
+                rectMode(CENTER);
+                rect(batter.x, batter.y - hitZoneHeight / 2, hitZoneWidth, hitZoneHeight);
+            }
+        }
+        else if (level === 2) {
+            image(bgSideImage2, 0, 0, width, height);
+            drawField();
+            drawPlayers();
+    
+            if (batter) {
+                stroke(255, 0, 0);
+                strokeWeight(2);
+                noFill();
+                rectMode(CENTER);
+                rect(batter.x, batter.y - hitZoneHeight / 2, hitZoneWidth, hitZoneHeight);
+            }
+        }
+        else if (level === 3) {
+            image(bgSideImage3, 0, 0, width, height);
+            drawField();
+            drawPlayers();
+    
+            if (batter) {
+                stroke(255, 0, 0);
+                strokeWeight(2);
+                noFill();
+                rectMode(CENTER);
+                rect(batter.x, batter.y - hitZoneHeight / 2, hitZoneWidth, hitZoneHeight);
+            }
         }
     }
     
@@ -847,6 +885,38 @@ function assignEntities() {
 
     // Fielders positioned at default
     fielders = generateFielders();
+}
+
+function nextInning() {
+    inputEnabled = false;
+    outs = 0;
+    runners = [];
+    resetFieldersPosition();
+    popupMessage = "3 Outs!\nSwitching Sides"
+    popupTimer = millis();
+    if (!topInning) inning++;
+    topInning = !topInning;
+
+    showOutPopup = true;
+    resetBatter();
+    runners = [];
+
+    setTimeout(() => {
+        showOutPopup = false;
+        inputEnabled = true;
+    }, 1500);
+
+    if (inning === 4 && score.home < score.away){
+        if (level === 1 || level === 2){
+        showWinPopup();
+        }
+        if (level === 3){
+            showDonePopup();
+        }
+    }
+    if (inning === 4 && score.home >= score.away){
+        showLosePopup();
+    }
 }
 
 // Load volume settings from local storage
