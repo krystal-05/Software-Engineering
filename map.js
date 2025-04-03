@@ -41,15 +41,15 @@ let secretLevelButton;
      }
 
      function cityOne() {
-        localStorage.setItem("level", 1);
+        localStorage.setItem("lastSelectedLevel", 1);
         window.location.href = "game.html";
     }
     function cityTwo() {
-        localStorage.setItem("level", 2);
+        localStorage.setItem("lastSelectedLevel", 2);
         window.location.href = "game.html";
     }
     function cityThree() {
-        localStorage.setItem("level", 3);
+        localStorage.setItem("lastSelectedLevel", 3);
         window.location.href = "game.html";
     }
 

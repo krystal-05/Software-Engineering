@@ -4,10 +4,12 @@ const PLAYER_WIDTH = 80;
 const PLAYER_HEIGHT = 120;
 const SPRITE_Y_OFFSET = 20;
 const MAX_POWER = 1600;
+const MAX_LEVEL = 3;
 
-level = localStorage.getItem("level");
-if (level !== null) 
-    level = parseInt(level);
+let lastSelectedLevel = localStorage.getItem("lastSelectedLevel");
+if (lastSelectedLevel !== null) lastSelectedLevel = parseInt(lastSelectedLevel);
+else { lastSelectedLevel = 1; }
+
 let hitZoneWidth, hitZoneHeight, catchDistance, groundDistance, runnerProximity;
 let pitcher, batter, ball, bases, fielders, runners = [];
 let lineup, currentBatter = 0;
@@ -47,9 +49,19 @@ let audioButton;
 let generalDifficultyScale = 1;
 
 function preload() {
-    bgSideImage = loadImage('assets/final_design/batterfield.png');
-    bgSideImage2 = loadImage('assets/final_design/batterfield.png');
-    bgSideImage3 = loadImage('assets/final_design/batterfield.png');
+    switch (lastSelectedLevel) {
+        case 1:
+            bgSideImage = loadImage('assets/final_design/batterfield.png');
+            break;
+        case 2:
+            bgSideImage = loadImage('assets/final_design/batterfield.png');
+            break;
+        case 3:
+            bgSideImage = loadImage('assets/final_design/batterfield.png');
+            break;
+        default:
+            break;
+    }
     bgTopImage = loadImage('assets/flat_field1.png');
     batterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
     batterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
@@ -146,44 +158,16 @@ function draw() {
     } 
     else {
         // batter-view
-        if (level === 1) {
-            image(bgSideImage, 0, 0, width, height);
-            drawField();
-            drawPlayers();
-    
-            if (batter) {
-                stroke(255, 0, 0);
-                strokeWeight(2);
-                noFill();
-                rectMode(CENTER);
-                rect(batter.x, batter.y - hitZoneHeight / 2, hitZoneWidth, hitZoneHeight);
-            }
-        }
-        else if (level === 2) {
-            image(bgSideImage2, 0, 0, width, height);
-            drawField();
-            drawPlayers();
-    
-            if (batter) {
-                stroke(255, 0, 0);
-                strokeWeight(2);
-                noFill();
-                rectMode(CENTER);
-                rect(batter.x, batter.y - hitZoneHeight / 2, hitZoneWidth, hitZoneHeight);
-            }
-        }
-        else if (level === 3) {
-            image(bgSideImage3, 0, 0, width, height);
-            drawField();
-            drawPlayers();
-    
-            if (batter) {
-                stroke(255, 0, 0);
-                strokeWeight(2);
-                noFill();
-                rectMode(CENTER);
-                rect(batter.x, batter.y - hitZoneHeight / 2, hitZoneWidth, hitZoneHeight);
-            }
+        image(bgSideImage, 0, 0, width, height);
+        drawField();
+        drawPlayers();
+        // draw hitzone
+        if (batter) {
+            stroke(255, 0, 0);
+            strokeWeight(2);
+            noFill();
+            rectMode(CENTER);
+            rect(batter.x, batter.y - hitZoneHeight / 2, hitZoneWidth, hitZoneHeight);
         }
     }
     
@@ -752,7 +736,7 @@ function nextInning() {
 // Handle response to user key input
 function keyPressed() {
     // pitch select/infielder select
-    if ((key === '1' || key === '2') && pitchCanChange) {
+    if ((key === '1' || key === '2') && pitchCanChange && inputEnabled) {
         if (topInning) {
             return;
         }
@@ -769,7 +753,7 @@ function keyPressed() {
     }
     // Start pitch/skill-check input/swing bat
     if (key === ' ') {
-        if(topInning) {
+        if(topInning && inputEnabled) {
             if(!hitPowerSlider && !hitDirectionSlider && !hitSkillCheckComplete) {
                 startHitSkillCheck();
             }
@@ -907,10 +891,9 @@ function nextInning() {
     }, 1500);
 
     if (inning === 4 && score.home < score.away){
-        if (level === 1 || level === 2){
-        showWinPopup();
-        }
-        if (level === 3){
+        if (lastSelectedLevel < MAX_LEVEL) {
+            showWinPopup();
+        } else {
             showDonePopup();
         }
     }
@@ -1029,7 +1012,7 @@ function loseClick(){
     showLosePopup();
 }
 function winClick(){
-    if (level === 3){
+    if (lastSelectedLevel === 3){
         showDonePopup();
     }
     else{
