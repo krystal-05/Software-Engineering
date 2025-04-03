@@ -60,6 +60,7 @@ function preload() {
             bgSideImage = loadImage('assets/final_design/batterfield.png');
             break;
         default:
+            bgSideImage = loadImage('assets/final_design/batterfield.png');
             break;
     }
     bgTopImage = loadImage('assets/flat_field1.png');
