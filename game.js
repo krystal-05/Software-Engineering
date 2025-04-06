@@ -254,7 +254,10 @@ function draw() {
                 runners.forEach(runner => {
                     runner.running = true;
                 });
-                if (runners.length === 0) resetBatter();
+                if (runners.length === 0) {
+                    resetBatter();
+                    //setBasedRunners();
+                }
             } 
             else if(ballHit && !ball.homeRun) {
                 // calculate normalizedPower value based on power used to hit the ball 
@@ -830,6 +833,9 @@ function assignEntities() {
         { x: width * 0.5,   y: height * 0.4 },   // 2nd base
         { x: width * 0.17,  y: height * 0.58 }   // 3rd base
     ];
+    for (i = 0; i < 4; ++i) {
+        bases[i].number = i;
+    }
     setBasedRunners();
 
     pitcher = { x: width * 0.5, y: height * 0.575, armAngle: 0 };

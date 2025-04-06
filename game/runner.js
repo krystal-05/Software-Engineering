@@ -56,6 +56,7 @@ function moveRunners(dt) {
                 runner.x = targetBase.x * baseScale;
                 runner.y = targetBase.y;
                 // occupied used in playerHit()
+                let prevBase = runner.base;
                 targetBase.occupied = true;
 
                 // Mark runner safe/not running when reaching their target
@@ -69,6 +70,7 @@ function moveRunners(dt) {
                     if (runner.base == 0) {
                         score[topInning ? 'away' : 'home']++;
                         bases[0].occupied = false;
+                        bases[prevBase].occupied = false;
 
                         popupMessage = "RUN SCORED!";
                         showRunPopup = true;
@@ -78,6 +80,7 @@ function moveRunners(dt) {
                         return false;
                     } else {
                         if (!ball.homeRun) runner.running = false;
+                        else bases[prevBase].occupied = false;
                         runner.safe = true;
                         if (DEBUG) console.log(`Runner reached base ${runner.base} and is holding.`);
                     }
@@ -98,15 +101,10 @@ function shouldBacktrack(runner) {
 }
 
 function setBasedRunners() {
-    let i = 0;
-    for (let base of bases) {
-        base.number = i;
-        if (i === 0) {
-            base.occupied = true;
-        } else 
-            base.occupied = false;
-        ++i;
-    }
+    bases.forEach((base, index) => {
+        base.occupied = (index === 0);
+        if (DEBUG) console.log("set base ", base.number, base.occupied);
+    });
 }
 // will run the runner manually if the runner is allowed
 function runBase(baseStr) {
@@ -134,7 +132,7 @@ function runBase(baseStr) {
     }
 
     for (let runner of runners) {
-        if (runner.base === attempted) {
+        if (runner.base === attempted && !runner.running) {
             if (runner.safe) runner.safe = false;
             runner.targetBase = nextBaseIndex;
             runner.running = true;
@@ -152,7 +150,7 @@ function displayRunHint() {
 
     for (let i = 1; i < bases.length; i++) {
         let nextIndex = (i + 1) % bases.length;
-        if (bases[i].occupied && !bases[nextIndex].occupied) {
+        if (bases[i].occupied && !bases[nextIndex].occupied && !homeRunHit) {
             let label = (i === 1 || i === 3) ? 4 - i : i;
             text(`Press ${label} to Run!`, bases[i].x, bases[i].y + height * .05);
         }
