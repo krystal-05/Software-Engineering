@@ -59,11 +59,15 @@ function playerHit() {
 
     batter.running = true;
     runners.forEach(runner => {
-        runner.running = true;
+        if (bases[runner.base - 1].occupied) {
+            runner.running = true;
+            bases[runner.base].occupied = false;
+        }
     });
     setTimeout(() => {
         batter.x = batter.x - width * .05;
         runners.push(batter);
+        bases[0].occupied = false;
         ball.advancingRunner = batter;
         batter = null;
     }, 75);

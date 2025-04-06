@@ -4,6 +4,11 @@ const PLAYER_WIDTH = 80;
 const PLAYER_HEIGHT = 120;
 const SPRITE_Y_OFFSET = 20;
 const MAX_POWER = 1600;
+const MAX_LEVEL = 3;
+
+let lastSelectedLevel = localStorage.getItem("lastSelectedLevel");
+if (lastSelectedLevel !== null) lastSelectedLevel = parseInt(lastSelectedLevel);
+else { lastSelectedLevel = 1; }
 
 let hitZoneWidth, hitZoneHeight, catchDistance, groundDistance, runnerProximity;
 let pitcher, batter, ball, bases, fielders, runners = [];
@@ -43,27 +48,44 @@ let audioButton;
 // Difficulty
 let generalDifficultyScale = 1;
 
-// function preload() {
-//     bgSideImage = loadImage('assets/newFieldSide.png');
-//     bgTopImage = loadImage('assets/flat_field1.png');
-//     batterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
-//     batterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
-//     fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
-//     runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
-//     fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
-//     runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
-//     catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
-//     ballImg = loadImage('assets/Baseball1.png');
+function preload() {
+    switch (lastSelectedLevel) {
+        case 1:
+            bgSideImage = loadImage('assets/final_design/batterfield.png');
+            break;
+        case 2:
+            bgSideImage = loadImage('assets/final_design/batterfield.png');
+            break;
+        case 3:
+            bgSideImage = loadImage('assets/final_design/batterfield.png');
+            break;
+        default:
+            bgSideImage = loadImage('assets/final_design/batterfield.png');
+            break;
+    }
+    bgTopImage = loadImage('assets/flat_field1.png');
+    batterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
+    batterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
+    batterGif = loadImage('assets/temp_assets/BATTER.gif');
+    fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
+    runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
+    fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
+    runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
+    catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
+    ballImg = loadImage('assets/Baseball1.png');
+    targetImage = loadImage('assets/final_design/Target2.png');
 
-//     currSong = loadSound('sounds/gamesong.mp3');
-//     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
-//     soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3'); 
-//     audio1 = loadSound('sounds/gamesong.mp3');
-//     audio2 = loadSound('sounds/audio2.mp3');
-//     audio3 = loadSound('sounds/audio3.mp3');
-//     audio4 = loadSound('sounds/audio4.mp3');
-//     audio5 = loadSound('sounds/audio5.mp3');
-// }
+    currSong = loadSound('sounds/gamesong.mp3');
+    soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
+    soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3'); 
+    audio1 = loadSound('sounds/gamesong.mp3');
+    audio2 = loadSound('sounds/audio2.mp3');
+    audio3 = loadSound('sounds/audio3.mp3');
+    audio4 = loadSound('sounds/audio4.mp3');
+    audio5 = loadSound('sounds/audio5.mp3');
+}
+
+
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -169,7 +191,7 @@ function draw() {
         image(bgTopImage, 0, 0, width, height);
         drawTopDownField();
         drawTopDownPlayers();
-    }
+    } 
     else {
         // batter-view
         image(bgSideImage, 0, 0, width, height);
@@ -217,10 +239,14 @@ function draw() {
     drawPopup();
     pop();
 
+    push();
     if (!ballMoving && !topInning && pitchCanChange) {
         drawPitchSelectionBox();
+    } else if (topInning) {
+        displayRunHint();
     }
-    
+    pop();
+
     // Game logic
     while (accumulator >= fixedDt) {
         // ball goes off screen
@@ -249,9 +275,8 @@ function draw() {
             // bot hits ball in hit zone
             if (botHitScheduled && ball.y >= batter.y - hitZoneHeight * 0.5) {
                 botHitBall();
-                botHitScheduledHit = false;
+                botHitScheduled = false;
             }
-            
             // Swing before ball in hit zone
             if (ball.y >= batter.y && abs(ball.x - batter.x) < hitZoneWidth && !swingAttempt) {
                 ball.strikePitch = true;
@@ -265,8 +290,13 @@ function draw() {
 
         if (ballMoving && !ball.throwing) {
             if (ballHit && ball.homeRun) {
-                let unsafeRunners = runners.filter(runner => runner.running);
-                if (unsafeRunners.length === 0) resetBatter();
+                runners.forEach(runner => {
+                    runner.running = true;
+                });
+                if (runners.length === 0) {
+                    resetBatter();
+                    //setBasedRunners();
+                }
             } 
             else if(ballHit && !ball.homeRun) {
                 // calculate normalizedPower value based on power used to hit the ball 
@@ -682,25 +712,32 @@ function handleStrikeCall() {
 
 // Logic handling in-play event popups
 function drawPopup() {
-    if (showStrikePopup || showHomerunPopup || showOutPopup || showRunPopup || showFoulPopup) {
-        inputEnabled = false;
-
+    // so that the player can still control runners while the run scored is up
+    if (showRunPopup && topInning) {
         push();
         textSize(50);
         fill(255, 0, 0);
         textAlign(CENTER, CENTER);
         text(popupMessage, width / 2, height / 4);
         pop();
-        
-        // Hide the popup after 1.5 seconds
-        if (millis() - popupTimer > 1500) {
-            inputEnabled = true;
-            showStrikePopup = false;
-            showRunPopup = false;
-            showHomerunPopup = false;
-            showOutPopup = false;
-            showFoulPopup = false;
-        }
+    } else if (showStrikePopup || showHomerunPopup || showOutPopup || showFoulPopup || (showRunPopup && !topInning)) {
+        inputEnabled = false;
+        push();
+        textSize(50);
+        fill(255, 0, 0);
+        textAlign(CENTER, CENTER);
+        text(popupMessage, width / 2, height / 4);
+        pop();
+    }
+
+    // Hide the popup after 1.5 seconds.
+    if (millis() - popupTimer > 1500) {
+        inputEnabled = true;
+        showStrikePopup = false;
+        showRunPopup = false;
+        showHomerunPopup = false;
+        showOutPopup = false;
+        showFoulPopup = false;
     }
 }
 
@@ -710,18 +747,14 @@ function drawPitchSelectionBox() {
     let boxWidth = 250;
     let boxHeight = 120;
     
-    // Position the box relative to the pitcher:
-    // For example, place it to the right of the pitcher and centered vertically on the pitcher.
     let boxX = pitcher.x + height * 0.1;
     let boxY = pitcher.y - boxHeight * 0.5;
     
-    // Draw a half-transparent rectangle for the textbox background
-    fill(0, 0, 0, 127); // Black with 50% opacity
+    fill(0, 0, 0, 127);
     stroke(255);
     strokeWeight(2);
     rect(boxX, boxY, boxWidth, boxHeight, 10);
     
-    // Draw the pitch options text inside the box
     noStroke();
     fill(255);
     textSize(16);
@@ -730,50 +763,42 @@ function drawPitchSelectionBox() {
     text("2: Curveball", boxX + 10, boxY + 75);
     text("Current: " + (ball.pitchType ? ball.pitchType : "None"), boxX + 10, boxY + 100);
     pop();
-  }
-
-// Set field up for next inning
-function nextInning() {
-    inputEnabled = false;
-    outs = 0;
-    runners = [];
-    resetFieldersPosition()
-    if (!topInning) inning++;
-    topInning = !topInning;
-
-    showOutPopup = true;
-    popupMessage = "3 Outs!\nSwitching Sides"
-    popupTimer = millis();
-    resetBatter();
-    runners = [];
-
-//     setTimeout(() => {
-//         showOutPopup = false;
-//         inputEnabled = true;
-//     }, 1500);
-// }
+}
 
 // Handle response to user key input
 function keyPressed() {
     // pitch select/infielder select
-    if ((key === '1' || key === '2') && pitchCanChange) {
-        if (topInning) {
-            return;
-        }
-        switch(key) {
-            case '1':
-                setPitchType('fastball');
-                break;
-            case '2':
-                setPitchType('curveball');
-                break;
-            default:
-                break;
+    if ((key === '1' || key === '2' || key === '3') && inputEnabled) {
+        if (topInning && ballHit) {
+            switch(key) {
+                case '1':
+                    runBase(key);
+                    break;
+                case '2':
+                    runBase(key);
+                    break;
+                case '3':
+                    runBase(key);
+                    break;
+                default:
+                    break;
+            }
+        } else if (!topInning && pitchCanChange) {
+            switch(key) {
+                case '1':
+                    setPitchType('fastball');
+                    break;
+                case '2':
+                    setPitchType('curveball');
+                    break;
+                default:
+                    break;
+            }
         }
     }
     // Start pitch/skill-check input/swing bat
     if (key === ' ') {
-        if(topInning) {
+        if(topInning && inputEnabled) {
             if(!hitPowerSlider && !hitDirectionSlider && !hitSkillCheckComplete) {
                 startHitSkillCheck();
             }
@@ -814,9 +839,9 @@ function keyPressed() {
 
 // Reset umpire arm position after a short delay
 function updateUmpire() {
-  if (umpire.armRaised && millis() - umpire.armTimer > 1000) {
-      umpire.armRaised = false;
-  }
+    if (umpire.armRaised && millis() - umpire.armTimer > 1000) {
+        umpire.armRaised = false;
+    }
 }
 // Reset field for next batter
 function resetBatter() {
@@ -836,6 +861,7 @@ function resetBatter() {
     if(!ball.foul) {
         strikes = 0;
     }
+    bases[0].occupied = true;
     homeRunHit = false;
     resetBall();
     resetFieldersPosition();
@@ -848,6 +874,10 @@ function assignEntities() {
         { x: width * 0.5,   y: height * 0.4 },   // 2nd base
         { x: width * 0.17,  y: height * 0.58 }   // 3rd base
     ];
+    for (i = 0; i < 4; ++i) {
+        bases[i].number = i;
+    }
+    setBasedRunners();
 
     pitcher = { x: width * 0.5, y: height * 0.575, armAngle: 0 };
 
@@ -889,6 +919,38 @@ function assignEntities() {
 
     // Fielders positioned at default
     fielders = generateFielders();
+}
+
+function nextInning() {
+    inputEnabled = false;
+    outs = 0;
+    runners = [];
+    resetFieldersPosition();
+    popupMessage = "3 Outs!\nSwitching Sides"
+    popupTimer = millis();
+    if (!topInning) inning++;
+    topInning = !topInning;
+
+    showOutPopup = true;
+    resetBatter();
+    runners = [];
+    setBasedRunners();
+
+    setTimeout(() => {
+        showOutPopup = false;
+        inputEnabled = true;
+    }, 1500);
+
+    if (inning === 4 && score.home < score.away){
+        if (lastSelectedLevel < MAX_LEVEL) {
+            showWinPopup();
+        } else {
+            showDonePopup();
+        }
+    }
+    if (inning === 4 && score.home >= score.away){
+        showLosePopup();
+    }
 }
 
 // Load volume settings from local storage
@@ -1001,7 +1063,7 @@ function loseClick(){
     showLosePopup();
 }
 function winClick(){
-    if (level === 3){
+    if (lastSelectedLevel === 3){
         showDonePopup();
     }
     else{
