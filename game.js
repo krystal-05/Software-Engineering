@@ -179,9 +179,13 @@ function draw() {
         drawPitcherSkillCheckBar(dt);
     }
 
-    if(hitPowerSlider || hitDirectionSlider) {
+    if(hitPowerSlider) {
         updateHitSkillBar(dt);
-        drawSkillCheckBar(dt);
+        drawPowerSkillCheckBar(dt);
+    }
+    else if(hitDirectionSlider) {
+        updateHitSkillBar(dt);
+        drawDirectionSkillBar(dt);
     }
 
     // Draw the HUD
