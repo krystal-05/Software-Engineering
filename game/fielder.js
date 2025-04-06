@@ -267,7 +267,7 @@ function handleCatch(currentFielder) {
     }
 
     // if the ball is caught by the catcher, call ground-throw function
-    if (dist(ball.x, ball.y, catcherPlayer.x, catcherPlayer.y) < catcherPlayer.catchRadius) {
+    if (dist(ball.x, ball.y, catcherPlayer.x, catcherPlayer.y) < catchDistance) {
         catcherPlayer.state = "hasBall";
         handleGroundThrow(currentFielder);
         ballCaughtThisFrame = true;
@@ -402,7 +402,7 @@ function checkFielderCatch() {
     }
 
     // Catcher catches ball in attempt to out runner
-    if (!ball.strikePitch && dist(ball.x, ball.y, catcherPlayer.x, catcherPlayer.y) < catcherPlayer.catchRadius) {
+    if (!ball.strikePitch && dist(ball.x, ball.y, catcherPlayer.x, catcherPlayer.y) < catchDistance) {
         catcherPlayer.state = "hasBall";
         if (ball.inAir) {
             handleThrow(catcherPlayer);
