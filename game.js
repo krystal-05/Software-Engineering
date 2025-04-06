@@ -291,6 +291,7 @@ function draw() {
                 ball.y += ball.speedY * fixedDt;
                 // Home Run height reached
                 if (!ball.foul && ball.y < 0 && homeRunHit) {
+                    handleHomerun();
                     ball.homeRun = true;
                     showHomerunPopup = true;
                     popupMessage = "HOME RUN!"
@@ -316,6 +317,7 @@ function draw() {
                     }
                 }
                 if (ball.foul && millis() - ball.foulSince > 1500) {
+                    handleFoul();
                     ball.foul = false;
                     resetBall();
                     return;
@@ -643,31 +645,75 @@ function drawUmpire() {
     stroke(0);
     strokeWeight(3);
     fill(shirtColor);
-    if (umpire.armRaised) {
-        line(umpire.x, umpire.y - 20, umpire.x - 20, umpire.y - 60); // Raised left arm
+    if (umpire.armRaisedLeft && umpire.armRaisedRight) {
+        // Both arms raised
+        line(umpire.x - 20, umpire.y - 20, umpire.x - 60, umpire.y - 60); // Left
+        line(umpire.x + 20, umpire.y - 20, umpire.x + 60, umpire.y - 60); // Right
+    } else if (umpire.armRaisedLeft) {
+        // Only left arm raised
+        line(umpire.x, umpire.y - 20, umpire.x - 20, umpire.y - 60);
+        line(umpire.x, umpire.y - 20, umpire.x + 20, umpire.y); // Right arm normal
+    } else if (umpire.armRaisedRight) {
+        // Only right arm raised
+        line(umpire.x - 20, umpire.y, umpire.x - 60, umpire.y - 20); // Left arm normal
+        line(umpire.x + 20, umpire.y - 20, umpire.x + 60, umpire.y - 60);
     } else {
-        line(umpire.x, umpire.y - 20, umpire.x - 20, umpire.y); // Normal left arm
-    }
-    line(umpire.x, umpire.y - 20, umpire.x + 20, umpire.y); // Right arm
+        // Both arms normal
+        line(umpire.x, umpire.y - 20, umpire.x - 20, umpire.y); // Left
+        line(umpire.x, umpire.y - 20, umpire.x + 20, umpire.y); // Right
+    }    
 
     pop();
 }
 
 // Handle umpire strike call when a strike occurs
 function handleStrikeCall() {
-    umpire.armRaised = true;
+    umpire.armRaisedLeft = true;
     umpire.armTimer = millis();
     popupMessage = "STRIKE!";
     showStrikePopup = true;
     popupTimer = millis();
     if (DEBUG) console.log("Umpire arm raised!");
     setTimeout(() => {
-        umpire.armRaised = false;
+        umpire.armRaisedLeft = false;
         setTimeout(() => {
-            umpire.armReset = true;
+            umpire.armResetLeft = true;
         }, 500); // Allow arm to reset after half a second
     }, 1000); // Lower the arm after 1 second
 }
+
+function handleHomerun() {
+    umpire.armRaisedRight = true;
+    umpire.armRaisedLeft = true;
+    umpire.armTimer = millis();
+    showHomerunPopup = true;
+    popupTimer = millis();
+    if (DEBUG) console.log('armRaisedLeft:', umpire.armRaisedLeft, 
+        'armRaisedRight:', umpire.armRaisedRight);
+    setTimeout(() => {
+        umpire.armRaisedRight = false;
+        umpire.armRaisedLeft = false;
+        setTimeout(() => {
+            umpire.armReset = true;
+        }, 500);
+    }, 1000);
+}
+
+function handleFoul() {
+    umpire.armRaisedRightaq = true;
+    umpire.armTimer = millis();
+    showFoulPopup = true;
+    popupTimer = millis();
+    if (DEBUG) console.log("Umpire arms raised!");
+    setTimeout(() => {
+        umpire.armRaised = false;
+        setTimeout(() => {
+            umpire.armReset = true;
+        }, 500);
+    }, 1000);
+}
+
+
 
 // Logic handling in-play event popups
 function drawPopup() {
