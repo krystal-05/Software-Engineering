@@ -48,6 +48,7 @@ function playerHit() {
     ball.initialSpeedY = ball.speedY;
 
     if(isFoul) {
+        handleFoul();
         ball.foulSince = millis();
         showFoulPopup = true;
         popupMessage = "FOUL BALL";

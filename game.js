@@ -317,7 +317,6 @@ function draw() {
                     }
                 }
                 if (ball.foul && millis() - ball.foulSince > 1500) {
-                    handleFoul();
                     ball.foul = false;
                     resetBall();
                     return;
@@ -700,13 +699,14 @@ function handleHomerun() {
 }
 
 function handleFoul() {
-    umpire.armRaisedRightaq = true;
+    umpire.armRaisedRight = true;
     umpire.armTimer = millis();
+    popupMessage = "FOUL!";
     showFoulPopup = true;
     popupTimer = millis();
     if (DEBUG) console.log("Umpire arms raised!");
     setTimeout(() => {
-        umpire.armRaised = false;
+        umpire.armRaisedRight = false;
         setTimeout(() => {
             umpire.armReset = true;
         }, 500);
