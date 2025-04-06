@@ -105,7 +105,7 @@ function setup() {
     if (!currSong.isPlaying()) {
         currSong.play();
         currSong.loop();
-        }
+    }
 
     assignEntities();
     let transformedPitcher = sideToTopDown(pitcher.x, pitcher.y);
@@ -115,42 +115,6 @@ function setup() {
         scaleX: .4,
         scaleY: 1
     };
-
-    ball = {
-        x: pitcher.x,
-        y: pitcher.y,
-        speedY: 430,
-        speedX: 0,
-        throwing: false,
-        inAir: false,
-        advancingRunner: null,
-        strikePitch: false,
-        initialSpeedY: 0,
-        crossedGround: false
-    };
-
-    batter = {
-        x: width * 0.5,
-        y: height * 0.90,
-        running: false,
-        speed: 300,
-        base: 0,
-        safe: false,
-        backtracking: false
-    };
-
-    umpire = { 
-      x: width * 0.20, 
-      y: height * 0.70, 
-      armRaised: false, 
-      armTimer: 0
-    };
-
-    catcherPlayer = { x: width * 0.5, y: height * 0.95, state: "idle", isCatcher: true };
-
-    // Fielders positioned at (or near) the bases
-    fielders = generateFielders();
-
 
     initialFielderPositions = fielders.map(fielder => ({ x: fielder.x, y: fielder.y }));
 
@@ -176,6 +140,7 @@ function setup() {
     createWinPopup();
     createLosePopup();
     createDonePopup();
+
     inputEnabled = true;
 }
 
@@ -225,7 +190,7 @@ function draw() {
     settingButton.display();
     returnButton.display();
     tempSwapPerspective.display();
-     if (DEBUG === true){
+    if (DEBUG){
         audioButton.display();
         Difficulty1.display();
         Difficulty2.display();
@@ -261,7 +226,7 @@ function draw() {
                 ballMoving = true;
             }
         }
-
+        // pitch ball movement
         if (ballMoving && !ballHit && !ball.throwing) {
             switch(ball.pitchType) {
                 case 'curveball':
@@ -279,15 +244,11 @@ function draw() {
             }
             // Swing before ball in hit zone
             if (ball.y >= batter.y && abs(ball.x - batter.x) < hitZoneWidth && !swingAttempt) {
-                ball.strikePitch = true;
                 swingAttempt = true;
-
-                strikes++;
-                handleStrikeCall();
-                if (DEBUG) console.log("No swing! Strike " + strikes);
+                playerStrike();
             }
         }
-
+        // hit ball movement
         if (ballMoving && !ball.throwing) {
             if (ballHit && ball.homeRun) {
                 runners.forEach(runner => {
@@ -342,12 +303,14 @@ function draw() {
                 else { // ball going down
                     // ball has not reached target, keep applying gravity
                     if (ball.y < targetY) {
-                        ball.speedY += gravity * fixedDt;
-                    } else {
-                        ball.y = lerp(ball.y, targetY, 0.1);
-                        ball.speedY *= 0.9;
+                        ball.speedY += requiredG * fixedDt;
 
-                        if (abs(ball.y - targetY) < catchDistance) {
+                    // bounce to recover ball in target range (bounce effect)
+                    } else {
+                        ball.y = lerp(ball.y, targetY, 0.01);
+                        ball.speedY *= 0.5;
+
+                        if (abs(ball.speedY) < 5 || abs(ball.y - targetY) < catchDistance) {
                             ball.inAir = false;
                         }
                     }
@@ -359,12 +322,6 @@ function draw() {
                 }
 
                 ball.speedX *= 0.98;
-                // if (!ball.inAir && ball.y <= height * 0.4) {
-                //     ball.speedX = 0;
-                //     ball.speedY = 0;
-                //     ball.y = height * 0.4;
-                // }
-
                 if (abs(ball.speedX) < 0.3 && abs(ball.speedY) < 0.3) {
                     ball.speedX = 0;
                     ball.speedY = 0;
@@ -376,10 +333,12 @@ function draw() {
             }
         }
 
+        // throwing ball movement
         if (ball.throwing) {
             ball.x += ball.speedX * fixedDt;
             ball.y += ball.speedY * fixedDt;
            
+            // determine runner to try and get out
             let targetFielder = ball.targetFielder;
 
             // Fielder caught ball in attempt to out a runner
@@ -1030,10 +989,10 @@ function mousePressed() {
         }
     }
     if (!currSong.isPlaying()) {
-            currSong.play();
-            currSong.loop();
+        currSong.loop();
+    }
 }
-}
+
 // Handle change of perspective
 function togglePerspective() {
     currentPerspective = currentPerspective === "side" ? "topDown" : "side";
