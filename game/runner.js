@@ -140,7 +140,6 @@ function runBase(baseStr) {
             runner.running = true;
             bases[attempted].occupied = false;
             bases[nextBaseIndex].occupied = true;
-            
         }
     }
 }

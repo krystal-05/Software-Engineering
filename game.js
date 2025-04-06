@@ -252,8 +252,10 @@ function draw() {
         // hit ball movement
         if (ballMoving && !ball.throwing) {
             if (ballHit && ball.homeRun) {
-                let unsafeRunners = runners.filter(runner => runner.running);
-                if (unsafeRunners.length === 0) resetBatter();
+                runners.forEach(runner => {
+                    runner.running = true;
+                });
+                if (runners.length === 0) resetBatter();
             } 
             else if(ballHit && !ball.homeRun) {
                 // calculate normalizedPower value based on power used to hit the ball 
