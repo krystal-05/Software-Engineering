@@ -30,18 +30,23 @@ function preload() {
 }
 
 function cityOne() {
-    window.location.href = "gameOne.html";
+    localStorage.setItem("lastSelectedLevel", '1');
+    window.location.href = "game.html";
 }
 function cityTwo() {
-    window.location.href = "gameTwo.html";
+    localStorage.setItem("lastSelectedLevel", '2');
+    window.location.href = "game.html";
 }
 function cityThree() {
-    window.location.href = "gameThree.html";
+    localStorage.setItem("lastSelectedLevel", '3');
+    window.location.href = "game.html";
 }
 
 function dawgs() {
-    window.open('https://www.youtube.com/watch?v=RQmEERvqq70&ab_channel=Generuu');
+    localStorage.setItem("lastSelectedLevel", '1s');
+    window.open('https://www.youtube.com/watch?v=RQmEERvqq70&ab_channel=Generuu')
 }
+
 
 function loadVolumeSetting() {
     const savedVolume = localStorage.getItem("volume");
@@ -88,7 +93,7 @@ function setup(){
 
     char = new character;
 
-    levels.push(new level(levelOneHover, cityOneLocation[0], cityOneLocation[1]));
+    levels.push(new level(levelOneImg, cityOneLocation[0], cityOneLocation[1]));
     levels.push(new level(levelTwoImg, cityTwoLocation[0], cityTwoLocation[1]));
     levels.push(new level(levelThreeImg, cityThreeLocation[0], cityThreeLocation[1]));
     levels.push(new level(secretLevelImg, citySecretLocation[0], citySecretLocation[1]));
@@ -97,6 +102,8 @@ function setup(){
     lvlIndx['2'] = [levels[1], levelTwoImg, levelTwoHover, cityTwo];
     lvlIndx['3'] = [levels[2], levelThreeImg, levelThreeHover, cityThree];
     lvlIndx['1s'] = [levels[3], secretLevelImg, secretLevelHover, dawgs];
+
+    lvlIndx[char.levelPosition][0].img = lvlIndx[char.levelPosition][2]; 
     
     loadVolumeSetting();
 }
@@ -105,11 +112,36 @@ class character {
     constructor() {
         // Change this to change the character sprite I didn't know what quite to use for it
         this.img = idleAnimation;
-        this.x = cityOneLocation[0];
-        this.y = cityOneLocation[1]; 
+        
+        // Uses locally stored "lastSelectedLevel" to set char starting position
+        let lastSelected = localStorage.getItem("lastSelectedLevel");
+        switch(lastSelected) {
+            case '2': {
+                this.levelPosition = '2';
+                this.x = cityTwoLocation[0];
+                this.y = cityTwoLocation[1];
+                break;
+            }
+            case '3': {
+                this.levelPosition = '3';
+                this.x = cityThreeLocation[0];
+                this.y = cityThreeLocation[1];
+                break;
+            }
+            case '1s': {
+                this.levelPosition = '1s';
+                this.x = citySecretLocation[0];
+                this.y = citySecretLocation[1];
+                break;
+            }
+            default: {
+                this.levelPosition = '1';
+                this.x = cityOneLocation[0];
+                this.y = cityOneLocation[1];
+            }
+        }
         this.width = 100;
         this.height = 100;
-        this.levelPosition = '1';
     }
     
     // returns location of city to be moved to if a move can be made
@@ -151,10 +183,6 @@ class character {
         image(char.img, char.x, char.y, char.width, char.height);
     }
 }
-
-function buttonClick() {
-    playSoundEffect("buttonSound");
-}
     
 function keyPressed() {
     
@@ -168,6 +196,7 @@ function keyPressed() {
         }
         animFinished = false;
     } else if (keyCode === ENTER) {
+        playSoundEffect("buttonSound");
         lvlIndx[char.levelPosition][3]();
     }
     
