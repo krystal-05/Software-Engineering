@@ -29,7 +29,6 @@ let yPower;
 
 let bgImage, batterGif;
 let settingButton, returnButton;
-let tempSwapPerspective;
 
 let umpire;
 let showStrikePopup = false;
@@ -128,7 +127,6 @@ function setup() {
 
     settingButton = new Button("Settings", width - 80, 40, 125, 40, null, null, () => settingsClick());
     returnButton = new Button("Menu", width - 80, 90, 125, 40, null, null, () => returnToMenu());
-    tempSwapPerspective = new Button("Perspective", width - 80, 140, 125, 40, null, null, () => togglePerspective());
     audioButton = new Button("Audio", width - 80, 190, 125, 40, null, null, () => audioClick());
     Difficulty1 = new Button("make Normal", width - 80, 240, 125, 40, null, null, () => changeDifficulty(1));
     Difficulty2 = new Button("make Hard", width - 80, 290, 125, 40, null, null, () => changeDifficulty(2));
@@ -194,7 +192,6 @@ function draw() {
     drawScoreboard();
     settingButton.display();
     returnButton.display();
-    tempSwapPerspective.display();
     if (DEBUG){
         audioButton.display();
         Difficulty1.display();
@@ -846,6 +843,9 @@ function keyPressed() {
             userPitch();
         }
     }
+    if ((key === 'e' || key === 'E') && inputEnabled) {
+        togglePerspective();
+    }
 }
 
 // Reset umpire arm position after a short delay
@@ -1004,10 +1004,6 @@ function mousePressed() {
         if (returnButton.isHovered()) {
             buttonClick();
             setTimeout(() => returnButton.action(), 200);
-        }
-        if (tempSwapPerspective.isHovered()) {
-            buttonClick();
-            setTimeout(() => tempSwapPerspective.action(), 200);
         }
         if (audioButton.isHovered()) {
             if (DEBUG) {
