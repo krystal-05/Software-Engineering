@@ -37,6 +37,7 @@ let showRunPopup = false;
 let showOutPopup = false;
 let showHomerunPopup = false;
 let showFoulPopup = false;
+let showTiePopup = false;
 let popupTimer = 0;
 let popupMessage = "";
 
@@ -717,7 +718,11 @@ function handleFoul() {
     }, 1000);
 }
 
-
+function handleTie(){
+    popupMessage = "TIE! EXTRA INNING";
+    showFoulPopup = true;
+    popupTimer = millis();
+}
 
 // Logic handling in-play event popups
 function drawPopup() {
@@ -729,7 +734,7 @@ function drawPopup() {
         textAlign(CENTER, CENTER);
         text(popupMessage, width / 2, height / 4);
         pop();
-    } else if (showStrikePopup || showHomerunPopup || showOutPopup || showFoulPopup || (showRunPopup && !topInning)) {
+    } else if (showStrikePopup || showHomerunPopup || showOutPopup || showFoulPopup || showTiePopup || (showRunPopup && !topInning)) {
         inputEnabled = false;
         push();
         textSize(50);
@@ -747,6 +752,7 @@ function drawPopup() {
         showHomerunPopup = false;
         showOutPopup = false;
         showFoulPopup = false;
+        showTiePopup = false;
     }
 }
 
@@ -950,18 +956,25 @@ function nextInning() {
         inputEnabled = true;
     }, 1500);
 
-    if (inning === 4 && score.home < score.away){
-        if (lastSelectedLevel < MAX_LEVEL) {
-            showWinPopup();
-        } else {
-            showDonePopup();
+    //game ends after 4 innings, adds extra inning if tied until someone wins
+    if (topInning && inning > 4){
+        if (score.home < score.away){
+            if (lastSelectedLevel < MAX_LEVEL) {
+                showWinPopup();
+            } else {
+                showDonePopup();
+            }
         }
-    }
-    if (inning === 4 && score.home >= score.away){
-        showLosePopup();
-    }
+        else if (score.home > score.away){
+            showLosePopup();
+        }
+        else{
+            setTimeout(() => {
+                handleTie();
+            }, 1600);
+        }
 }
-
+}
 // Load volume settings from local storage
 function loadVolumeSetting() {
     const savedVolume = localStorage.getItem("volume");
@@ -1081,4 +1094,13 @@ function winClick(){
 }
 function startGameClick(){
     buttonClick();
+}
+if(lastSelectedLevel === 1){
+    changeDifficulty(1);
+}
+if(lastSelectedLevel === 2){
+    changeDifficulty(2);      
+}
+if(lastSelectedLevel === 3){
+    changeDifficulty(3);
 }
