@@ -20,23 +20,27 @@ function playerHit() {
     ball.inAir = true;
     playSoundEffect("hitBall");
 
-    // x-value left/right power
-    powerXSaveVal = directionValue * xPower * 4;
-    ball.speedX = powerXSaveVal * 60;
-
-    const ballVector = {
-        x: powerXSaveVal,
-        y: -yPower * powerMultiplier
-    };
-    
-    let isFoul = checkFoulByAngle(ballVector);
-    let isPerfectPower = false;
     let sliderPos = powerBarX + powerSliderFinalX;
     let perfectZoneCenter = powerBarX + (barWidth / 2);
     let diff = abs(sliderPos - perfectZoneCenter);
-    isPerfectPower = diff <= perfectZoneWidth / 2;
+    let isPerfectPower = diff <= perfectZoneWidth / 2;
+
     let basePower = powerMultiplier;
     let homeRunChance = Math.random();
+
+    const angle = directionValue;
+    const ballVector = p5.Vector.fromAngle(angle).mult(basePower);
+    ballVector.y *= -yPower;
+    ballVector.x *= xPower;
+
+    ball.speedX = ballVector.x * 60;
+    ball.speedY = ballVector.y * 60;
+    ball.initialSpeedY = ball.speedY;
+    powerXSaveVal = ballVector.x;
+
+    const hitAngle = degrees(directionValue);
+    let isFoul = checkFoulByAngle(hitAngle);
+    //console.log("HOME RUN CHANCE: ", homeRunChance);
 
     // 50% chance to get homerun when landing on the middle
     if(isPerfectPower && !isFoul && homeRunChance < 0.5) { 
@@ -48,6 +52,7 @@ function playerHit() {
     ball.initialSpeedY = ball.speedY;
 
     if(isFoul) {
+        handleFoul();
         ball.foulSince = millis();
         showFoulPopup = true;
         popupMessage = "FOUL BALL";
@@ -102,8 +107,8 @@ function startDirectionSlider() {
 
 function startPowerSlider() {
     hitSliderX = random(0, barWidth);
+    powerSliderSpeed = 300;
     if(DEBUG) powerSliderSpeed = 100; // for demo and debugging
-    //directionSliderSpeed = 400;
 
     powerBarX = width / 2 - barWidth / 2;
     powerBarY = height - 100;
@@ -150,8 +155,44 @@ function evaluatePowerMultiplier() {
 
 
 function evaluateDirectionValue() {
-    let normalized = hitSliderX / barWidth;
-    return normalized * 2 - 1;
+    const normalized = hitSliderX / barWidth; // 0 to 1
+    const angleDeg = 181 + normalized * (359 - 181); // 181 to 359
+    directionValue = radians(angleDeg); 
+    return directionValue;
+}
+
+
+function checkFoulByAngle(hitAngle) {
+    const home = bases[0];
+    const first = bases[1];
+    const third = bases[3];
+
+    const vFirst = createVector(first.x - home.x, first.y - home.y).normalize();
+    const vThird = createVector(third.x - home.x, third.y - home.y).normalize();
+
+    let angleToFirst = degrees(vFirst.heading()); 
+    let angleToThird = degrees(vThird.heading());
+
+    // make angles positive
+    if (angleToFirst < 0) angleToFirst += 360; // ~326 degrees
+    if (angleToThird < 0) angleToThird += 360; // ~214 degrees
+    if (hitAngle < 0) hitAngle += 360;
+
+    const leftLine = Math.min(angleToFirst, angleToThird);
+    const rightLine = Math.max(angleToFirst, angleToThird);
+
+    const isFoul = hitAngle < leftLine || hitAngle > rightLine;
+
+    /*
+    if (DEBUG) {
+        console.log("hitAngle:", hitAngle.toFixed(2));
+        console.log("angleToFirst:", angleToFirst.toFixed(2));
+        console.log("angleToThird:", angleToThird.toFixed(2));
+        console.log("isFoul:", isFoul);
+    }
+    */
+
+    return isFoul;
 }
 
 
@@ -162,7 +203,8 @@ function updateHitSkillBar(dt) {
             powerSliderSpeed *= -1;
             hitSliderX += powerSliderSpeed * dt;
         }
-    } else if (hitDirectionSlider) {
+    } 
+    else if (hitDirectionSlider) {
         hitSliderX += directionSliderSpeed * dt;
         if (hitSliderX < 0 || hitSliderX > barWidth) {
             directionSliderSpeed *= -1;
@@ -172,48 +214,64 @@ function updateHitSkillBar(dt) {
 }
 
 
-function checkFoulByAngle(ballVec) {
+function drawPowerSkillCheckBar(dt) {
+    fill(100);
+    rect(powerBarX, powerBarY, barWidth, barHeight);
+    
+    let goodZoneX = powerBarX + (barWidth - goodZoneWidth) / 2;
+    fill('yellow');
+    rect(goodZoneX, powerBarY, goodZoneWidth, barHeight);
+
+    let perfectZoneX = powerBarX + (barWidth - perfectZoneWidth) / 2;
+    fill('green');
+    rect(perfectZoneX, powerBarY, perfectZoneWidth, barHeight);
+    
+    fill('red');
+    image(targetImage, powerBarX + hitSliderX - barHeight/2, powerBarY, barHeight, barHeight);
+}
+
+
+function drawDirectionSkillBar(dt) {
+    fill(100);
+    rect(directionBarX, directionBarY, barWidth, barHeight);
+
     const home = bases[0];
     const first = bases[1];
     const third = bases[3];
 
     const vFirst = createVector(first.x - home.x, first.y - home.y).normalize();
     const vThird = createVector(third.x - home.x, third.y - home.y).normalize();
-    const hitVec = createVector(ballVec.x, ballVec.y).normalize();
 
-    const angleToFirst = vFirst.heading();
-    const angleToThird = vThird.heading();
-    const hitAngle = hitVec.heading();
+    let angleToFirst = degrees(vFirst.heading());
+    let angleToThird = degrees(vThird.heading());
 
-    const leftLine = angleToThird;
-    const rightLine = angleToFirst;
-    let isFoul = hitAngle < leftLine || hitAngle > rightLine;
+    if (angleToFirst < 0) angleToFirst += 360;
+    if (angleToThird < 0) angleToThird += 360;
 
-    if(DEBUG){
-        console.log("hitAngle:", degrees(hitAngle));
-        console.log("angleToFirst:", degrees(rightLine));
-        console.log("angleToThird:", degrees(leftLine));
-        console.log("isFoul:", isFoul);
-    }
-    return isFoul;
-}
+    const minAngle = 181; // furthest left part of the bar maps to this in degrees
+    const maxAngle = 359; // furthest right part of the bar maps to this in degrees
 
+    let tLeft = (angleToThird - minAngle) / (maxAngle - minAngle);
+    let tRight = (angleToFirst - minAngle) / (maxAngle - minAngle);
 
+    tLeft = constrain(tLeft, 0, 1);
+    tRight = constrain(tRight, 0, 1);
 
-function drawSkillCheckBar(dt) {
-    let hitBarX = hitPowerSlider ? powerBarX : directionBarX;
-    let hitBarY = hitPowerSlider ? powerBarY : directionBarY;
+    const xLeft = directionBarX + tLeft * barWidth;
+    const xRight = directionBarX + tRight * barWidth;
+
+    // left foul zone
     fill(100);
-    rect(hitBarX, hitBarY, barWidth, barHeight);
-    
-    let goodZoneX = hitBarX + (barWidth - goodZoneWidth) / 2;
-    fill('yellow');
-    rect(goodZoneX, hitBarY, goodZoneWidth, barHeight);
+    rect(directionBarX, directionBarY, xLeft - directionBarX, barHeight);
 
-    let perfectZoneX = hitBarX + (barWidth - perfectZoneWidth) / 2;
+    // fair zone
     fill('green');
-    rect(perfectZoneX, hitBarY, perfectZoneWidth, barHeight);
-    
+    rect(xLeft, directionBarY, xRight - xLeft, barHeight);
+
+    // right foul zone
+    fill(100);
+    rect(xRight, directionBarY, directionBarX + barWidth - xRight, barHeight);
+
     fill('red');
-    image(targetImage, hitBarX + hitSliderX - barHeight/2, hitBarY, barHeight, barHeight);
+    image(targetImage, directionBarX + hitSliderX - barHeight / 2, directionBarY, barHeight, barHeight);
 }
