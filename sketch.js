@@ -33,12 +33,12 @@ function setup() {
     }
 
     startMenuButtons();
-    resetButton = new Button("Reset Game Save", width / 2, 420, 300, 75, null, null, () => deleteSave());
+    resetButton = new Button("Reset Game Save", width / 2, 500, 300, 75, null, null, () => deleteSave());
     createModal();
 }
 
 function draw() {
-    background(20);
+    background(bgImage);
 
     switch (gameState) {
         case "preMenu":
@@ -59,7 +59,7 @@ function draw() {
 }
 
 function drawMainMenu() {
-    background(0);
+    background(bgImage);
 
     let scaleFactor = Math.max(width / bgImage.width, height / bgImage.height);
     let drawWidth = bgImage.width * scaleFactor;
@@ -82,15 +82,26 @@ function drawMainMenu() {
 }
 
 function drawLoadScreen() {
+    background(bgImage);
+    let scaleFactor = Math.max(width / bgImage.width, height / bgImage.height);
+    let drawWidth = bgImage.width * scaleFactor;
+    let drawHeight = bgImage.height * scaleFactor;
+    image(bgImage, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
+
     fill(255, 215, 0);
     textSize(60);
     textStyle(BOLD);
-    text("Load Game", width / 2, height * .1);
+
+    let rawIconWidth  = width * 0.4;
+    let baseIconWidth = constrain(rawIconWidth, 500, width);
+    let iconScale = baseIconWidth / titleIcon.width;
+    let baseIconHeight = titleIcon.height * iconScale;
+    image(titleIcon, (width - baseIconWidth) / 2, height * 0.01, baseIconWidth, baseIconHeight);
 
     loadButtons = [
-        new Button("Game 1", width / 2, 300, 300, 75, null, null, () => loadGame()),
+        new Button("Game 1", width / 2, 400, 300, 75, null, null, () => loadGame()),
         new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack()),
-        new Button("Log In", 500, height - 50, 100, 50, null, null, () => loadlogin())
+        new Button("Log In", 1200, height - 50, 100, 50, null, null, () => loadlogin())
     ];
 
     for (let btn of loadButtons) {
