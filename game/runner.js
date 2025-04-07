@@ -150,7 +150,7 @@ function displayRunHint() {
 
     for (let i = 1; i < bases.length; i++) {
         let nextIndex = (i + 1) % bases.length;
-        if (bases[i].occupied && !bases[nextIndex].occupied && !homeRunHit) {
+        if (bases[i].occupied && !bases[i-1].occupied && !bases[nextIndex].occupied && !homeRunHit) {
             let label = (i === 1 || i === 3) ? 4 - i : i;
             text(`Press ${label} to Run!`, bases[i].x, bases[i].y + height * .05);
         }
