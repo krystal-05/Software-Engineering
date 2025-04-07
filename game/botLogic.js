@@ -27,40 +27,58 @@ function botAttemptHit(pitchMultiplier) {
     }
 }
 
-
 function botHitBall() {
-    let softHitPower = 5;
-    let hardHitPower = 5.6;
-    let homeRunPower = 8;
-
     ballHit = true;
     ball.inAir = true;
     playSoundEffect("hitBall");
 
-    powerXSaveVal = random(-xPower * 2, xPower * 2)
+    let botPowerChance = Math.random();
+    let difficultyModifier = (generalDifficultyScale - 1) * 0.1;
+    let adjustedBotPowerChance = botPowerChance + difficultyModifier;
+
+    let basePower;
+    if (adjustedBotPowerChance > 0.80) {
+        basePower = 5;
+    } 
+    else if (adjustedBotPowerChance > 0.50) {
+        basePower = 4.2;
+    } 
+    else {
+        basePower = 3.5;
+    }
+    if (DEBUG) console.log("BASE POWER: ", basePower);
+
+    const isFoul = Math.random() < 0.25; // 25% chance to hit a foul ball
+
+    if (isFoul) {
+        handleFoul();
+        powerXSaveVal = xPower * 4;
+        ball.speedX = powerXSaveVal * 60;
+        ball.speedY = (-yPower * basePower) * 60;
+        ball.foul = true;
+        ball.foulSince = millis();
+        if (strikes < 2) strikes++;
+        return;
+    }
+
+    powerXSaveVal = random(-xPower * 2, xPower * 2);
     ball.speedX = powerXSaveVal * 60;
 
-    homeRunScale = generalDifficultyScale * .8;
-    let baseHomeRunChance = .1;
-    let modHomeRunChance = 0.10 * (generalDifficultyScale - 1);
-    let homeRunChance = baseHomeRunChance + modHomeRunChance;
-
+    homeRunScale = generalDifficultyScale * 0.8;
+    const homeRunChance = 0.1 + 0.10 * (generalDifficultyScale - 1);
+    let homeRunHit = false;
     if (Math.random() < homeRunChance) {
-        if (DEBUG) console.log("HOME RUN AT POWER");
         homeRunHit = true;
+        basePower = 8.0;
+        ball.speedY = (-yPower * basePower) * 60;
     }
 
-    if (homeRunHit) {
-        ball.speedY = (-yPower * homeRunPower) * 60;
-    } else {
-        ball.speedY = random(-yPower * softHitPower, -yPower * hardHitPower) * 60;
-    }
+    ball.speedY = (-yPower * basePower) * 60;
     ball.initialSpeedY = ball.speedY;
-
     batter.running = true;
     runners.forEach(runner => runner.running = true);
     setTimeout(() => {
-        batter.x = batter.x - width * .05;
+        batter.x = batter.x - width * 0.05;
         runners.push(batter);
         ball.advancingRunner = batter;
         batter = null;
@@ -94,7 +112,7 @@ function botPitch() {
     difficultyModifier = (generalDifficultyScale - 1) * 0.2;
     let finalMultiplier = botPitchMultiplier + difficultyModifier;
 
-    console.log("BOT PITCH MULTIPLIER", finalMultiplier);
+    if(DEBUG) console.log("BOT PITCH MULTIPLIER", finalMultiplier);
     ball.speedY *= finalMultiplier;
     pitchAnimation = true;    
 }

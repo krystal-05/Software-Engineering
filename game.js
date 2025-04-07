@@ -677,7 +677,6 @@ function handleStrikeCall() {
     popupMessage = "STRIKE!";
     showStrikePopup = true;
     popupTimer = millis();
-    if (DEBUG) console.log("Umpire arm raised!");
     setTimeout(() => {
         umpire.armRaisedLeft = false;
         setTimeout(() => {
@@ -692,8 +691,6 @@ function handleHomerun() {
     umpire.armTimer = millis();
     showHomerunPopup = true;
     popupTimer = millis();
-    if (DEBUG) console.log('armRaisedLeft:', umpire.armRaisedLeft, 
-        'armRaisedRight:', umpire.armRaisedRight);
     setTimeout(() => {
         umpire.armRaisedRight = false;
         umpire.armRaisedLeft = false;
@@ -706,10 +703,9 @@ function handleHomerun() {
 function handleFoul() {
     umpire.armRaisedRight = true;
     umpire.armTimer = millis();
-    popupMessage = "FOUL!";
+    popupMessage = "FOUL BALL";
     showFoulPopup = true;
     popupTimer = millis();
-    if (DEBUG) console.log("Umpire arms raised!");
     setTimeout(() => {
         umpire.armRaisedRight = false;
         setTimeout(() => {

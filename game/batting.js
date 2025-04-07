@@ -54,13 +54,14 @@ function playerHit() {
     if(isFoul) {
         handleFoul();
         ball.foulSince = millis();
-        showFoulPopup = true;
-        popupMessage = "FOUL BALL";
-        popupTimer = millis();
         if(strikes < 2) strikes++; // only get a strike when less than 2 strikes
         ball.foul = true;
         return;
     }
+
+    console.log("angle:", angle.toFixed(2));
+    console.log("ballVector.x:", ballVector.x.toFixed(2), "ballVector.y:", ballVector.y.toFixed(2));
+    console.log("ball.speedX:", ball.speedX.toFixed(2), "ball.speedY:", ball.speedY.toFixed(2));
 
     batter.running = true;
     runners.forEach(runner => {
@@ -155,9 +156,10 @@ function evaluatePowerMultiplier() {
 
 
 function evaluateDirectionValue() {
-    const normalized = hitSliderX / barWidth; // 0 to 1
-    const angleDeg = 181 + normalized * (359 - 181); // 181 to 359
-    directionValue = radians(angleDeg); 
+    const bounds = getInPlayBounds();
+    const normalized = hitSliderX / barWidth;
+    const angleDeg = bounds.minAngle + normalized * (bounds.maxAngle - bounds.minAngle);
+    directionValue = radians(angleDeg);
     return directionValue;
 }
 
@@ -174,8 +176,8 @@ function checkFoulByAngle(hitAngle) {
     let angleToThird = degrees(vThird.heading());
 
     // make angles positive
-    if (angleToFirst < 0) angleToFirst += 360; // ~326 degrees
-    if (angleToThird < 0) angleToThird += 360; // ~214 degrees
+    if (angleToFirst < 0) angleToFirst += 360; 
+    if (angleToThird < 0) angleToThird += 360; 
     if (hitAngle < 0) hitAngle += 360;
 
     const leftLine = Math.min(angleToFirst, angleToThird);
@@ -193,6 +195,33 @@ function checkFoulByAngle(hitAngle) {
     */
 
     return isFoul;
+}
+
+// function to get the field bounds (between first and third is in play)
+function getInPlayBounds() {
+    const home = bases[0];
+    const first = bases[1];
+    const third = bases[3];
+
+    const vFirst = createVector(first.x - home.x, first.y - home.y).normalize();
+    const vThird = createVector(third.x - home.x, third.y - home.y).normalize();
+
+    let angleToFirst = degrees(vFirst.heading());
+    let angleToThird = degrees(vThird.heading());
+
+    if (angleToFirst < 0) angleToFirst += 360;
+    if (angleToThird < 0) angleToThird += 360;
+
+    const foulMargin = 30; 
+    const minAngle = Math.min(angleToFirst, angleToThird) - foulMargin;
+    const maxAngle = Math.max(angleToFirst, angleToThird) + foulMargin;
+
+    return {
+        angleToFirst,
+        angleToThird,
+        minAngle: constrain(minAngle, 0, 360),
+        maxAngle: constrain(maxAngle, 0, 360)
+    };
 }
 
 
@@ -248,17 +277,19 @@ function drawDirectionSkillBar(dt) {
     if (angleToFirst < 0) angleToFirst += 360;
     if (angleToThird < 0) angleToThird += 360;
 
-    const minAngle = 181; // furthest left part of the bar maps to this in degrees
-    const maxAngle = 359; // furthest right part of the bar maps to this in degrees
+    const foulMargin = 30; 
 
-    let tLeft = (angleToThird - minAngle) / (maxAngle - minAngle);
-    let tRight = (angleToFirst - minAngle) / (maxAngle - minAngle);
+    const fairStart = Math.min(angleToFirst, angleToThird);
+    const fairEnd = Math.max(angleToFirst, angleToThird);
+    const minAngle = constrain(fairStart - foulMargin, 0, 360);
+    const maxAngle = constrain(fairEnd + foulMargin, 0, 360);
 
-    tLeft = constrain(tLeft, 0, 1);
-    tRight = constrain(tRight, 0, 1);
-
-    const xLeft = directionBarX + tLeft * barWidth;
-    const xRight = directionBarX + tRight * barWidth;
+    const totalAngle = maxAngle - minAngle;
+    const fairZoneSize = fairEnd - fairStart;
+    const foulZoneSize = (totalAngle - fairZoneSize) / 2;
+    
+    const xLeft = directionBarX + foulZoneSize / totalAngle * barWidth;
+    const xRight = directionBarX + (foulZoneSize + fairZoneSize) / totalAngle * barWidth;
 
     // left foul zone
     fill(100);
