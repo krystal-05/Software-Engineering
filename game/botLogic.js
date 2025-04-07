@@ -66,8 +66,8 @@ function botHitBall() {
 
     homeRunScale = generalDifficultyScale * 0.8;
     const homeRunChance = 0.1 + 0.10 * (generalDifficultyScale - 1);
-    let homeRunHit = false;
-    if (Math.random() < homeRunChance) {
+    let chance = Math.random();
+    if (chance < homeRunChance) {
         homeRunHit = true;
         basePower = 8.0;
         ball.speedY = (-yPower * basePower) * 60;
