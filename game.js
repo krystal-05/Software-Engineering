@@ -592,80 +592,87 @@ function drawScoreboard() {
     text(`Strikes: ${strikes}`, 30, 100);
 }
 
-
-// Draw the umpire on the field
 function drawUmpire() {
     push();
     rectMode(CENTER);
-
+  
+    translate(umpire.x, umpire.y);
+  
+    // Rotation for spinning
+    if (umpire.spinning) {
+      rotate(radians(umpire.spinAngle));
+      umpire.spinAngle += 10; // Speed of spin
+  
+      if (umpire.spinAngle >= 360) {
+        umpire.spinning = false;
+        umpire.spinAngle = 0;
+      }
+    }
+  
     // ** Skin Tone (Light Brown) **
     let skinColor = color(210, 150, 100);
-
+  
     // ** Clothing Colors **
     let shirtColor = color(20, 20, 20); // Black shirt
     let pantsColor = color(100, 100, 100); // Gray pants
     let shoeColor = color(0, 0, 0); // Black shoes
     let hatColor = color(50, 50, 200); // Blue hat
-
+  
     // ** Body (Shirt) **
     fill(shirtColor);
-    rect(umpire.x, umpire.y, 30, 50, 5); // Shirt
-
+    rect(0, 0, 30, 50, 5); // Shirt
+  
     // ** Pants **
     fill(pantsColor);
-    rect(umpire.x, umpire.y + 30, 25, 30); // Pants
-
+    rect(0, 30, 25, 30); // Pants
+  
     // ** Shoes **
     fill(shoeColor);
-    rect(umpire.x - 8, umpire.y + 50, 10, 5, 2); // Left shoe
-    rect(umpire.x + 8, umpire.y + 50, 10, 5, 2); // Right shoe
-
+    rect(-8, 50, 10, 5, 2); // Left shoe
+    rect(8, 50, 10, 5, 2); // Right shoe
+  
     // ** Head (Skin Tone) **
     fill(skinColor);
-    rect(umpire.x, umpire.y - 40, 30, 30, 10); // Head shape
-
+    rect(0, -40, 30, 30, 10); // Head
+  
     // ** Eyes **
     fill(0);
-    ellipse(umpire.x - 6, umpire.y - 42, 4, 4); // Left eye
-    ellipse(umpire.x + 6, umpire.y - 42, 4, 4); // Right eye
-
+    ellipse(-6, -42, 4, 4); // Left eye
+    ellipse(6, -42, 4, 4); // Right eye
+  
     // ** Nose **
     fill(180, 120, 90);
-    triangle(umpire.x - 2, umpire.y - 38, umpire.x + 2, umpire.y - 38, umpire.x, umpire.y - 32);
-
-    // ** Mouth (Neutral expression) **
+    triangle(-2, -38, 2, -38, 0, -32);
+  
+    // ** Mouth **
     fill(255, 0, 0);
-    arc(umpire.x, umpire.y - 30, 8, 5, 0, PI, CHORD); // Mouth shape
-
-    // ** Hat (Blue) **
+    arc(0, -30, 8, 5, 0, PI, CHORD);
+  
+    // ** Hat **
     fill(hatColor);
-    rect(umpire.x, umpire.y - 50, 32, 10, 3); // Brim
-    rect(umpire.x, umpire.y - 55, 20, 10, 3); // Top
-
-    // ** Arms (Shirt Color) **
+    rect(0, -50, 32, 10, 3); // Brim
+    rect(0, -55, 20, 10, 3); // Top
+  
+    // ** Arms **
     stroke(0);
     strokeWeight(3);
     fill(shirtColor);
     if (umpire.armRaisedLeft && umpire.armRaisedRight) {
-        // Both arms raised
-        line(umpire.x - 20, umpire.y - 20, umpire.x - 60, umpire.y - 60); // Left
-        line(umpire.x + 20, umpire.y - 20, umpire.x + 60, umpire.y - 60); // Right
+      line(-20, -20, -60, -60); // Left
+      line(20, -20, 60, -60);   // Right
     } else if (umpire.armRaisedLeft) {
-        // Only left arm raised
-        line(umpire.x, umpire.y - 20, umpire.x - 20, umpire.y - 60);
-        line(umpire.x, umpire.y - 20, umpire.x + 20, umpire.y); // Right arm normal
+      line(0, -20, -20, -60);   // Left arm raised
+      line(0, -20, 20, 0);      // Right arm normal
     } else if (umpire.armRaisedRight) {
-        // Only right arm raised
-        line(umpire.x - 20, umpire.y, umpire.x - 60, umpire.y - 20); // Left arm normal
-        line(umpire.x + 20, umpire.y - 20, umpire.x + 60, umpire.y - 60);
+      line(-20, 0, -60, -20);   // Left arm normal
+      line(20, -20, 60, -60);   // Right arm raised
     } else {
-        // Both arms normal
-        line(umpire.x, umpire.y - 20, umpire.x - 20, umpire.y); // Left
-        line(umpire.x, umpire.y - 20, umpire.x + 20, umpire.y); // Right
-    }    
-
+      line(0, -20, -20, 0);     // Left
+      line(0, -20, 20, 0);      // Right
+    }
+  
     pop();
-}
+  }  
 
 // Handle umpire strike call when a strike occurs
 function handleStrikeCall() {
@@ -695,6 +702,10 @@ function handleHomerun() {
             umpire.armReset = true;
         }, 500);
     }, 1000);
+    setTimeout(() => {
+        umpire.spinning = true;
+        umpire.spinAngle = 0;
+    }, 500);
 }
 
 function handleFoul() {
@@ -921,7 +932,9 @@ function assignEntities() {
       x: width * 0.20, 
       y: height * 0.70, 
       armRaised: false, 
-      armTimer: 0
+      armTimer: 0,
+      spinning: false,
+      spinAngle: 0
     };
 
     catcherPlayer = { x: width * 0.5, y: height * 0.95, state: "idle", isCatcher: true };
