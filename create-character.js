@@ -1,12 +1,12 @@
 let buttons = [], confirmButton;
-let bgImage, characterImage;
+let bgImage, characterImage, characterImage1;
 let settingMenu = false;
 let audioSelectionMenu = false;
-
 
 function preload() {
     bgImage = loadImage('assets/roughititlescreen4.png');
     characterImage = loadImage('assets/tempCharacter.png');
+    characterImage1 = loadImage('/assets/tempCharacter1.png');  // Load option 2's character
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
     currSong = loadSound('sounds/stadiumSound.mp3');
 }
@@ -22,16 +22,15 @@ function setup() {
         loadVolumeSetting();
         currSong.play();
     }
-    localStorage.setItem("characterTag", null);
+
+    // Set default character to Character 1 if none selected
+    if (localStorage.getItem("characterTag") === null || localStorage.getItem("characterTag") === "null") {
+        localStorage.setItem("characterTag", "Character 1");
+    }
 
     buttons.push(new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack()));
-   // buttons.push(new Button("Character 1", width / 2 - 230, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 1")));
-  //  buttons.push(new Button("Character 2", width / 2, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 2")));
-  //  buttons.push(new Button("Character 3", width / 2 + 230, height / 2 - 275, 200, 50, null, null, () => selectedCharacter("Character 3")));
-        
-  buttons.push(new Button("<", width / 2 - 250, height / 2, 50, 50, null, null, () => selectedCharacter("Character 1")));
-  buttons.push(new Button(">", width / 2 + 250, height / 2, 50, 50, null, null, () => selectedCharacter("Character 2")));
-
+    buttons.push(new Button("<", width / 2 - 250, height / 2, 50, 50, null, null, () => selectedCharacter("Character 1")));
+    buttons.push(new Button(">", width / 2 + 250, height / 2, 50, 50, null, null, () => selectedCharacter("Character 2")));
 
     confirmButton = new Button("Confirm Character", width - 645, height - 50, 200, 50, null, null, () => confirmCharacter());
 }
@@ -46,26 +45,27 @@ function draw() {
     
     fill('rgba(100, 100, 100, 0.8)');
     rect(width / 2, height / 2 + 50, 400, 450, 20);
-    
+
     textSize(32);
     fill('black');
-    if (localStorage.getItem("characterTag") === "null") {
-        text("Select a Preset", width / 2, height / 2 - 200);
-    } else if (localStorage.getItem("characterTag") === "Character 1") {
+
+    let characterTag = localStorage.getItem("characterTag");
+
+    if (characterTag === "Character 1") {
         text("Character 1", width / 2, height / 2 - 200);
         image(characterImage, width / 2 - 200, height / 2 - 175, 400, 400);
-    } else if (localStorage.getItem("characterTag") === "Character 2") {
+    } else if (characterTag === "Character 2") {
         text("Character 2", width / 2, height / 2 - 200);
-        image(characterImage, width / 2 - 200, height / 2 - 175, 400, 400);
-    } else if (localStorage.getItem("characterTag") === "Character 3") {
-        text("Character 3", width / 2, height / 2 - 200);
-        image(characterImage, width / 2 - 200, height / 2 - 175, 400, 400);
+        image(characterImage1, width / 2 - 200, height / 2 - 175, 400, 400); // ✅ Show new image
+    } else {
+        text("Select a Preset", width / 2, height / 2 - 200);
     }
 
     for (let btn of buttons) {
         btn.display();
     }
-    if (localStorage.getItem("characterTag") !== "null") {
+
+    if (characterTag !== "null") {
         confirmButton.display();
     }
 }
@@ -77,11 +77,12 @@ function mousePressed() {
             setTimeout(() => btn.action(), 200);
         }
     }
+
     if (confirmButton.isHovered() && localStorage.getItem("characterTag") !== "null") {
         buttonClick();
         setTimeout(() => confirmButton.action(), 200);
     }
-    
+
     if (!currSong.isPlaying()) {
         currSong.loop();
     }
@@ -99,6 +100,7 @@ function confirmCharacter() {
     localStorage.setItem("characterTag", null);
     window.location.href = "map.html";
 }
+
 function buttonClick() {
     playSoundEffect("buttonSound");
 }
@@ -123,7 +125,6 @@ function loadVolumeSetting() {
         sound.amp(isMuted ? 0 : currEffectsVolume);
     });
 }
-
 
 function goBack() {
     localStorage.setItem("gameState", "loadGame");
