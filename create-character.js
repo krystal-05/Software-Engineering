@@ -12,6 +12,7 @@ function preload() {
 }
 
 function setup() {
+    let buttonHeight = windowHeight * 0.075;
     createCanvas(windowWidth, windowHeight);
     textAlign(CENTER, CENTER);
     rectMode(CENTER);
@@ -28,23 +29,27 @@ function setup() {
         localStorage.setItem("characterTag", "Character 1");
     }
 
-    buttons.push(new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack()));
-    buttons.push(new Button("<", width / 2 - 250, height / 2, 50, 50, null, null, () => selectedCharacter("Character 1")));
-    buttons.push(new Button(">", width / 2 + 250, height / 2, 50, 50, null, null, () => selectedCharacter("Character 2")));
+    buttons.push(new Button("Back", width * .15, height * .925, 200, 50, null, null, () => goBack()));
+    buttons.push(new Button("<", width * .3, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 1")));
+    buttons.push(new Button(">", width * .7, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 2")));
 
-    confirmButton = new Button("Confirm Character", width - 645, height - 50, 200, 50, null, null, () => confirmCharacter());
+    confirmButton = new Button("Confirm Character", width / 2, height * .925, 200, 50, null, null, () => confirmCharacter());
 }
 
 function draw() {
+    let imgWidth = width * .25;
+    let imgHeight = imgWidth;
+
     background(bgImage);
     fill(255, 215, 0);
-    textSize(64);
+    let dynamicSize = width * 0.05;
+    textSize(dynamicSize);
     textStyle(BOLD);
     fill('black');
-    text("Select Character", width / 2, 45);
+    text("Select Character", width / 2, height * .05);
     
     fill('rgba(100, 100, 100, 0.8)');
-    rect(width / 2, height / 2 + 50, 400, 450, 20);
+    rect(width / 2, height * .55, imgWidth * 1.1, imgHeight * 1.2, 20);
 
     textSize(32);
     fill('black');
@@ -52,13 +57,19 @@ function draw() {
     let characterTag = localStorage.getItem("characterTag");
 
     if (characterTag === "Character 1") {
-        text("Character 1", width / 2, height / 2 - 200);
-        image(characterImage, width / 2 - 200, height / 2 - 175, 400, 400);
+        let scopedDynamicSize = width * 0.025;
+        textSize(scopedDynamicSize);
+        text("Character 1", width / 2, height * .2);
+        image(characterImage, width / 2 - imgWidth / 2, height / 2 - imgHeight / 2, imgWidth, imgHeight);
     } else if (characterTag === "Character 2") {
-        text("Character 2", width / 2, height / 2 - 200);
-        image(characterImage1, width / 2 - 200, height / 2 - 175, 400, 400); // ✅ Show new image
+        let scopedDynamicSize = width * 0.025;
+        textSize(scopedDynamicSize);
+        text("Character 2", width / 2, height * .2);
+        image(characterImage1, width / 2 - imgWidth / 2, height / 2 - imgHeight / 2, imgWidth, imgHeight);
     } else {
-        text("Select a Preset", width / 2, height / 2 - 200);
+        let scopedDynamicSize = width * 0.025;
+        textSize(scopedDynamicSize);
+        text("Select a Preset", width / 2, height * .2);
     }
 
     for (let btn of buttons) {
