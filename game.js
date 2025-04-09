@@ -797,6 +797,9 @@ function drawPitchSelectionBox() {
 // Handle response to user key input
 function keyPressed() {
     // pitch select/infielder select
+    if(key == 'Escape') {
+        showSettings();
+    }
     if ((key === '1' || key === '2' || key === '3') && inputEnabled) {
         if (topInning && ballHit) {
             switch(key) {
