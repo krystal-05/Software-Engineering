@@ -52,10 +52,6 @@ function draw() {
             break;
         default:
     }
-
-    if (settingMenu) {
-        showSettings();
-    }
 }
 
 function drawMainMenu() {
@@ -178,7 +174,7 @@ function startMenuButtons() {
     let buttonY = height - buttonSize - (buttonSize * 0.2);
 
     buttons.push(new Button("Start Game", width / 2, height * 0.75, startButtonWidth, startButtonHeight, null, null, () => gameState = "loadGame"));
-    buttons.push(new Button("Settings", startX + buttonSize + gap + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, settingsImg, settingsImgHover, () => settingMenu = true));
+    buttons.push(new Button("Settings", startX + buttonSize + gap + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, settingsImg, settingsImgHover, () => settingsClick()));
     buttons.push(new Button("Credits", startX + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, creditsImg, creditsImgHover, () => loadCredits()));
 }
 
@@ -201,6 +197,11 @@ function loadVolumeSetting() {
     Object.values(soundEffects).forEach((sound) => {
         sound.amp(isMuted ? 0 : currEffectsVolume);
     });
+}
+
+function settingsClick() {
+    settingMenu ? hideSettings() : showSettings();
+    settingMenu = !settingMenu;
 }
 
 function keyPressed() {

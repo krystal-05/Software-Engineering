@@ -1077,8 +1077,8 @@ function togglePerspective() {
 }
 // Handle opening settings
 function settingsClick() {
-    settingMenu = true;
-    showSettings();
+    settingMenu ? hideSettings() : showSettings();
+    settingMenu = !settingMenu;
 }
 // Sound effect for clicking buttons
 function buttonClick() {

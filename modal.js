@@ -150,7 +150,7 @@ function showSettings() {
 }
 
 function hideSettings() {
-    settingMenu = false;
+    settingMenu = !settingMenu;
     modal.style.display = "none";
 }
 
