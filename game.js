@@ -74,6 +74,9 @@ function preload() {
     catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
     ballImg = loadImage('assets/Baseball1.png');
     targetImage = loadImage('assets/final_design/Target2.png');
+    settingButtonImage = loadImage('assets/final_design/game_setting2.png');
+    menuButtonImage = loadImage('assets/final_design/game_home2.png');
+
 
     currSong = loadSound('sounds/gamesong.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
@@ -125,8 +128,15 @@ function setup() {
         fielder.state = "idle";
     });
 
-    settingButton = new Button("Settings", width - 80, 40, 125, 40, null, null, () => settingsClick());
-    returnButton = new Button("Menu", width - 80, 90, 125, 40, null, null, () => returnToMenu());
+    let buttonSize = min(width * 0.1, height * 0.1);
+    const buttonWidth = width * 0.055;  
+    const buttonHeight = height * 0.1; 
+    let settingsButtonX = width - buttonWidth / 2;
+    let settingsButtonY = buttonHeight / 2;
+    let menuButtonX = settingsButtonX - buttonWidth;
+    let menuButtonY = settingsButtonY;
+    settingButton = new Button("Settings", settingsButtonX, settingsButtonY, buttonSize, buttonSize, settingButtonImage, settingButtonImage, () => settingsClick());
+    returnButton = new Button("Menu", menuButtonX, menuButtonY, buttonSize, buttonSize, menuButtonImage, menuButtonImage, () => returnToMenu());
     audioButton = new Button("Audio", width - 80, 190, 125, 40, null, null, () => audioClick());
     Difficulty1 = new Button("make Normal", width - 80, 240, 125, 40, null, null, () => changeDifficulty(1));
     Difficulty2 = new Button("make Hard", width - 80, 290, 125, 40, null, null, () => changeDifficulty(2));
