@@ -149,8 +149,13 @@ function showSettings() {
     modal.style.display = "flex";
 }
 
-function hideSettings() {
+// Handle opening settings
+function settingsClick() {
+    settingMenu ? hideSettings() : showSettings();
     settingMenu = !settingMenu;
+}
+
+function hideSettings() {
     modal.style.display = "none";
 }
 

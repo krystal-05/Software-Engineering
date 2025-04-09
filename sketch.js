@@ -199,13 +199,14 @@ function loadVolumeSetting() {
     });
 }
 
-function settingsClick() {
-    settingMenu ? hideSettings() : showSettings();
-    settingMenu = !settingMenu;
-}
-
 function keyPressed() {
-    if (keyCode === ESCAPE) {
+    if(gameState == "preMenu") {
+        gamestate = "menu";
+    }
+    if(key === 'Escape' && gameState == "menu") {
+        settingsClick();
+    }
+    else if (key === 'Escape' && !(gameState == "menu")) {
         goBack();
     }
 }

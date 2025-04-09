@@ -798,7 +798,7 @@ function drawPitchSelectionBox() {
 function keyPressed() {
     // pitch select/infielder select
     if(key == 'Escape') {
-        showSettings();
+        settingsClick();
     }
     if ((key === '1' || key === '2' || key === '3') && inputEnabled) {
         if (topInning && ballHit) {
@@ -1078,11 +1078,7 @@ function mousePressed() {
 function togglePerspective() {
     currentPerspective = currentPerspective === "side" ? "topDown" : "side";
 }
-// Handle opening settings
-function settingsClick() {
-    settingMenu ? hideSettings() : showSettings();
-    settingMenu = !settingMenu;
-}
+
 // Sound effect for clicking buttons
 function buttonClick() {
     playSoundEffect("buttonSound");
