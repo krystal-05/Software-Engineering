@@ -8,6 +8,7 @@ let currSong, buttonSound;
 let currEffectsVolume = 0.5;
 let soundEffects = {};
 let DEBUG = false;
+let popupDisableInput = false, settingsDisableInput = false, inputEnabled = true;
 
 function createModal() {
     const style = document.createElement("style");
@@ -94,7 +95,7 @@ function createModal() {
     debugButton = modal.querySelector("#debugMode");
 
     // Event listeners for modal
-    closeButton.addEventListener("click", hideSettings);
+    closeButton.addEventListener("click", settingsClick);
     volumeSlider.addEventListener("input", updateVolume);
     effectsVolumeSlider.addEventListener("input", updateEffectsVolume);
     muteButton.addEventListener("click", () => {
@@ -103,7 +104,7 @@ function createModal() {
     });
     backButton.addEventListener("click", () => {
         buttonClick();
-        hideSettings();
+        settingsClick();
     });
 
     debugButton.addEventListener("change", (event) => {
@@ -146,6 +147,8 @@ function createModal() {
 }
 
 function showSettings() {
+    settingsDisableInput = true;
+    updateEnabledInput();
     modal.style.display = "flex";
 }
 
@@ -156,6 +159,8 @@ function settingsClick() {
 }
 
 function hideSettings() {
+    settingsDisableInput = false;
+    updateEnabledInput();
     modal.style.display = "none";
 }
 
@@ -188,6 +193,9 @@ function playSoundEffect(effect) {
     }
 }
 
+function updateEnabledInput() {
+    inputEnabled = !(settingsDisableInput || popupDisableInput);
+}
 
 function updateEffectsVolume() {
     currEffectsVolume = parseFloat(effectsVolumeSlider.value);

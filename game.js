@@ -15,7 +15,7 @@ let pitcher, batter, ball, bases, fielders, runners = [];
 let lineup, currentBatter = 0;
 let score = { home: 0, away: 0 }, outs = 0, strikes = 0, inning = 1, topInning = true;
 let ballMoving = false, ballHit = false, pitchAnimation = false, swingAttempt = false;
-let settingMenu = false, inputEnabled = false;
+let settingMenu = false;
 let ballCaughtThisFrame = false;
 let outPopupTime = 0;
 let currentPerspective = "side";
@@ -149,8 +149,6 @@ function setup() {
     createWinPopup();
     createLosePopup();
     createDonePopup();
-
-    inputEnabled = true;
 }
 
 function draw() {
@@ -748,25 +746,29 @@ function drawPopup() {
         textAlign(CENTER, CENTER);
         text(popupMessage, width / 2, height / 4);
         pop();
+
+        if (millis() - popupTimer > 1500) {
+            showHomerunPopup = false
+        }
     } else if (showStrikePopup || showHomerunPopup || showOutPopup || showFoulPopup || showTiePopup || (showRunPopup && !topInning)) {
-        inputEnabled = false;
+        popupDisableInput = true;
+        updateEnabledInput();
         push();
         textSize(50);
         fill(255, 0, 0);
         textAlign(CENTER, CENTER);
         text(popupMessage, width / 2, height / 4);
         pop();
-    }
 
-    // Hide the popup after 1.5 seconds.
-    if (millis() - popupTimer > 1500) {
-        inputEnabled = true;
-        showStrikePopup = false;
-        showRunPopup = false;
-        showHomerunPopup = false;
-        showOutPopup = false;
-        showFoulPopup = false;
-        showTiePopup = false;
+        if (millis() - popupTimer > 1500) {
+            popupDisableInput = false;
+            updateEnabledInput();
+            showStrikePopup = false;
+            showRunPopup = false;
+            showOutPopup = false;
+            showFoulPopup = false;
+            showTiePopup = false;
+        }
     }
 }
 
@@ -796,6 +798,7 @@ function drawPitchSelectionBox() {
 
 // Handle response to user key input
 function keyPressed() {
+    if (DEBUG) console.log("inputEnabled:", inputEnabled);
     // pitch select/infielder select
     if(key == 'Escape') {
         settingsClick();
@@ -959,7 +962,8 @@ function assignEntities() {
 }
 
 function nextInning() {
-    inputEnabled = false;
+    popupDisableInput = true;
+    updateEnabledInput();
     outs = 0;
     runners = [];
     resetFieldersPosition();
@@ -975,7 +979,8 @@ function nextInning() {
 
     setTimeout(() => {
         showOutPopup = false;
-        inputEnabled = true;
+        popupDisableInput = false;
+        updateEnabledInput();
     }, 1500);
 
     //game ends after 4 innings, adds extra inning if tied until someone wins
