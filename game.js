@@ -772,33 +772,8 @@ function drawPopup() {
     }
 }
 
-function drawPitchSelectionBox() {
-    push();
-    // Define the size of the box
-    let boxWidth = 250;
-    let boxHeight = 120;
-    
-    let boxX = pitcher.x + height * 0.1;
-    let boxY = pitcher.y - boxHeight * 0.5;
-    
-    fill(0, 0, 0, 127);
-    stroke(255);
-    strokeWeight(2);
-    rect(boxX, boxY, boxWidth, boxHeight, 10);
-    
-    noStroke();
-    fill(255);
-    textSize(16);
-    text("Select Pitch Type:", boxX + 10, boxY + 25);
-    text("1: Fastball", boxX + 10, boxY + 50);
-    text("2: Curveball", boxX + 10, boxY + 75);
-    text("Current: " + (ball.pitchType ? ball.pitchType : "None"), boxX + 10, boxY + 100);
-    pop();
-}
-
 // Handle response to user key input
 function keyPressed() {
-    if (DEBUG) console.log("inputEnabled:", inputEnabled);
     // pitch select/infielder select
     if(key == 'Escape') {
         settingsClick();
@@ -825,6 +800,9 @@ function keyPressed() {
                     break;
                 case '2':
                     setPitchType('curveball');
+                    break;
+                case '3':
+                    setPitchType('changeup');
                     break;
                 default:
                     break;
@@ -1097,8 +1075,6 @@ function returnToMenu() {
 function audioClick(){
     audioSelectionMenu = true;
     showAudioMenu();
-    console.log("Button clicked!");  // To check if the button event runs
-    console.log("audioMenu:", audioMenu);  // To check if audioMenu exists
 }
 function loseClick(){
     showLosePopup();

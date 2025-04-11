@@ -17,7 +17,7 @@ function botAttemptHit(pitchMultiplier) {
     } else {
         if(DEBUG) console.log("bot missed STRIKE", strikes);
     }
-    if (ball.curveInitialized) baseAntiChance += 0.09;
+    if (ball.curveInitialized || ball.changeUpInitialized) baseAntiChance += 0.09;
 
     let difficultyModifier = (generalDifficultyScale - 1) * 0.1;
     let adjustedAntiChance = baseAntiChance - difficultyModifier;
@@ -46,7 +46,6 @@ function botHitBall() {
     else {
         basePower = 3.5;
     }
-    if (DEBUG) console.log("BASE POWER: ", basePower);
 
     const isFoul = Math.random() < 0.25; // 25% chance to hit a foul ball
 
@@ -92,10 +91,12 @@ function botPitch() {
 
     if (generalDifficultyScale > 1) {
         let randomPitch = Math.random();
-        if (randomPitch <= .4) {
+        if (randomPitch <= .5) {
             setPitchType('fastball');
-        } else {
+        } else if (randomPitch > .5 && randomPitch <= .25) {
             setPitchType('curveball');
+        } else {
+            setPitchType('changeup');
         }
     }
 

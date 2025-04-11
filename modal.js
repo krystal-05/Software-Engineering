@@ -165,7 +165,7 @@ function hideSettings() {
 }
 
 function toggleMute() {
-    console.log("toggle mute");
+    if (DEBUG) console.log("toggle mute");
     isMuted = !isMuted;
     muteButton.textContent = isMuted ? "Unmute" : "Mute";
 

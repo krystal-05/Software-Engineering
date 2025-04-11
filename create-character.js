@@ -101,7 +101,7 @@ function mousePressed() {
 
 function selectedCharacter(characterTag) {
     localStorage.setItem("characterTag", characterTag);
-    console.log("selected character ", characterTag);
+    if (DEBUG) console.log("selected character ", characterTag);
 }
 
 function confirmCharacter() {

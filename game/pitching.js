@@ -93,6 +93,9 @@ function setPitchType(type) {
         case 'curveball':
             initializeCurveball();
             break;
+        case 'changeup':
+            initializeChangeUp();
+            break;
         default:
             initializeFastball();
             break;
@@ -101,7 +104,7 @@ function setPitchType(type) {
 }
 
 function initializeCurveball() {
-    sliderSpeed = 600;
+    sliderSpeed = 550;
     ball.speedY = 400;
     ball.curveFactor = 2;
     ball.originalX = ball.x;
@@ -109,8 +112,19 @@ function initializeCurveball() {
     ball.totalDistance = batter.y - ball.startY;
     ball.curveAmplitude = 50; // lateral offset
     ball.curveInitialized = true;
+    ball.changeUpInitialized = false;
 }
-
+function initializeChangeUp() {
+    sliderSpeed = 550;
+    ball.speedY = 200;
+    ball.curveFactor = 1;
+    ball.originalX = ball.x;
+    ball.startY = ball.y;
+    ball.totalDistance = batter.y - ball.startY;
+    ball.curveAmplitude = 0; // reset lateral offset
+    ball.curveInitialized = false;
+    ball.changeUpInitialized = true;
+}
 function initializeFastball() {
     sliderSpeed = 400;
     ball.speedY = 430;
@@ -120,4 +134,30 @@ function initializeFastball() {
     ball.totalDistance = batter.y - ball.startY;
     ball.curveAmplitude = 0; // reset lateral offset
     ball.curveInitialized = false;
+    ball.changeUpInitialized = false;
+}
+
+function drawPitchSelectionBox() {
+    push();
+    // Define the size of the box
+    let boxWidth = max(width * .125, height * .125);
+    let boxHeight = boxWidth;
+    
+    let boxX = pitcher.x + height * 0.1;
+    let boxY = pitcher.y - boxHeight * .75;
+    
+    fill(0, 0, 0, 127);
+    stroke(255);
+    strokeWeight(2);
+    rect(boxX, boxY, boxWidth, boxHeight, 10);
+    
+    noStroke();
+    fill(255);
+    textSize(16);
+    text("Select Pitch Type:", boxX * 1.01, boxY * 1.05);
+    text("1: Fastball", boxX * 1.01, boxY * 1.15);
+    text("2: Curveball", boxX * 1.01, boxY * 1.225);
+    text("3: Change-Up", boxX * 1.01, boxY * 1.3);
+    text("Current: " + (ball.pitchType ? ball.pitchType : "None"), boxX * 1.01, boxY + boxHeight * .95);
+    pop();
 }
