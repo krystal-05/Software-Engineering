@@ -20,6 +20,8 @@ let ballCaughtThisFrame = false;
 let outPopupTime = 0;
 let currentPerspective = "side";
 let pitchCanChange = topInning;
+let batterIterator = 0;
+let playerSideBatting = true;
 
 let initialFielderPositions = [];
 let accumulator = 0;
@@ -64,8 +66,16 @@ function preload() {
             break;
     }
     bgTopImage = loadImage('assets/flat_field1.png');
-    batterIdle = loadImage('assets/final_design/BatterAniOne.png');
-    batterSwung = loadImage('assets/final_design/BatterAniTwo.png');
+
+    blueBatterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
+    redBatterIdle = blueBatterIdle;
+    playerBatterIdle = loadImage('assets/final_design/BatterAniOne.png');
+
+    blueBatterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
+    redBatterSwung = blueBatterSwung;
+    playerBatterSwung = loadImage('assets/final_design/BatterAniTwo.png');
+
+    playerIdleGif = loadImage('assets/test_sprite/M-idle01.gif');
     batterGif = loadImage('assets/temp_assets/BATTER.gif');
     fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
     runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
@@ -569,15 +579,20 @@ function drawPlayers() {
     });
 
     runners.forEach(runner => {
-        let img = runner.running ? runnerRunningGif : runnerIdle;
+        let img;
+        if (runner.player) img = runner.running ? runnerRunningGif : playerIdleGif;
+        else img = runner.running ? runnerRunningGif : runnerIdle;
         drawScaledPlayer(runner, img);
     });
 
-    drawScaledPlayer(pitcher, fielderIdleGif);
+    let pitcherImg;
+    if (playerSideBatting) pitcherImg = fielderIdleGif;
+    else pitcherImg = playerIdleGif;
+    drawScaledPlayer(pitcher, pitcherImg);
 
     if (batter) {
-        if (swingAttempt) drawScaledPlayer(batter, batterSwung);
-        else drawScaledPlayer(batter, batterIdle);
+        let batterImage = getBatterImage(batter, swingAttempt, batterIterator);
+        drawScaledPlayer(batter, batterImage);
     }
 
     drawScaledPlayer(catcherPlayer, catcherImg, catcherPlayer.y + height * .025);
@@ -666,17 +681,17 @@ function drawUmpire() {
     strokeWeight(3);
     fill(shirtColor);
     if (umpire.armRaisedLeft && umpire.armRaisedRight) {
-      line(-20, -20, -60, -60); // Left
-      line(20, -20, 60, -60);   // Right
+        line(-20, -20, -60, -60); // Left
+        line(20, -20, 60, -60);   // Right
     } else if (umpire.armRaisedLeft) {
-      line(0, -20, -20, -60);   // Left arm raised
-      line(0, -20, 20, 0);      // Right arm normal
+        line(0, -20, -20, -60);   // Left arm raised
+        line(0, -20, 20, 0);      // Right arm normal
     } else if (umpire.armRaisedRight) {
-      line(-20, 0, -60, -20);   // Left arm normal
-      line(20, -20, 60, -60);   // Right arm raised
+        line(-20, 0, -60, -20);   // Left arm normal
+        line(20, -20, 60, -60);   // Right arm raised
     } else {
-      line(0, -20, -20, 0);     // Left
-      line(0, -20, 20, 0);      // Right
+        line(0, -20, -20, 0);     // Left
+        line(0, -20, 20, 0);      // Right
     }
   
     pop();
@@ -748,7 +763,7 @@ function drawPopup() {
         pop();
 
         if (millis() - popupTimer > 1500) {
-            showHomerunPopup = false
+            showRunPopup = false;
         }
     } else if (showStrikePopup || showHomerunPopup || showOutPopup || showFoulPopup || showTiePopup || (showRunPopup && !topInning)) {
         popupDisableInput = true;
@@ -764,6 +779,7 @@ function drawPopup() {
             popupDisableInput = false;
             updateEnabledInput();
             showStrikePopup = false;
+            showHomerunPopup = false;
             showRunPopup = false;
             showOutPopup = false;
             showFoulPopup = false;
@@ -941,7 +957,9 @@ function assignEntities() {
 
 function nextInning() {
     popupDisableInput = true;
+    playerSideBatting = !playerSideBatting;
     updateEnabledInput();
+    batterIterator = 0;
     outs = 0;
     runners = [];
     resetFieldersPosition();

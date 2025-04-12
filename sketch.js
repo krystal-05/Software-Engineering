@@ -108,6 +108,10 @@ function drawLoadScreen() {
 }
 
 function mousePressed() {
+    if (gameState === "preMenu") {
+        gamestate = "menu";
+    }
+
     if (settingMenu) { return; }
 
     let activeButtons = (gameState === "menu") ? buttons : loadButtons;
@@ -117,7 +121,7 @@ function mousePressed() {
             setTimeout(() => btn.action(), 200);
         }
     }
-    if (resetButton.isHovered() && localStorage.getItem("isLoad1") !== "false") {
+    if (gameState === "loadGame" && resetButton.isHovered() && localStorage.getItem("isLoad1") !== "false") {
         buttonClick();
         setTimeout(() => resetButton.action(), 200);
     }
@@ -195,7 +199,7 @@ function loadVolumeSetting() {
 }
 
 function keyPressed() {
-    if(gameState == "preMenu") {
+    if (gameState === "preMenu") {
         gamestate = "menu";
     }
     if(key === 'Escape' && gameState == "menu") {

@@ -70,12 +70,15 @@ function playerHit() {
             bases[runner.base].occupied = false;
         }
     });
+    // Set the runner to be the user's character
+    if (batterIterator === 0) batter.player = true;
     setTimeout(() => {
         batter.x = batter.x - width * .05;
         runners.push(batter);
         bases[0].occupied = false;
         ball.advancingRunner = batter;
         batter = null;
+        batterIterator = (batterIterator + 1) % 9; // iterate batter position when user is batting
     }, 75);
 }
 
@@ -305,4 +308,17 @@ function drawDirectionSkillBar(dt) {
 
     fill('red');
     image(targetImage, directionBarX + hitSliderX - barHeight / 2, directionBarY, barHeight, barHeight);
+}
+
+function getBatterImage(batter, swingAttempt, batterIterator) {
+    if (playerSideBatting) {
+        if (batterIterator > 0) {
+            return swingAttempt ? blueBatterSwung : blueBatterIdle;
+        } else {
+            return swingAttempt ? playerBatterSwung : playerBatterIdle;
+        }
+    } else {
+        // return swingAttempt ? redBatterSwung : redBatterIdle;
+        return swingAttempt ? blueBatterSwung : blueBatterIdle;
+    }
 }

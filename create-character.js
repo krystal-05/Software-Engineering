@@ -30,7 +30,7 @@ function setup() {
         localStorage.setItem("characterTag", "Character 1");
     }
 
-    buttons.push(new Button("Back", width * .15, height * .925, 200, 50, null, null, () => goBack()));
+    buttons.push(new Button("Back", width * .15, height * .925, 200, 50, null, null, () => backToMenu()));
     buttons.push(new Button("<", width * .3, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 1")));
     buttons.push(new Button(">", width * .7, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 2")));
 
