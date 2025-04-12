@@ -129,12 +129,12 @@ function setup() {
     });
 
     let buttonSize = min(width * 0.1, height * 0.1);
-    const buttonWidth = width * 0.055;  
-    const buttonHeight = height * 0.1; 
-    let settingsButtonX = width - buttonWidth / 2;
-    let settingsButtonY = buttonHeight / 2;
-    let menuButtonX = settingsButtonX + 0;
-    let menuButtonY = settingsButtonY + 70; // shifts it down by 50 pixels
+    const widthGap = width * 0.07;  
+    const heightGap = height * 0.1; 
+    let settingsButtonX = width - widthGap / 2;
+    let settingsButtonY = heightGap / 2;
+    let menuButtonX = settingsButtonX;
+    let menuButtonY = settingsButtonY + heightGap; 
     settingButton = new Button("Settings", settingsButtonX, settingsButtonY, buttonSize, buttonSize, settingButtonImage, settingButtonImage, () => settingsClick());
     returnButton = new Button("Menu", menuButtonX, menuButtonY, buttonSize, buttonSize, menuButtonImage, menuButtonImage, () => backToMenu());
     audioButton = new Button("Audio", width - 80, 190, 125, 40, null, null, () => audioClick());
