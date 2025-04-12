@@ -64,8 +64,8 @@ function preload() {
             break;
     }
     bgTopImage = loadImage('assets/flat_field1.png');
-    batterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
-    batterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
+    batterIdle = loadImage('assets/temp_assets/sprites/BatterAniOne.png');
+    batterSwung = loadImage('assets/temp_assets/sprites/BatterAniTwo.png');
     batterGif = loadImage('assets/temp_assets/BATTER.gif');
     fielderIdleGif = loadImage('assets/temp_assets/IDLE1.gif');
     runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
