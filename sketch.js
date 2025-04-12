@@ -1,6 +1,5 @@
 let buttons = [];
 let loadButtons = [];
-let gameState = "menu";
 let isLoad1 = "false";
 let settingMenu = false;
 let bgImage, titleIcon;
@@ -131,10 +130,6 @@ function mousePressed() {
 
 function goBack() {
     gameState = "menu";
-}
-
-function buttonClick() {
-    playSoundEffect("buttonSound");
 }
 
 function loadCharacterSelect() {

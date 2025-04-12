@@ -44,7 +44,7 @@ let topDownCamera;
 
 let audioSelectionMenu = false;
 let audioButton;
-
+gameState = "game";
 // Difficulty
 let generalDifficultyScale = 1;
 
@@ -136,7 +136,7 @@ function setup() {
     let menuButtonX = settingsButtonX + 0;
     let menuButtonY = settingsButtonY + 70; // shifts it down by 50 pixels
     settingButton = new Button("Settings", settingsButtonX, settingsButtonY, buttonSize, buttonSize, settingButtonImage, settingButtonImage, () => settingsClick());
-    returnButton = new Button("Menu", menuButtonX, menuButtonY, buttonSize, buttonSize, menuButtonImage, menuButtonImage, () => returnToMenu());
+    returnButton = new Button("Menu", menuButtonX, menuButtonY, buttonSize, buttonSize, menuButtonImage, menuButtonImage, () => backToMenu());
     audioButton = new Button("Audio", width - 80, 190, 125, 40, null, null, () => audioClick());
     Difficulty1 = new Button("make Normal", width - 80, 240, 125, 40, null, null, () => changeDifficulty(1));
     Difficulty2 = new Button("make Hard", width - 80, 290, 125, 40, null, null, () => changeDifficulty(2));
@@ -1060,16 +1060,6 @@ function mousePressed() {
 // Handle change of perspective
 function togglePerspective() {
     currentPerspective = currentPerspective === "side" ? "topDown" : "side";
-}
-
-// Sound effect for clicking buttons
-function buttonClick() {
-    playSoundEffect("buttonSound");
-}
-// Handle returning to menu page
-function returnToMenu() {
-    localStorage.setItem("gameState", "menu");
-    window.location.href = "index.html";
 }
 
 function audioClick(){

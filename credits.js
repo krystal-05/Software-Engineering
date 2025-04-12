@@ -1,6 +1,7 @@
 let backButton;
 let settingMenu = false;
 let audioSelectionMenu = false;
+gameState = "credits";
 
 function preload() {
     soundEffects["buttonSound"] = loadSound("sounds/buttonClick.mp3");
@@ -11,7 +12,7 @@ function setup() {
     background(20); // Dark background color
     loadVolumeSetting();
 
-    backButton = new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack());
+    backButton = new Button("Back", 175, height - 50, 200, 50, null, null, () => backToMenu());
 }
 
 function draw() {
@@ -39,10 +40,6 @@ function draw() {
     text("Vidhi", width / 2, height / 3 + (35 * 9));
 
     backButton.display();
-}
-
-function buttonClick() {
-    playSoundEffect("buttonSound");
 }
 
 function mousePressed() {
@@ -80,13 +77,8 @@ function loadVolumeSetting() {
     });
 }
 
-function goBack() {
-    localStorage.setItem("gameState", "menu");
-    window.location.href = "index.html";
-}
-
 function keyPressed() {
     if (keyCode === ESCAPE) {
-        goBack();
+        backToMenu();
     }
 }

@@ -2,6 +2,7 @@ let buttons = [], confirmButton;
 let bgImage, characterImage, characterImage1;
 let settingMenu = false;
 let audioSelectionMenu = false;
+gameState = "createCharacter";
 
 function preload() {
     bgImage = loadImage('assets/roughititlescreen4.png');
@@ -34,6 +35,7 @@ function setup() {
     buttons.push(new Button(">", width * .7, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 2")));
 
     confirmButton = new Button("Confirm Character", width / 2, height * .925, 200, 50, null, null, () => confirmCharacter());
+    createModal();
 }
 
 function draw() {
@@ -82,20 +84,22 @@ function draw() {
 }
 
 function mousePressed() {
-    for (let btn of buttons) {
-        if (btn.isHovered() && btn.action) {
-            buttonClick();
-            setTimeout(() => btn.action(), 200);
+    if(inputEnabled) {
+        for (let btn of buttons) {
+            if (btn.isHovered() && btn.action) {
+                buttonClick();
+                setTimeout(() => btn.action(), 200);
+            }
         }
-    }
 
-    if (confirmButton.isHovered() && localStorage.getItem("characterTag") !== "null") {
-        buttonClick();
-        setTimeout(() => confirmButton.action(), 200);
-    }
+        if (confirmButton.isHovered() && localStorage.getItem("characterTag") !== "null") {
+            buttonClick();
+            setTimeout(() => confirmButton.action(), 200);
+        }
 
-    if (!currSong.isPlaying()) {
-        currSong.loop();
+        if (!currSong.isPlaying()) {
+            currSong.loop();
+        }
     }
 }
 
@@ -110,10 +114,6 @@ function confirmCharacter() {
     localStorage.setItem("isLoad1", "true");
     localStorage.setItem("characterTag", null);
     window.location.href = "map.html";
-}
-
-function buttonClick() {
-    playSoundEffect("buttonSound");
 }
 
 function loadVolumeSetting() {
@@ -137,7 +137,9 @@ function loadVolumeSetting() {
     });
 }
 
-function goBack() {
-    localStorage.setItem("gameState", "loadGame");
-    window.location.href = "index.html";
+
+function keyPressed() {
+    if(key == 'Escape') {
+        settingsClick();
+    }
 }

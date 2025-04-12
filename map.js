@@ -13,6 +13,7 @@ let settingMenu = false;
 let audioSelectionMenu = false;
 let animFinished = true;
 let char;
+gameState = "map";
 
 function preload() {
     map = loadImage('assets/map.png');
@@ -106,6 +107,7 @@ function setup(){
     lvlIndx[char.levelPosition][0].img = lvlIndx[char.levelPosition][2]; 
     
     loadVolumeSetting();
+    createModal();
 }
 
 class character {
@@ -185,22 +187,27 @@ class character {
 }
     
 function keyPressed() {
-    
-    let tmp = char.move(key);
-    if(tmp && animFinished) {
-        lvlIndx[char.levelPosition][0].img = lvlIndx[char.levelPosition][1];
-        nextPos = tmp;
-        char.img = runningAnimation;
-        if(nextPos[0] - char.x > 0) {
-            char.width = 0 - char.width;
-        }
-        animFinished = false;
-    } else if (keyCode === ENTER) {
-        playSoundEffect("buttonSound");
-        lvlIndx[char.levelPosition][3]();
+    if(key == 'Escape') {
+        settingsClick();
     }
     
-    return false;
+    if(inputEnabled) {
+        let tmp = char.move(key);
+        if(tmp && animFinished) {
+            lvlIndx[char.levelPosition][0].img = lvlIndx[char.levelPosition][1];
+            nextPos = tmp;
+            char.img = runningAnimation;
+            if(nextPos[0] - char.x > 0) {
+                char.width = 0 - char.width;
+            }
+            animFinished = false;
+        } else if (keyCode === ENTER) {
+            playSoundEffect("buttonSound");
+            lvlIndx[char.levelPosition][3]();
+        }
+        
+        return false;
+    }
 }
 
 function draw() {

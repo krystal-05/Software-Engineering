@@ -9,6 +9,9 @@ let currEffectsVolume = 0.5;
 let soundEffects = {};
 let DEBUG = false;
 let popupDisableInput = false, settingsDisableInput = false, inputEnabled = true;
+if (typeof gameState === 'undefined') {
+    var gameState = "menu"; 
+}
 
 function createModal() {
     const style = document.createElement("style");
@@ -77,7 +80,7 @@ function createModal() {
         <input type="range" id="effectsVolumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="1">
         </div>
         <button id="muteToggle" class="modal-button">Mute</button>
-        <button id="backSettings" class="modal-button">Back</button>
+        <button id="menuSettingsButton" class="modal-button">Main Menu</button>
         <div>
             <label for="debugMode">Debug Mode</label>
             <input type="checkbox" id="debugMode"></input>
@@ -91,7 +94,7 @@ function createModal() {
     volumeSlider = modal.querySelector("#volumeSlider");
     effectsVolumeSlider = modal.querySelector("#effectsVolumeSlider");
     muteButton = modal.querySelector("#muteToggle");
-    const backButton = modal.querySelector("#backSettings");
+   // const menuSettingsButton = modal.querySelector("#menuSettingsButton");
     debugButton = modal.querySelector("#debugMode");
 
     // Event listeners for modal
@@ -102,9 +105,9 @@ function createModal() {
         toggleMute();
         buttonClick();
     });
-    backButton.addEventListener("click", () => {
+    menuSettingsButton.addEventListener("click", () => {
         buttonClick();
-        settingsClick();
+        backToMenu();
     });
 
     debugButton.addEventListener("change", (event) => {
@@ -149,6 +152,10 @@ function createModal() {
 function showSettings() {
     settingsDisableInput = true;
     updateEnabledInput();
+    const menuSettingsButton = modal.querySelector("#menuSettingsButton");
+    if (menuSettingsButton) {
+        menuSettingsButton.style.display = (gameState === "menu") ? "none" : "inline-block";
+    }
     modal.style.display = "flex";
 }
 
@@ -162,6 +169,11 @@ function hideSettings() {
     settingsDisableInput = false;
     updateEnabledInput();
     modal.style.display = "none";
+}
+
+function backToMenu() {
+    localStorage.setItem("gameState", "menu");
+    window.location.href = "index.html";
 }
 
 function toggleMute() {
@@ -185,6 +197,9 @@ function updateVolume() {
     }
 }
 
+function buttonClick() {
+    playSoundEffect("buttonSound");
+}
 
 function playSoundEffect(effect) {
     if (soundEffects[effect]) {
