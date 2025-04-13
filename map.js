@@ -8,7 +8,7 @@ let levels = [];
 let lvlIndx = {};
 let levelOneImg, levelTwoImg, levelThreeImg, secretLevelImg;
 let idleAnimation, runningAnimation;
-let charMoveSpeed = 7;
+let charMoveSpeed = 10;
 let settingMenu = false;
 let audioSelectionMenu = false;
 let animFinished = true;
@@ -16,7 +16,7 @@ let char;
 gameState = "map";
 
 function preload() {
-    map = loadImage('assets/map.png');
+    map = loadImage('assets/Temp_Map.png');
     idleAnimation = loadImage('assets/temp_assets/IDLE1.gif');
     runningAnimation = loadImage('assets/temp_assets/LRUNGIF.gif');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
@@ -87,10 +87,10 @@ class level {
 function setup(){
     createCanvas(windowWidth, windowHeight);
 
-    cityOneLocation = [windowWidth / 2 + 150, windowHeight / 2 - 150];
-    cityTwoLocation = [windowWidth / 2 - 200, windowHeight / 2 - 150];
-    cityThreeLocation = [windowWidth / 2 - 150, windowHeight / 2 + 150];
-    citySecretLocation = [windowWidth / 2 - 450, windowHeight / 2 - 190];
+    cityOneLocation = [windowWidth / 2 + 225, windowHeight / 2 - 190];
+    cityTwoLocation = [windowWidth / 3 - 300, windowHeight / 2 - 75];
+    cityThreeLocation = [windowWidth / 2 - 375, windowHeight / 2 + 175];
+    citySecretLocation = [windowWidth / 3 - 530, windowHeight / 2 - 125];
 
     char = new character;
 
@@ -144,21 +144,23 @@ class character {
         }
         this.width = 100;
         this.height = 100;
+
+        this.unlocked = parseInt(localStorage.getItem("unlockedLevel"));
     }
     
     // returns location of city to be moved to if a move can be made
     move(input) {
         switch(this.levelPosition) {
             case '1': {
-                if(input === 'a') {
+                if(input === 'a' && this.unlocked >= 2) {
                     return cityTwoLocation.concat(['2']);
                 }
                 break;
             } 
             case '2': {
-                if(input === 'a') {
+                if(input === 'a' && this.unlocked === 3) {
                     return citySecretLocation.concat(['1s']);
-                } else if(input === 's') {
+                } else if(input === 's' && this.unlocked === 3) {
                     return cityThreeLocation.concat(['3']);
                 } else if(input === 'd') {
                     return cityOneLocation.concat(['1']);
@@ -203,6 +205,7 @@ function keyPressed() {
             animFinished = false;
         } else if (keyCode === ENTER) {
             playSoundEffect("buttonSound");
+            localStorage.setItem("thisLevel", char.levelPosition);
             lvlIndx[char.levelPosition][3]();
         }
         
@@ -225,15 +228,15 @@ function draw() {
 
     // Animates character
     if(!animFinished) {
-        if(nextPos[0] - char.x > 0) {
+        if(nextPos[0] > char.x) {
             char.x = char.x + charMoveSpeed;
-        } else if (nextPos[0] - char.x < 0) {
+        } else if (nextPos[0] < char.x) {
             char.x = char.x - charMoveSpeed;
         }
 
-        if(nextPos[1] - char.y > 0) {
+        if(nextPos[1] > char.y) {
             char.y = char.y + charMoveSpeed;
-        } else if (nextPos[1] - char.y < 0) {
+        } else if (nextPos[1] < char.y) {
             char.y = char.y - charMoveSpeed;
         }
 
@@ -245,7 +248,7 @@ function draw() {
             char.y = nextPos[1];
         }
 
-        if(nextPos[0] - char.x === 0 && nextPos[1] - char.y === 0) {
+        if(nextPos[0] === char.x && nextPos[1] === char.y) {
             animFinished = true;
             char.levelPosition = nextPos[2];
             lvlIndx[char.levelPosition][0].img = lvlIndx[char.levelPosition][2]; 

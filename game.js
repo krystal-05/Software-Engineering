@@ -983,6 +983,15 @@ function nextInning() {
     if (topInning && inning > 4){
         if (score.home < score.away){
             if (lastSelectedLevel < MAX_LEVEL) {
+
+                let unlockedLevel = localStorage.getItem("unlockedLevel");
+                let thisLevel = localStorage.getItem("thisLevel");
+                if(unlockedLevel === null) {
+                    localStorage.setItem("unlockedLevel", '2');
+                } else if (unlockedLevel === 2 && thisLevel === '2') {
+                    localStorage.setItem("unlockedLevel", '3');
+                }
+
                 showWinPopup();
             } else {
                 showDonePopup();
@@ -1092,7 +1101,15 @@ function winClick(){
         showDonePopup();
     }
     else{
-    showWinPopup();
+        let unlockedLevel = localStorage.getItem("unlockedLevel");
+        let thisLevel = localStorage.getItem("thisLevel");
+
+        if(unlockedLevel === null) {
+            localStorage.setItem("unlockedLevel", '2');
+        } else if (thisLevel === '2') {
+            localStorage.setItem("unlockedLevel", '3');
+        }
+        showWinPopup();
     }
 }
 function startGameClick(){

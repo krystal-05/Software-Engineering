@@ -153,6 +153,9 @@ function loadCredits() {
     window.location.href = "credits.html";
 }
 function deleteSave() {
+    localStorage.removeItem("unlockedLevel");
+    localStorage.removeItem("lastSelectedLevel");
+
     localStorage.setItem("isLoad1", false);
     isLoad1 = localStorage.getItem("isLoad1");
 }
