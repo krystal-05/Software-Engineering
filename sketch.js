@@ -3,7 +3,7 @@ let loadButtons = [];
 let isLoad1 = "false";
 let settingMenu = false;
 let bgImage, titleIcon;
-let settingsImg, settingsImgHover, creditsImg, creditsImgHover;
+let settingsImg, settingsImgHover, creditsImg, creditsImgHover, howToImg, howToImgHover;
 let audioSelectionMenu = false;
 let loadButtonWidth, loadButtonHeight;
 
@@ -14,6 +14,8 @@ function preload() {
     settingsImgHover = loadImage('assets/OSettings_2.png');
     creditsImg = loadImage('assets/OCredits_1.png');
     creditsImgHover = loadImage('assets/OCredits_2.png');
+    howToImg = loadImage('assets/how-to.png');
+    howToImgHover = loadImage('assets/how-to-hover.png');
     currSong = loadSound('sounds/mainScreenSound.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
 }
@@ -150,6 +152,9 @@ function loadlogin() {
 function loadCredits() {
     window.location.href = "credits.html";
 }
+function loadHowTo(){
+    window.location.href = "how-to.html";
+}
 function deleteSave() {
     localStorage.removeItem("unlockedLevel");
     localStorage.removeItem("lastSelectedLevel");
@@ -177,6 +182,20 @@ function startMenuButtons() {
     buttons.push(new Button("Start Game", width / 2, height * 0.75, startButtonWidth, startButtonHeight, null, null, () => gameState = "loadGame"));
     buttons.push(new Button("Settings", startX + buttonSize + gap + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, settingsImg, settingsImgHover, () => settingsClick()));
     buttons.push(new Button("Credits", startX + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, creditsImg, creditsImgHover, () => loadCredits()));
+    buttons.push(new Button(
+        "How To",
+        buttonSize * 0.6,                             // X: small offset from left
+        height - buttonSize * 0.6,                    // Y: near bottom
+        buttonSize,
+        buttonSize,
+        howToImg,
+        howToImgHover,
+        () => loadHowTo(),
+        false,
+        false,
+        true // This sets isHowToButton true
+    ));
+    
 }
 
 function loadMenuButtons() {

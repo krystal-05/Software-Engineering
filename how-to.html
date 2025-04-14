@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>How To Play</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        #leftArrow, #rightArrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 60px;
+            cursor: pointer;
+            color: gold;
+            user-select: none;
+        }
+
+        #leftArrow {
+            left: 30px;
+        }
+
+        #rightArrow {
+            right: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="leftArrow">&#60;</div>
+    <div id="rightArrow">&#62;</div>
+
+   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <script src="how-to.js"></script>
+    <script>
+        
+        document.getElementById("leftArrow").addEventListener("click", () => {
+            currentSlide = (currentSlide - 1 + howToSlides.length) % howToSlides.length;
+        });
+
+        document.getElementById("rightArrow").addEventListener("click", () => {
+            currentSlide = (currentSlide + 1) % howToSlides.length;
+        });
+    </script>
+</body>
+</html>
