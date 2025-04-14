@@ -37,6 +37,7 @@ function setup() {
     startMenuButtons();
     loadMenuButtons();
     createModal();
+    createInitialPopup();
 }
 
 function draw() {
@@ -44,7 +45,7 @@ function draw() {
 
     switch (gameState) {
         case "preMenu":
-            //TODO
+            drawInitialPopup();
             break;
         case "menu":
             drawMainMenu();
@@ -54,6 +55,14 @@ function draw() {
             break;
         default:
     }
+}
+function drawInitialPopup(){
+    background(bgImage);
+    let scaleFactor = Math.max(width / bgImage.width, height / bgImage.height);
+    let drawWidth = bgImage.width * scaleFactor;
+    let drawHeight = bgImage.height * scaleFactor;
+    image(bgImage, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
+    showInitialPopup();
 }
 
 function drawMainMenu() {

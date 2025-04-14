@@ -10,7 +10,7 @@ let soundEffects = {};
 let DEBUG = false;
 let popupDisableInput = false, settingsDisableInput = false, inputEnabled = true;
 if (typeof gameState === 'undefined') {
-    var gameState = "menu"; 
+    var gameState = "preMenu"; 
 }
 
 function createModal() {
