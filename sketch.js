@@ -18,6 +18,7 @@ function preload() {
     howToImgHover = loadImage('assets/how-to-hover.png');
     currSong = loadSound('sounds/mainScreenSound.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
+    premenuImage = loadImage('assets/black.png');
 }
 
 function setup() {
@@ -57,11 +58,11 @@ function draw() {
     }
 }
 function drawInitialPopup(){
-    background(bgImage);
-    let scaleFactor = Math.max(width / bgImage.width, height / bgImage.height);
-    let drawWidth = bgImage.width * scaleFactor;
-    let drawHeight = bgImage.height * scaleFactor;
-    image(bgImage, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
+    background(premenuImage);
+    let scaleFactor = Math.max(width / premenuImage.width, height / premenuImage.height);
+    let drawWidth = premenuImage.width * scaleFactor;
+    let drawHeight = premenuImage.height * scaleFactor;
+    image(premenuImage, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
     showInitialPopup();
 }
 
