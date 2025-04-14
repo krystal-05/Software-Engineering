@@ -5,7 +5,7 @@ let audioSelectionMenu = false;
 gameState = "createCharacter";
 
 function preload() {
-    bgImage = loadImage('assets/roughititlescreen4.png');
+    bgImage = loadImage('assets/pendFinalStrtScreen.png');
     characterImage = loadImage('assets/tempCharacter.png');
     characterImage1 = loadImage('/assets/tempCharacter1.png');  // Load option 2's character
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
