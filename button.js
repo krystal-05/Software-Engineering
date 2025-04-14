@@ -80,18 +80,11 @@ function resetGameButtonLocation() {
     const heightGap = height * 0.1;
     let settingsButtonX = width - widthGap / 2;
     let settingsButtonY = heightGap / 2;
-    let menuButtonX = settingsButtonX;
-    let menuButtonY = settingsButtonY + heightGap;
 
     settingButton.x = settingsButtonX;
     settingButton.y = settingsButtonY;
     settingButton.width = buttonSize;
     settingButton.height = buttonSize;
-
-    returnButton.x = menuButtonX;
-    returnButton.y = menuButtonY;
-    returnButton.width = buttonSize;
-    returnButton.height = buttonSize;
 
     audioButton.x = settingsButtonX * 0.995;
     audioButton.y = settingsButtonY * 5;

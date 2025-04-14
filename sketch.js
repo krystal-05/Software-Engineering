@@ -211,8 +211,7 @@ function loadMenuButtons() {
 
     loadButtons = [
         new Button("Game 1", width / 2, height * .45, loadButtonWidth, loadButtonHeight, null, null, () => loadGame()),
-        new Button("Back", width * .1, height * .925, loadButtonWidth, loadButtonHeight, null, null, () => goBack()),
-        new Button("Log In", width * .5, height * .925, loadButtonWidth, loadButtonHeight, null, null, () => loadlogin())
+        new Button("Back", width * .1, height * .925, loadButtonWidth, loadButtonHeight, null, null, () => goBack())
     ];
     resetButton = new Button("Reset Game Save", width / 2, height * .55, loadResetButtonWidth, loadButtonHeight, null, null, () => deleteSave());
 }

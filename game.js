@@ -30,7 +30,7 @@ let xPower;
 let yPower;
 
 let bgImage, batterGif;
-let settingButton, returnButton;
+let settingButton;
 
 let umpire;
 let showStrikePopup = false;
@@ -85,8 +85,6 @@ function preload() {
     ballImg = loadImage('assets/Baseball1.png');
     targetImage = loadImage('assets/final_design/Target2.png');
     settingButtonImage = loadImage('assets/final_design/game_setting2.png');
-    menuButtonImage = loadImage('assets/final_design/game_home2.png');
-
 
     currSong = loadSound('sounds/gamesong.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
@@ -142,11 +140,8 @@ function setup() {
     const heightGap = height * 0.1; 
     let settingsButtonX = width - widthGap / 2;
     let settingsButtonY = heightGap / 2;
-    let menuButtonX = settingsButtonX;
-    let menuButtonY = settingsButtonY + heightGap; 
     
     settingButton = new Button("Settings", settingsButtonX, settingsButtonY, buttonSize, buttonSize, settingButtonImage, settingButtonImage, () => settingsClick());
-    returnButton = new Button("Menu", menuButtonX, menuButtonY, buttonSize, buttonSize, menuButtonImage, menuButtonImage, () => backToMenu());
     audioButton = new Button("Audio", settingsButtonX * .995, settingsButtonY * 5, buttonSize * 1.4, buttonSize * .45, null, null, () => audioClick());
     Difficulty1 = new Button("make Normal", settingsButtonX * .995, settingsButtonY * 6, buttonSize * 1.4, buttonSize * .45, null, null, () => changeDifficulty(1));
     Difficulty2 = new Button("make Hard", settingsButtonX * .995, settingsButtonY * 7, buttonSize * 1.4, buttonSize * .45, null, null, () => changeDifficulty(2));
@@ -210,7 +205,6 @@ function draw() {
     push();
     drawScoreboard();
     settingButton.display();
-    returnButton.display();
     if (DEBUG){
         audioButton.display();
         Difficulty1.display();
@@ -1044,10 +1038,6 @@ function mousePressed() {
         if (settingButton.isHovered()) {
             buttonClick();
             setTimeout(() => settingButton.action(), 200);
-        }
-        if (returnButton.isHovered()) {
-            buttonClick();
-            setTimeout(() => returnButton.action(), 200);
         }
         if (audioButton.isHovered()) {
             if (DEBUG) {

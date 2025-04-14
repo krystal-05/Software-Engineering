@@ -42,8 +42,8 @@ function draw() {
     let dynamicSize = width * 0.05;
     textSize(dynamicSize);
     textStyle(BOLD);
-    fill('black');
-    text("Select Character", width / 2, height * .05);
+    //fill('black');
+    //text("Select Character", width / 2, height * .05);
     
     fill('rgba(100, 100, 100, 0.8)');
     rect(width / 2, height * .55, imgWidth * 1.1, imgHeight * 1.2, 20);
@@ -146,8 +146,8 @@ function createCharacterButtons() {
     let defButtonHeight = Math.max(baseDefHeight, minDefHeight);
 
     buttons.push(new Button("Back", width * .15, height * .925, defButtonWidth, defButtonHeight, null, null, () => backToMenu()));
-    buttons.push(new Button("<", width * .3, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 1")));
-    buttons.push(new Button(">", width * .7, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 2")));
+    buttons.push(new Button("<", width * .325, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 1")));
+    buttons.push(new Button(">", width * .675, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 2")));
 
     confirmButton = new Button("Confirm Character", width / 2, height * .925, defConfirmButtonWidth, defButtonHeight, null, null, () => confirmCharacter());
 }
