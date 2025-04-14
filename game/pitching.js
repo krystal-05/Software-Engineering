@@ -153,11 +153,12 @@ function drawPitchSelectionBox() {
     
     noStroke();
     fill(255);
-    textSize(16);
+    let dynamicSize = boxX * .025;
+    textSize(dynamicSize);
     text("Select Pitch Type:", boxX * 1.01, boxY * 1.05);
-    text("1: Fastball", boxX * 1.01, boxY * 1.15);
-    text("2: Curveball", boxX * 1.01, boxY * 1.225);
-    text("3: Change-Up", boxX * 1.01, boxY * 1.3);
+    text("1: Fastball", boxX * 1.01, boxY + boxHeight * .4);
+    text("2: Curveball", boxX * 1.01, boxY + boxHeight * .525);
+    text("3: Change-Up", boxX * 1.01, boxY + boxHeight * .65);
     text("Current: " + (ball.pitchType ? ball.pitchType : "None"), boxX * 1.01, boxY + boxHeight * .95);
     pop();
 }
