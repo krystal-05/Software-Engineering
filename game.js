@@ -615,6 +615,13 @@ function drawScoreboard() {
     text(`Strikes: ${strikes}`, 30, 100);
 }
 
+function resizeUmpire(oldWidth, oldHeight) {
+    umpire.relativeX = umpire.x / oldWidth;
+    umpire.relativeY = umpire.y / oldHeight;
+    umpire.x = umpire.relativeX * width;
+    umpire.y = umpire.relativeY * height;
+}
+
 function drawUmpire() {
     push();
     rectMode(CENTER);
@@ -623,13 +630,13 @@ function drawUmpire() {
   
     // Rotation for spinning
     if (umpire.spinning) {
-      rotate(radians(umpire.spinAngle));
-      umpire.spinAngle += 10; // Speed of spin
-  
-      if (umpire.spinAngle >= 360) {
-        umpire.spinning = false;
-        umpire.spinAngle = 0;
-      }
+        rotate(radians(umpire.spinAngle));
+        umpire.spinAngle += 10; // Speed of spin
+    
+        if (umpire.spinAngle >= 360) {
+            umpire.spinning = false;
+            umpire.spinAngle = 0;
+        }
     }
   
     // ** Skin Tone (Light Brown) **
@@ -1170,7 +1177,6 @@ function updateLayoutValues() {
 
 function updateRunners(oldWidth, oldHeight) {
     if (runners && runners.length > 0) {
-        console.log("being ran");
         runners.forEach(runner => {
             runner.relativeX = runner.x / oldWidth;
             runner.relativeY = runner.y / oldHeight;
@@ -1213,6 +1219,7 @@ function windowResized() {
     updateLayoutValues();
     updateFielders();
     updateRunners(oldWidth, oldHeight);
+    resizeUmpire(oldWidth, oldHeight);
 
     resetGameButtonLocation();
 }
