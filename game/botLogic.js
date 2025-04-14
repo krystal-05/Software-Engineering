@@ -78,6 +78,8 @@ function botHitBall() {
     runners.forEach(runner => runner.running = true);
     setTimeout(() => {
         batter.x = batter.x - width * 0.05;
+        batter.relativeX = batter.x / width;
+        batter.relativeY = batter.y / height;
         runners.push(batter);
         ball.advancingRunner = batter;
         batter = null;

@@ -121,6 +121,7 @@ function setup() {
     }
 
     assignEntities();
+
     let transformedPitcher = sideToTopDown(pitcher.x, pitcher.y);
     topDownCamera = {
         worldAnchor: { x: transformedPitcher.x, y: transformedPitcher.y },
@@ -128,8 +129,6 @@ function setup() {
         scaleX: .4,
         scaleY: 1
     };
-
-    initialFielderPositions = fielders.map(fielder => ({ x: fielder.x, y: fielder.y }));
 
     lineup = [batter];
     resetBall();
@@ -145,14 +144,15 @@ function setup() {
     let settingsButtonY = heightGap / 2;
     let menuButtonX = settingsButtonX;
     let menuButtonY = settingsButtonY + heightGap; 
+    
     settingButton = new Button("Settings", settingsButtonX, settingsButtonY, buttonSize, buttonSize, settingButtonImage, settingButtonImage, () => settingsClick());
     returnButton = new Button("Menu", menuButtonX, menuButtonY, buttonSize, buttonSize, menuButtonImage, menuButtonImage, () => backToMenu());
-    audioButton = new Button("Audio", width - 80, 190, 125, 40, null, null, () => audioClick());
-    Difficulty1 = new Button("make Normal", width - 80, 240, 125, 40, null, null, () => changeDifficulty(1));
-    Difficulty2 = new Button("make Hard", width - 80, 290, 125, 40, null, null, () => changeDifficulty(2));
-    Difficulty3 = new Button("make Impossible", width - 80, 340, 125, 40, null, null, () => changeDifficulty(3));
-    loseDemo = new Button("Lose Demo", width - 80, 640, 120, 40, null, null, () => loseClick());
-    winDemo = new Button("Win Demo", width - 80, 690, 120, 40, null, null, () => winClick());
+    audioButton = new Button("Audio", settingsButtonX * .995, settingsButtonY * 5, buttonSize * 1.4, buttonSize * .45, null, null, () => audioClick());
+    Difficulty1 = new Button("make Normal", settingsButtonX * .995, settingsButtonY * 6, buttonSize * 1.4, buttonSize * .45, null, null, () => changeDifficulty(1));
+    Difficulty2 = new Button("make Hard", settingsButtonX * .995, settingsButtonY * 7, buttonSize * 1.4, buttonSize * .45, null, null, () => changeDifficulty(2));
+    Difficulty3 = new Button("make Impossible", settingsButtonX * .995, settingsButtonY * 8, buttonSize * 1.4, buttonSize * .45, null, null, () => changeDifficulty(3));
+    loseDemo = new Button("Lose Demo", settingsButtonX * .995, settingsButtonY * 10, buttonSize * 1.4, buttonSize * .45, null, null, () => loseClick());
+    winDemo = new Button("Win Demo", settingsButtonX * .995, settingsButtonY * 11, buttonSize * 1.4, buttonSize * .45, null, null, () => winClick());
 
     createModal();
     createAudioMenu();
@@ -1123,4 +1123,96 @@ if(lastSelectedLevel === 2){
 }
 if(lastSelectedLevel === 3){
     changeDifficulty(3);
+}
+
+function updateLayoutValues() {
+    if (bases && bases.length >= 4) {
+        bases[0].x = width * 0.5;
+        bases[0].y = height * 0.88;
+        bases[1].x = width * 0.83;
+        bases[1].y = height * 0.58;
+        bases[2].x = width * 0.5;
+        bases[2].y = height * 0.4;
+        bases[3].x = width * 0.17;
+        bases[3].y = height * 0.58;
+    }
+  
+    if (pitcher) {
+        pitcher.x = width * 0.5;
+        pitcher.y = height * 0.575;
+        pitcher.scaleFactor = getScaleFactor(pitcher.y);
+    }
+  
+    if (batter) {
+        batter.x = width * 0.5;
+        batter.y = height * 0.90;
+        batter.scaleFactor = getScaleFactor(batter.y);
+    }
+  
+    if (catcherPlayer) {
+        catcherPlayer.x = width * 0.5;
+        catcherPlayer.y = height * 0.95;
+        let scale = getScaleFactor(catcherPlayer.y);
+        catcherPlayer.catchRadius = catchDistance * scale;
+    }
+  
+    if (ball && !ballMoving) {
+        ball.x = pitcher.x;
+        ball.y = pitcher.y - height * 0.05;
+    }
+    
+    if (topDownCamera && pitcher) {
+        let transformedPitcher = sideToTopDown(pitcher.x, pitcher.y);
+        topDownCamera.worldAnchor = { x: transformedPitcher.x, y: transformedPitcher.y };
+        topDownCamera.screenAnchor = { x: width * 0.5, y: height * 0.75 };
+    }
+}
+
+function updateRunners(oldWidth, oldHeight) {
+    if (runners && runners.length > 0) {
+        console.log("being ran");
+        runners.forEach(runner => {
+            runner.relativeX = runner.x / oldWidth;
+            runner.relativeY = runner.y / oldHeight;
+            runner.x = runner.relativeX * width;
+            runner.y = runner.relativeY * height;
+        });
+    }
+}
+
+function updateFielders() {
+    let newFielders = generateFielders();
+  
+    if (fielders && fielders.length === newFielders.length) {
+        for (let i = 0; i < fielders.length; i++) {
+            fielders[i].x = newFielders[i].x;
+            fielders[i].y = newFielders[i].y;
+            let newScale = getScaleFactor(fielders[i].y);
+            fielders[i].catchRadius = catchDistance * newScale;
+        }
+    } else {
+        fielders = newFielders;
+    }
+  }
+
+function windowResized() {
+    let oldWidth = width;
+    let oldHeight = height;
+
+    resizeCanvas(windowWidth, windowHeight);
+    
+    hitZoneWidth = windowWidth * 0.03;
+    hitZoneHeight = hitZoneWidth;
+    catchDistance = windowWidth * 0.015;
+    groundDistance = windowWidth * 0.005;
+    runnerProximity = windowWidth * 0.01;
+    strikeCatchThreshold = windowWidth * 0.01;
+    xPower = windowWidth / 200;
+    yPower = windowHeight / 200;
+
+    updateLayoutValues();
+    updateFielders();
+    updateRunners(oldWidth, oldHeight);
+
+    resetGameButtonLocation();
 }

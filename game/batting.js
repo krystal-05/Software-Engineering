@@ -74,6 +74,8 @@ function playerHit() {
     if (batterIterator === 0) batter.player = true;
     setTimeout(() => {
         batter.x = batter.x - width * .05;
+        batter.relativeX = batter.x / width;
+        batter.relativeY = batter.y / height;
         runners.push(batter);
         bases[0].occupied = false;
         ball.advancingRunner = batter;

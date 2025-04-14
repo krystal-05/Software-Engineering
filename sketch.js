@@ -5,6 +5,7 @@ let settingMenu = false;
 let bgImage, titleIcon;
 let settingsImg, settingsImgHover, creditsImg, creditsImgHover;
 let audioSelectionMenu = false;
+let loadButtonWidth, loadButtonHeight;
 
 function preload() {
     bgImage = loadImage('assets/roughititlescreen4.png');
@@ -30,9 +31,9 @@ function setup() {
         gameState = storedState;
         localStorage.removeItem("gameState");
     }
-
+    
     startMenuButtons();
-    resetButton = new Button("Reset Game Save", width / 2, 500, 300, 75, null, null, () => deleteSave());
+    loadMenuButtons();
     createModal();
 }
 
@@ -92,12 +93,6 @@ function drawLoadScreen() {
     let iconScale = baseIconWidth / titleIcon.width;
     let baseIconHeight = titleIcon.height * iconScale;
     image(titleIcon, (width - baseIconWidth) / 2, height * 0.01, baseIconWidth, baseIconHeight);
-
-    loadButtons = [
-        new Button("Game 1", width / 2, 400, 300, 75, null, null, () => loadGame()),
-        new Button("Back", 175, height - 50, 200, 50, null, null, () => goBack()),
-        new Button("Log In", 1200, height - 50, 100, 50, null, null, () => loadlogin())
-    ];
 
     for (let btn of loadButtons) {
         btn.display();
@@ -161,6 +156,7 @@ function deleteSave() {
 }
 
 function startMenuButtons() {
+    buttons = [];
     let baseStartWidth = width * 0.15;
     let baseStartHeight = baseStartWidth / 4;
     let minStartWidth = 120;
@@ -178,6 +174,25 @@ function startMenuButtons() {
     buttons.push(new Button("Start Game", width / 2, height * 0.75, startButtonWidth, startButtonHeight, null, null, () => gameState = "loadGame"));
     buttons.push(new Button("Settings", startX + buttonSize + gap + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, settingsImg, settingsImgHover, () => settingsClick()));
     buttons.push(new Button("Credits", startX + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, creditsImg, creditsImgHover, () => loadCredits()));
+}
+
+function loadMenuButtons() {
+    loadButtons = [];
+    let baseLoadWidth = width * 0.15;
+    let baseLoadHeight = baseLoadWidth / 4;
+    let minLoadWidth = 120;
+    let minLoadResetWidth = 140;
+    let minLoadHeight = 40;
+    let loadButtonWidth = Math.max(baseLoadWidth, minLoadWidth);
+    let loadResetButtonWidth = Math.max(baseLoadWidth, minLoadResetWidth);
+    let loadButtonHeight = Math.max(baseLoadHeight, minLoadHeight);
+
+    loadButtons = [
+        new Button("Game 1", width / 2, height * .45, loadButtonWidth, loadButtonHeight, null, null, () => loadGame()),
+        new Button("Back", width * .1, height * .925, loadButtonWidth, loadButtonHeight, null, null, () => goBack()),
+        new Button("Log In", width * .5, height * .925, loadButtonWidth, loadButtonHeight, null, null, () => loadlogin())
+    ];
+    resetButton = new Button("Reset Game Save", width / 2, height * .55, loadResetButtonWidth, loadButtonHeight, null, null, () => deleteSave());
 }
 
 function loadVolumeSetting() {
@@ -211,4 +226,13 @@ function keyPressed() {
     else if (key === 'Escape' && !(gameState == "menu")) {
         goBack();
     }
+}
+
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+
+    buttons = [];
+    loadButtons = [];
+    startMenuButtons();
+    loadMenuButtons();
 }

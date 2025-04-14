@@ -66,7 +66,8 @@ function generateFielders() {
         let scale = getScaleFactor(fielder.y);
         fielder.catchRadius = catchDistance * scale;
     });
-    
+
+    initialFielderPositions = newFielders.map(fielder => ({ x: fielder.x, y: fielder.y }));
     return newFielders;
 }
 // Scale speed based on y-value 
@@ -284,7 +285,7 @@ function handleCatch(currentFielder) {
         if ((targetRunner.backtracking && backtrackFielder === currentFielder) || (!targetRunner.backtracking)) {
             // only if the ball is near the base for outing runner
             let baseCoords = bases[intendedBase];
-            if (dist(ball.x, ball.y, baseCoords.x, baseCoords.y) < catcherPlayer.catchRadius) {
+            if (dist(ball.x, ball.y, baseCoords.x, baseCoords.y) < currentFielder.catchRadius) {
                 outs++;
                 if (DEBUG) console.log("Tagging out runner at base", intendedBase, "outs now", outs);
                 bases[intendedBase].occupied = false;

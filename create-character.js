@@ -13,7 +13,6 @@ function preload() {
 }
 
 function setup() {
-    let buttonHeight = windowHeight * 0.075;
     createCanvas(windowWidth, windowHeight);
     textAlign(CENTER, CENTER);
     rectMode(CENTER);
@@ -30,11 +29,7 @@ function setup() {
         localStorage.setItem("characterTag", "Character 1");
     }
 
-    buttons.push(new Button("Back", width * .15, height * .925, 200, 50, null, null, () => backToMenu()));
-    buttons.push(new Button("<", width * .3, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 1")));
-    buttons.push(new Button(">", width * .7, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 2")));
-
-    confirmButton = new Button("Confirm Character", width / 2, height * .925, 200, 50, null, null, () => confirmCharacter());
+    createCharacterButtons();
     createModal();
 }
 
@@ -137,9 +132,32 @@ function loadVolumeSetting() {
     });
 }
 
+function createCharacterButtons() {
+    buttons = [];
+    let buttonHeight = windowHeight * 0.075;
+    let baseDefWidth = width * 0.15;
+    let baseDefHeight = baseDefWidth / 4;
+    let minDefConfirmWidth = 140;
+    let minDefWidth = 120;
+    let minDefHeight = 30;
+    let defConfirmButtonWidth = Math.max(baseDefWidth, minDefConfirmWidth);
+    let defButtonWidth = Math.max(baseDefWidth, minDefWidth);
+    let defButtonHeight = Math.max(baseDefHeight, minDefHeight);
+
+    buttons.push(new Button("Back", width * .15, height * .925, defButtonWidth, defButtonHeight, null, null, () => backToMenu()));
+    buttons.push(new Button("<", width * .3, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 1")));
+    buttons.push(new Button(">", width * .7, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 2")));
+
+    confirmButton = new Button("Confirm Character", width / 2, height * .925, defConfirmButtonWidth, defButtonHeight, null, null, () => confirmCharacter());
+}
 
 function keyPressed() {
     if(key == 'Escape') {
         settingsClick();
     }
+}
+
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+    createCharacterButtons();
 }

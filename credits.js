@@ -82,3 +82,8 @@ function keyPressed() {
         backToMenu();
     }
 }
+
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+    resetCreditButtonLocation();
+}
