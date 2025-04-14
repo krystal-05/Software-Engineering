@@ -52,6 +52,7 @@ function draw() {
     fill('black');
 
     let characterTag = localStorage.getItem("characterTag");
+    cursor('default');
 
     if (characterTag === "Character 1") {
         let scopedDynamicSize = width * 0.025;

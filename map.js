@@ -216,6 +216,7 @@ function keyPressed() {
 function draw() {
     background(0);
     image(map, 0, 0, windowWidth, windowHeight);
+    cursor('default');
 
     imageMode(CENTER);
     for (let lvl of levels) {

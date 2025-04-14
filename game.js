@@ -162,6 +162,7 @@ function setup() {
 }
 
 function draw() {
+    cursor('default');
     updateUmpire();
     ballCaughtThisFrame = false;
     let dt = deltaTime / 1000;

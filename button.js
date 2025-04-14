@@ -18,6 +18,9 @@ class Button {
             if ((settingMenu && !this.isSettingsButton) || (audioSelectionMenu && !this.isAudioMenuButton)) {
                 showHover = false;
             }   
+            if(showHover && inputEnabled) {
+                cursor('pointer');
+            }
             if (this.img && this.imgHover) {
                 image(
                     showHover ? this.imgHover : this.img, 

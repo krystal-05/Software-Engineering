@@ -72,6 +72,8 @@ function drawMainMenu() {
     textSize(60);
     textStyle(BOLD);
     textStyle(NORMAL);
+    
+    cursor('default');
     for (let btn of buttons) {
         btn.display();
     }
@@ -94,6 +96,7 @@ function drawLoadScreen() {
     let baseIconHeight = titleIcon.height * iconScale;
     image(titleIcon, (width - baseIconWidth) / 2, height * 0.01, baseIconWidth, baseIconHeight);
 
+    cursor('default');
     for (let btn of loadButtons) {
         btn.display();
     }

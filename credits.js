@@ -22,6 +22,7 @@ function draw() {
     textAlign(CENTER, CENTER);
     fill(255); // White text
     textSize(32);
+    cursor('default');
 
     // Title
     text("Game Credits", width / 2, height / 5);
