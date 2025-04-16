@@ -121,13 +121,14 @@ function mousePressed() {
     if (gameState === "preMenu") {
         initialPopup.style.display = "none";
         gameState = "menu";
+        return;
     }
 
     if (settingMenu) { return; }
 
     let activeButtons = (gameState === "menu") ? buttons : loadButtons;
     for (let btn of activeButtons) {
-        if (btn.isHovered() && btn.action && gameState === "menu") {
+        if (btn.isHovered() && btn.action && gameState !== "preMenu") {
             buttonClick();
             setTimeout(() => btn.action(), 200);
         }
