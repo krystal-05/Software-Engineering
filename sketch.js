@@ -119,14 +119,15 @@ function drawLoadScreen() {
 
 function mousePressed() {
     if (gameState === "preMenu") {
-        gamestate = "menu";
+        initialPopup.style.display = "none";
+        gameState = "menu";
     }
 
     if (settingMenu) { return; }
 
     let activeButtons = (gameState === "menu") ? buttons : loadButtons;
     for (let btn of activeButtons) {
-        if (btn.isHovered() && btn.action) {
+        if (btn.isHovered() && btn.action && gameState === "menu") {
             buttonClick();
             setTimeout(() => btn.action(), 200);
         }
