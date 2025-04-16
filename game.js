@@ -226,7 +226,7 @@ function draw() {
         displayRunHint();
     }
     pop();
-
+    
     // Game logic
     while (accumulator >= fixedDt) {
         // ball goes off screen
@@ -268,10 +268,10 @@ function draw() {
             if (ballHit && ball.homeRun) {
                 runners.forEach(runner => {
                     runner.running = true;
+                    runner.safe = false;
                 });
                 if (runners.length === 0) {
                     resetBatter();
-                    //setBasedRunners();
                 }
             } 
             else if(ballHit && !ball.homeRun) {

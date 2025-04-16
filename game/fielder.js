@@ -84,7 +84,6 @@ function infielderChaseHelper(fielder) {
     ball.y += height * .025;
     fielder.chasing = null;
     ball.isChasing = false;
-    if (DEBUG) console.log("Chase reset for fielder", fielder.position);
 }
 // make infielder chase a runner to tag out
 function moveInfieldersToRunner(dt) {

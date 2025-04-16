@@ -63,7 +63,6 @@ function moveRunners(dt) {
                 if (runner.backtracking) {
                     runner.running = false;
                     runner.backtracking = false;
-                    runner.safe = true;
                 } else {
                     runner.base = targetIndex;
                     runner.targetBase = undefined;
