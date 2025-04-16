@@ -10,7 +10,8 @@ function generateFielders() {
         x: bases[1].x * 1.01, 
         y: bases[1].y * .95,    
         isInfielder: true,  
-        position: "first"
+        position: "first",
+        fielderBaseIndex: 1
     });
     
     // Second Baseman
@@ -18,7 +19,8 @@ function generateFielders() {
         x: bases[2].x * 1.05, 
         y: bases[2].y * .975, 
         isInfielder: true,  
-        position: "second"
+        position: "second",
+        fielderBaseIndex: 2
     });
 
     // Third Baseman
@@ -26,7 +28,8 @@ function generateFielders() {
         x: bases[3].x * 1.15,
         y: bases[3].y * .95, 
         isInfielder: true,  
-        position: "third"
+        position: "third",
+        fielderBaseIndex: 3
     });
     
     // Shortstop
@@ -74,8 +77,90 @@ function generateFielders() {
 function getFielderSpeedScale(y) {
     return map(y, height * 0.4, height * 0.9, 0.75, 1.5);
 }
+
+// reset necessary variables to resume play
+function infielderChaseHelper(fielder) {
+    fielder.state = "idle";
+    ball.y += height * .025;
+    fielder.chasing = null;
+    ball.isChasing = false;
+    if (DEBUG) console.log("Chase reset for fielder", fielder.position);
+}
+// make infielder chase a runner to tag out
+function moveInfieldersToRunner(dt) {
+    fielders.forEach(fielder => {
+        if (fielder.chasing) {
+            nextRunner = fielder.chasing;
+            let fielderToRunnerDist = dist(fielder.x, fielder.y, nextRunner.x, nextRunner.y);
+            if (fielderToRunnerDist > 12 && !nextRunner.safe) {
+                let angleToBase = atan2(nextRunner.y - fielder.y, nextRunner.x - fielder.x);
+                let speed = 250;
+                
+                let newX = fielder.x + cos(angleToBase) * speed * dt;
+                let newY = fielder.y + sin(angleToBase) * speed * dt;
+                fielder.x = newX; ball.x = newX;
+                fielder.y = newY; ball.y = newY - height * .025;
+            } else if (!nextRunner.safe) {
+                outs++;
+                infielderChaseHelper(fielder);
+                if (DEBUG) console.log("RAN TO AND TAGGED RUNNER, outs now", outs);
+                runners = runners.filter(r => r !== nextRunner);
+                if (outs >= 3) {
+                    nextInning();
+                    return;
+                }
+            } else {
+                infielderChaseHelper(fielder);
+            }
+        }
+    });
+}
+// Will move fielder when they are off base
+function moveInfieldersToBase(dt) {
+    if (!ballHit) return;
+    let closestFielder = null;
+    let minDistance = Infinity;
+
+    for (let fielder of fielders) {
+        let d = dist(fielder.x, fielder.y, ball.x, ball.y);
+        if (!ball.throwing && d < minDistance) {
+            minDistance = d;
+            closestFielder = fielder;
+            lastClosestFielder = closestFielder;
+        }
+    }
+    fielders.forEach(fielder => {
+        // if the fielder is the one running for the ball or is currently catching
+        // return
+        if (fielder === closestFielder) return;
+        if (fielder.isRecieving) {
+            fielder.state = "idle"; 
+            return;
+        }
+        // move fielder to original position if they moved
+        if (fielder.isInfielder && fielder.offBase) {
+            let initialPos = getInitialInfielderPosition(fielder);
+            fielder.state = "running";
+            let angleToBase = atan2(initialPos.y - fielder.y, initialPos.x - fielder.x);
+            let speed = 225;
+
+            let newX = fielder.x + cos(angleToBase) * speed * dt;
+            let newY = fielder.y + sin(angleToBase) * speed * dt;
+
+            fielder.x = newX;
+            fielder.y = newY;
+            if (dist(fielder.x, fielder.y, initialPos.x, initialPos.y) <= 12) {
+                    snapInfielderPosition(fielder);
+            } 
+        } else {
+            fielder.state = "idle";
+        }
+    });
+}
+
 // Logic for moving fielders
 function moveFieldersTowardsBall(dt) {
+    if (ball.isChasing) return;
     if (ball.homeRun) {
         fielders.forEach(fielder => {
             if (fielder === lastClosestFielder) {
@@ -116,23 +201,27 @@ function moveFieldersTowardsBall(dt) {
 
         closestFielder.x = newX;
         closestFielder.y = newY;
+        closestFielder.offBase = true;
 
-        if (dist(closestFielder.x, closestFielder.y, ball.x, ball.y) > catchDistance) {
+        if (dist(closestFielder.x, closestFielder.y, ball.x, ball.y) > closestFielder.catchRadius) {
             closestFielder.state = "running";
         } else {
             closestFielder.state = "idle";
         }
     }
-    
-    // todo
-    fielders.forEach(fielder => {
-        if (fielder !== closestFielder) {
-            let d = dist(fielder.x, fielder.y, ball.x, ball.y);
-            if (d > catchDistance) {
-                fielder.state = "idle";
-            }
-        }
-    });
+}
+// return original position object
+function getInitialInfielderPosition(fielder) {
+    fielderIndex = fielder.fielderBaseIndex - 1;
+    return initialFielderPositions[fielderIndex];
+}
+// snap infielder to original position
+function snapInfielderPosition(fielder) {
+    fielder.offBase = false;
+    fielder.state = "idle";
+    let initialPos = getInitialInfielderPosition(fielder);
+    fielder.x = initialPos.x;
+    fielder.y = initialPos.y;
 }
 
 // Logic for throwing when not air catch
@@ -193,9 +282,22 @@ function handleThrow(catcher) {
     if (DEBUG) console.log("No unsafe runners left, resetting the play.");
     resetBatter();
 }
+// fielder runs to targetfielder as last effort to get them out
+function attemptTagRunner(nextRunner, currentFielder) {
+    if (DEBUG) console.log("attemptTagRunner CALLED, chasing set to", nextRunner.base);
+    currentFielder.state = "running";
+    currentFielder.chasing = nextRunner;
+    ball.isChasing = true;
+}
 
 // Determine which fielder to throw to 
 function throwToNextRunner(currentFielder) {
+    // fielder is chasing a runner
+    if (currentFielder.chasing) {
+        if (DEBUG) console.log("Fielder still chasing; aborting throwToNextRunner");
+        return;
+    }
+    
     let nextRunner = getNearestUnsafeRunner(currentFielder);
     if (!nextRunner) {
         if (DEBUG) console.log("No more unsafe runners left.");
@@ -216,18 +318,25 @@ function throwToNextRunner(currentFielder) {
 
     let targetBase = bases[targetBaseIndex];
     let targetFielder = getFielderForBase(targetBaseIndex);
+    targetFielder.isRecieving = true;
+    ball.caught = false;
     // When infielder of target runner's target base has the ball - out
     if (!nextRunner.safe && targetFielder === currentFielder && !ball.throwing) {
         let freedBaseIndex = (nextRunner.targetBase !== undefined)
             ? nextRunner.targetBase
             : (nextRunner.base + 1) % bases.length;
         bases[freedBaseIndex].occupied = false;
-        outs++;
-        if (DEBUG) console.log("outs is now", outs);
-        runners = runners.filter(r => r !== nextRunner);
-        if (outs >= 3) {
-            nextInning();
-            return;
+        if (!currentFielder.offBase) {
+            outs++;
+            if (DEBUG) console.log("outs is now", outs);
+            runners = runners.filter(r => r !== nextRunner);
+            if (outs >= 3) {
+                nextInning();
+                return;
+            }
+        // infielder will need to tag the runner to get them out
+        } else {
+            attemptTagRunner(nextRunner, currentFielder);
         }
         handleGroundThrow(currentFielder);
         if (DEBUG) console.log("throwing now");
@@ -259,6 +368,7 @@ function throwToNextRunner(currentFielder) {
 function handleCatch(currentFielder) {
     ball.throwing = false;
     ball.caught = true;
+    currentFielder.isRecieving = false;
 
     let targetRunner = getNearestUnsafeRunner(currentFielder);
     if (!targetRunner) {
@@ -318,7 +428,7 @@ function getNearestUnsafeRunner(catcher) {
     let targetRunner = null;
     let minDistance = Infinity;
     for (let runner of runners) {
-        if (runner.safe || !runner.running || !runners.includes(runner)) { 
+        if (runner.safe || !runner.running || !runners.includes(runner)) {
             continue;
         }
 
@@ -389,7 +499,7 @@ function resetInfielders() {
     }
 }
 
-function checkFielderCatch() {
+function checkFielderCatch(dt) {
     if (ball.homeRun) return;
     if (ballCaughtThisFrame) return;
     if (ball.caught) return;
@@ -422,7 +532,9 @@ function checkFielderCatch() {
                 dist(ball.x, ball.y, fielder.x, fielder.y) < fielder.catchRadius) {
             // Fielder catches the ball:
             fielder.state = "hasBall";
-            resetInfielders();
+            fielder.isRecieving = false;
+            // currently removed, commented in-case of unexpected disaster
+            //resetInfielders();
             if (ball.inAir) {
                 // In-air catch
                 handleThrow(fielder);

@@ -248,9 +248,6 @@ function loadVolumeSetting() {
 }
 
 function keyPressed() {
-    if (gameState === "preMenu") {
-        gamestate = "menu";
-    }
     if(key === 'Escape' && gameState == "menu") {
         settingsClick();
     }

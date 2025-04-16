@@ -344,7 +344,7 @@ function draw() {
                 }
                 if(!ball.foul) moveFieldersTowardsBall(fixedDt);
             }
-            if (!homeRunHit && !ball.foul) {
+            if (!homeRunHit && !ball.foul && !ball.isChasing) {
                 checkFielderCatch();
             }
         }
@@ -358,10 +358,12 @@ function draw() {
             let targetFielder = ball.targetFielder;
 
             // Fielder caught ball in attempt to out a runner
-            if (targetFielder && dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < targetFielder.catchRadius) {
+            if (targetFielder && (dist(ball.x, ball.y, targetFielder.x, targetFielder.y) < targetFielder.catchRadius) && !ball.isChasing) {
                 handleCatch(targetFielder);
             }
         }
+        moveInfieldersToBase(fixedDt);
+        moveInfieldersToRunner(fixedDt);
         moveRunners(fixedDt);
         accumulator -= fixedDt;
     }
@@ -380,6 +382,7 @@ function resetBall() {
         strikePitch: false,
         initialSpeedY: 0,
         crossedGround: false,
+        isChasing: false,
         homeRun: false,
         foul: false,
         foulSince: null,
@@ -926,6 +929,7 @@ function assignEntities() {
         strikePitch: false,
         initialSpeedY: 0,
         crossedGround: false,
+        isChasing: false,
         homeRun: false,
         pitchType: 'fastball'
     };
