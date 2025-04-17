@@ -11,6 +11,8 @@ function createInitialPopup() {
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
+        max-width: 100%;
+        max-height: 100%;
     }
     .initialPopup-content {
         border: 1px solid black;
@@ -20,8 +22,9 @@ function createInitialPopup() {
         border-radius: 8px;
         text-align: center;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        width: 300px;
-        max-width: 80%;
+        width: 100vh;
+        height: 100vh;
+       
     }
     .closeButton {
         background:rgb(233, 201, 23);
@@ -30,10 +33,10 @@ function createInitialPopup() {
         font-size: 24px;
         cursor: pointer;
         border-radius: 5px;
-        margin-top: 0px;
+        margin-top: 200px;
         font-weight: bold;
         color: black; 
-        width: 100%;
+        width: 40%;
     }
     .closeButton:hover {
         background-color:rgb(255, 225, 57);
@@ -41,8 +44,9 @@ function createInitialPopup() {
     }
     .message{
         color: white;
-        font-size: 48px;
+        font-size: 72px;
         padding: 10px;
+        margin-top: 250px;
         }
     `;
     document.head.appendChild(style);
