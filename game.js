@@ -84,6 +84,7 @@ function preload() {
     catcherImg = loadImage('assets/final_design/RedTeam/RedCatcher.png');
     ballImg = loadImage('assets/Baseball1.png');
     targetImage = loadImage('assets/final_design/Target2.png');
+    directionImage = loadImage('assets/final_design/DirectArrow.png');
     settingButtonImage = loadImage('assets/final_design/game_setting2.png');
 
     currSong = loadSound('sounds/gamesong.mp3');
