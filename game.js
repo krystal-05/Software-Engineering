@@ -69,11 +69,11 @@ function preload() {
 
     blueBatterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
     redBatterIdle = blueBatterIdle;
-    playerBatterIdle = loadImage('assets/final_design/BatterAniOne.png');
+    playerBatterIdle = loadImage('assets/final_design/BlueTeam/BlueBatIdle.gif');
 
     blueBatterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
     redBatterSwung = blueBatterSwung;
-    playerBatterSwung = loadImage('assets/final_design/BatterAniTwo.png');
+    playerBatterSwung = loadImage('assets/final_design/BlueTeam/BlueBatSwing.png');
 
     playerIdleGif = loadImage('assets/test_sprite/M-idle01.gif');
     batterGif = loadImage('assets/temp_assets/BATTER.gif');
@@ -81,7 +81,7 @@ function preload() {
     runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
     fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
     runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
-    catcherImg = loadImage('assets/temp_assets/sprites/01_Catch.png');
+    catcherImg = loadImage('assets/final_design/RedTeam/RedCatcher.png');
     ballImg = loadImage('assets/Baseball1.png');
     targetImage = loadImage('assets/final_design/Target2.png');
     settingButtonImage = loadImage('assets/final_design/game_setting2.png');
