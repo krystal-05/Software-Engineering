@@ -5,9 +5,9 @@ let audioSelectionMenu = false;
 gameState = "createCharacter";
 
 function preload() {
-    bgImage = loadImage('assets/pendFinalStrtScreen.png');
-    characterImage = loadImage('assets/tempCharacter.png');
-    characterImage1 = loadImage('/assets/tempCharacter1.png');  // Load option 2's character
+    bgImage = loadImage('assets/final_design/final_background.png');
+    characterImage = loadImage('assets/final_design/Clarke/Clarke.png');
+    characterImage1 = loadImage('/assets/final_design/Claira/Claira.png');  // Load option 2's character
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
     currSong = loadSound('sounds/stadiumSound.mp3');
 }
@@ -58,12 +58,12 @@ function draw() {
         let scopedDynamicSize = width * 0.025;
         textSize(scopedDynamicSize);
         text("Character 1", width / 2, height * .2);
-        image(characterImage, width / 2 - imgWidth / 2, height / 2 - imgHeight / 2, imgWidth, imgHeight);
+        image(characterImage, width / 2 - imgWidth / 2, height / 1.83 - imgHeight / 2, imgWidth, imgHeight);
     } else if (characterTag === "Character 2") {
         let scopedDynamicSize = width * 0.025;
         textSize(scopedDynamicSize);
         text("Character 2", width / 2, height * .2);
-        image(characterImage1, width / 2 - imgWidth / 2, height / 2 - imgHeight / 2, imgWidth, imgHeight);
+        image(characterImage1, width / 2 - imgWidth / 2, height / 1.83 - imgHeight / 2, imgWidth, imgHeight);
     } else {
         let scopedDynamicSize = width * 0.025;
         textSize(scopedDynamicSize);
