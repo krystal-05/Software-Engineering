@@ -5,7 +5,7 @@ let audioSelectionMenu = false;
 gameState = "createCharacter";
 
 function preload() {
-    bgImage = loadImage('assets/final_design/final_background.png');
+    bgImage = loadImage('assets/final_design/start_screen.png');
     characterImage = loadImage('assets/final_design/Clarke/Clarke.png');
     characterImage1 = loadImage('/assets/final_design/Claira/Claira.png');  // Load option 2's character
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');

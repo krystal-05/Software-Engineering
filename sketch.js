@@ -8,7 +8,7 @@ let audioSelectionMenu = false;
 let loadButtonWidth, loadButtonHeight;
 
 function preload() {
-    bgImage = loadImage('assets/final_design/final_background.png');
+    bgImage = loadImage('assets/final_design/start_screen.png');
     titleIcon = loadImage('assets/OREDTitle.png');
     settingsImg = loadImage('assets/OSettings_1.png');
     settingsImgHover = loadImage('assets/OSettings_2.png');
