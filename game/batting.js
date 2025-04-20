@@ -321,7 +321,6 @@ function getBatterImage(batter, swingAttempt, batterIterator) {
             return swingAttempt ? playerBatterSwung : playerBatterIdle;
         }
     } else {
-        // return swingAttempt ? redBatterSwung : redBatterIdle;
-        return swingAttempt ? blueBatterSwung : blueBatterIdle;
+        return swingAttempt ? redBatterSwung : redBatterIdle;
     }
 }

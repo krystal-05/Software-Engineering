@@ -29,7 +29,7 @@ const fixedDt = 1/60;
 let xPower;
 let yPower;
 
-let bgImage, batterGif;
+let bgImage;
 let settingButton;
 
 let umpire;
@@ -67,21 +67,30 @@ function preload() {
     }
     bgTopImage = loadImage('assets/flat_field1.png');
 
-    blueBatterIdle = loadImage('assets/temp_assets/sprites/batterBlueIdle.png');
-    redBatterIdle = blueBatterIdle;
-    playerBatterIdle = loadImage('assets/final_design/BlueTeam/BlueBatIdle.gif');
+    blueBatterIdle = loadImage('assets/final_design/BlueTeam/BlueBatIdle.gif');
+    redBatterIdle = loadImage('assets/final_design/RedTeam/RedBatIdle.gif');
+    playerBatterIdle = loadImage('assets/final_design/Clarke/ClarkeBatIdle.gif');
 
-    blueBatterSwung = loadImage('assets/temp_assets/sprites/batterBlueSwing.png');
-    redBatterSwung = blueBatterSwung;
-    playerBatterSwung = loadImage('assets/final_design/BlueTeam/BlueBatSwing.png');
+    blueBatterSwung = loadImage('assets/final_design/BlueTeam/BlueBatSwing.png');
+    redBatterSwung = loadImage('assets/final_design/RedTeam/RedBatSwing.png');
+    playerBatterSwung = loadImage('assets/final_design/Clarke/ClarkBatSwing.png');
 
-    playerIdleGif = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
-    batterGif = loadImage('assets/temp_assets/BATTER.gif');
-    fielderIdleGif = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
-    runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
-    fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
-    runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
-    catcherImg = loadImage('assets/final_design/RedTeam/RedCatcher.png');
+    playerIdleGif = loadImage('assets/final_design/Clarke/ClarkeBaseIdle.gif');
+
+    redFielderIdleGif = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
+    blueFielderIdleGif = loadImage('assets/final_design/BlueTeam/BlueFieldIdle.gif');
+
+    blueRunnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
+    redRunnerRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
+
+    blueFielderRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
+    redFielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
+
+    RedRunnerIdle = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
+    BlueRunnerIdle = loadImage('assets/final_design/BlueTeam/BlueFieldIdle.gif');
+
+    redCatcherImg = loadImage('assets/final_design/RedTeam/RedCatcher.png');
+    blueCatcherImg = loadImage('assets/final_design/BlueTeam/BlueCatcher.png');
     ballImg = loadImage('assets/Baseball1.png');
     targetImage = loadImage('assets/final_design/Target2.png');
     directionImage = loadImage('assets/final_design/DirectArrow.png');
@@ -573,19 +582,30 @@ function drawPlayers() {
     drawUmpire();
     
     fielders.forEach(fielder => {
-        let img = (fielder.state === "running") ? fielderRunningGif : fielderIdleGif;
+        let img;
+        if (playerSideBatting) {
+            img = fielder.state === "running" ? redFielderRunningGif : redFielderIdleGif;
+        } else {
+            img = fielder.state === "running" ? blueFielderRunningGif : blueFielderIdleGif;
+        }
         drawScaledPlayer(fielder, img, fielder.y);
     });
 
     runners.forEach(runner => {
         let img;
-        if (runner.player) img = runner.running ? runnerRunningGif : playerIdleGif;
-        else img = runner.running ? runnerRunningGif : runnerIdle;
+        if (runner.player) {
+            img = runner.running ? blueRunnerRunningGif : playerIdleGif;
+        }
+        else if (playerSideBatting) {
+            img = runner.running ? blueRunnerRunningGif : BlueRunnerIdle;
+        } else {
+            img = runner.running ? redRunnerRunningGif : RedRunnerIdle;
+        }
         drawScaledPlayer(runner, img);
     });
 
     let pitcherImg;
-    if (playerSideBatting) pitcherImg = fielderIdleGif;
+    if (playerSideBatting) pitcherImg = redFielderIdleGif;
     else pitcherImg = playerIdleGif;
     drawScaledPlayer(pitcher, pitcherImg);
 
@@ -593,7 +613,7 @@ function drawPlayers() {
         let batterImage = getBatterImage(batter, swingAttempt, batterIterator);
         drawScaledPlayer(batter, batterImage);
     }
-
+    let catcherImg = playerSideBatting ? redCatcherImg : blueCatcherImg;
     drawScaledPlayer(catcherPlayer, catcherImg, catcherPlayer.y + height * .025);
 
     if (ball.homeRun) return;
@@ -1195,7 +1215,7 @@ function updateFielders() {
     } else {
         fielders = newFielders;
     }
-  }
+}
 
 function windowResized() {
     let oldWidth = width;
