@@ -80,6 +80,8 @@ function moveRunners(dt) {
                     } else {
                         if (!ball.homeRun) runner.running = false;
                         else bases[prevBase].occupied = false;
+                        bases[prevBase].wasOccupied = false;
+                        targetBase.wasOccupied = true;
                         runner.safe = true;
                         if (DEBUG) console.log(`Runner reached base ${runner.base} and is holding.`);
                     }

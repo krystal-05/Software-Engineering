@@ -920,9 +920,23 @@ function resetBatter() {
         strikes = 0;
     }
     bases[0].occupied = true;
+    setIfBaseWasOccupied();
     homeRunHit = false;
     resetBall();
     resetFieldersPosition();
+}
+
+function setIfBaseWasOccupied() {
+    let didSetTrue;
+    bases[0].wasOccupied = true;
+    for (let i = 1; i < 4; ++i) {
+        didSetTrue = false;
+        runners.forEach(runner => {
+            if (runner.base === i) bases[i].wasOccupied = true;
+            didSetTrue = true;
+        });
+        if (!didSetTrue) bases[i].wasOccupied = false;
+    }
 }
 
 function assignEntities() {
@@ -936,6 +950,7 @@ function assignEntities() {
         bases[i].number = i;
     }
     setBasedRunners();
+    
 
     pitcher = { x: width * 0.5, y: height * 0.575, armAngle: 0 };
 
