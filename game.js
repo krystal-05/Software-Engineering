@@ -960,7 +960,6 @@ function resetBatter() {
 
 function setIfBaseWasOccupied() {
     bases.forEach((base) => {
-        if (DEBUG) console.log(base.number, base.occupied);
         // home plate is always occupied after a reset
         if (base.number === 0) {
             base.occupied = true;
