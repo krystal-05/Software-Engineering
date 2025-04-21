@@ -822,19 +822,7 @@ function keyPressed() {
     }
     if ((key === '1' || key === '2' || key === '3') && inputEnabled) {
         if (topInning && ballHit) {
-            switch(key) {
-                case '1':
-                    runBase(key);
-                    break;
-                case '2':
-                    runBase(key);
-                    break;
-                case '3':
-                    runBase(key);
-                    break;
-                default:
-                    break;
-            }
+            runBase(key);
         } else if (!topInning && pitchCanChange) {
             switch(key) {
                 case '1':

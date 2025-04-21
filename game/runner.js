@@ -15,11 +15,6 @@ function moveRunners(dt) {
                 targetIndex = (runner.base + 1) % bases.length;
             }
             let speedScale = getRunnerSpeedScale(runner.y);
-            // If runner is turning back from running to the next base,
-            // reset their target
-            if (runner.backtracking) {
-                targetIndex = runner.base;
-            }
             let targetBase = bases[targetIndex % 4];
 
             let dx = targetBase.x - runner.x;
@@ -142,6 +137,7 @@ function runBase(baseStr) {
         }
     }
 }
+
 // show user which runners can be manually ran during a play
 function displayRunHint() {
     textAlign(CENTER, BOTTOM);

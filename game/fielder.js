@@ -117,6 +117,7 @@ function moveInfieldersToRunner(dt) {
                 infielderChaseHelper(fielder);
                 if (DEBUG) console.log("FORCED RUNNER OUT, outs now", outs);
                 runners = runners.filter(r => r !== nextRunner);
+                resetBatter();
                 if (outs >= 3) {
                     nextInning();
                     return;
@@ -294,11 +295,11 @@ function handleThrow(catcher) {
         return;
     }
 
-    // If air catch runner from first base will decide if they should run to back to first
-    let runnerFirstToSecond = runners.find(r => r.base === 1 && r.running);
-    if (runnerFirstToSecond && shouldBacktrack(runnerFirstToSecond)) {
-        runnerFirstToSecond.backtracking = true;
-    }
+    runners.forEach(runner => {
+        runner.backtracking = true;
+        runner.running     = true;
+        runner.targetBase  = undefined;
+    });
 
     // Check for any remaining unsafe runners
     let unsafeRunners = runners.filter(runner => !runner.safe);
