@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BATTERGROUND</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BATTERGROUND - How To</title>
+
     <script src="p5lib/p5.js"></script>
     <script src="p5lib/p5.sound.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+
     <style>
         body {
             margin: 0;
             overflow: hidden;
             font-family: 'Arial', sans-serif;
-            background-color: #1a1a1a;
+            background-color: black;
             color: white;
         }
 
@@ -25,6 +28,7 @@
             cursor: pointer;
             color: gold;
             user-select: none;
+            z-index: 10;
         }
 
         #leftArrow {
@@ -34,18 +38,50 @@
         #rightArrow {
             right: 30px;
         }
+
+        #backToHome {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #222;
+            color: gold;
+            border: 2px solid gold;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+    
+        #backgroundImage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+           /* background-image: url('assets/start-screen.png');*/
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: 0;
+        }
     </style>
 </head>
 <body>
+    <!-- Background image -->
+    <div id="backgroundImage"></div>
+
+    <!-- Arrows and Back button -->
     <div id="leftArrow">&#60;</div>
     <div id="rightArrow">&#62;</div>
+    <button id="backToHome" onclick="location.href='index.html'">← Back</button>
 
-   
     <script src="modal.js"></script>
     <script src="button.js"></script>
     <script src="how-to.js"></script>
     <script>
-        
+        // Slide nav arrow event listeners
         document.getElementById("leftArrow").addEventListener("click", () => {
             currentSlide = (currentSlide - 1 + howToSlides.length) % howToSlides.length;
         });

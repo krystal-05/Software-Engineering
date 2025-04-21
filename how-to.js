@@ -4,14 +4,22 @@ let slideImages = []; // Corresponding images for image slides
 let currentSlide = 0;
 let leftArrow, rightArrow;
 let titleImage;
+let bgImages = [];
 
 function preload() {
-    titleImage = loadImage('assets/OREDTitle.png', () => console.log('Title image loaded'), () => console.error('Failed to load title image'));
-    slideImages.push(loadImage('assets/game-start.png', () => console.log('Game start image loaded'), () => console.error('Failed to load game start image')));
-    slideImages.push(loadImage('assets/log-in.png', () => console.log('Log in image loaded'), () => console.error('Failed to load log in image')));
-    slideImages.push(loadImage('assets/home-page.png', () => console.log('Home page image loaded'), () => console.error('Failed to load home page image')));
-    slideImages.push(loadImage('assets/character-select.png', () => console.log('Character select image loaded'), () => console.error('Failed to load character select image')));
+    // Title + slide images already loaded...
+    slideImages.push(loadImage('assets/game-start.png'));
+    slideImages.push(loadImage('assets/log-in.png'));
+    slideImages.push(loadImage('assets/home-page.png'));
+
+    // Backgrounds for specific slides
+    bgImages.push(loadImage('assets/baseball-game.png'));      // bgImages[0] = Baseball rules
+    bgImages.push(loadImage('assets/start-screen.png'));       // bgImages[1] = Navigating website
+    bgImages.push(loadImage('assets/character-select.png')); // bgImages[2] = Character select
+    bgImages.push(loadImage('assets/map-screen.png')); // bgImages[3] = Map navigation
+
 }
+
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -26,53 +34,52 @@ function setup() {
                 "• The goal is to score runs by hitting the ball and running bases.",
                 "• 3 strikes = out, 3 outs = switch sides.",
                 "• 9 innings in a full game."
-            ]
+            ],
+            bgIndex: 0 // baseball-game.png
         },
         {
             title: "How to Start the Game",
             content: [
                 "• Click 'Start Game' on the main menu.",
                 "• Select your character or load an existing one.",
-                "• Follow on-screen prompts to begin the game."
-            ]
+                "• Select an open level to play.",
+                "• You can only move on to the next level once the initial one has been completed."
+            ],
+            bgIndex:2 // character-select.png
         },
         {
+            title: "Map Navigation",
+            content: [
+                "• Select a level to play.",
+                "• You can only move on to the next level after beating the previous one.",
+                "• Click the 'Secret Level' button to unlock a special level.",
+            ],
+            bgIndex:3 // character-select.png
+        },
+     
+                {
             title: "Navigating the Website",
             content: [
                 "• Use the Settings gear for volume & preferences.",
                 "• Click Credits to see the dev team.",
                 "• Log in or save progress under 'Load Game'."
-            ]
+            ],
+            bgIndex: 1 // start-screen.png
         }
         
     ];
 }
-howToSlides.push(
-    {
-        title: "The Home Page",
-        content: ["• This is where you begin!", "• Choose to log in, play a game, or go to How-To."],
-        imageIndex: 2
-    },
-    {
-        title: "Character Select",
-        content: ["• Pick your player here.", "• Load a saved character or create a new one."],
-        imageIndex: 3
-    },
-    {
-        title: "Start Game",
-        content: ["• Hit 'Game 1' to dive in!", "• Make sure you’re logged in to save progress."],
-        imageIndex: 0
-    },
-    {
-        title: "Log In",
-        content: ["• Enter your credentials.", "• Or sign up if you're new!"],
-        imageIndex: 1
-    }
-);
 
 function draw() {
-    background(30);
-    fill(255);
+    background(30); // fallback base
+
+    // Custom background if defined
+    let bgIndex = howToSlides[currentSlide].bgIndex;
+    if (bgIndex !== undefined && bgImages[bgIndex]) {
+        image(bgImages[bgIndex], 0, 0, width, height);
+    }
+
+    fill(255,215, 0);
 
     // Display Title Image
     if (titleImage) {
@@ -80,25 +87,23 @@ function draw() {
         const scale = iconWidth / titleImage.width;
         const iconHeight = titleImage.height * scale;
         image(titleImage, width / 2 - iconWidth / 2, -20, iconWidth, iconHeight);
-    } else {
-        console.error('Title image not loaded');
     }
 
-    // Display Slide Title
+    // Slide Title
     textSize(36);
     textStyle(BOLD);
-    fill(255, 215, 0);
+    fill(0);
     text(howToSlides[currentSlide].title, width / 2, height * 0.25);
 
-    // Display Slide Content
+    // Slide Content
     textSize(24);
     textStyle(NORMAL);
-    fill(255);
+    fill(0);
     for (let i = 0; i < howToSlides[currentSlide].content.length; i++) {
         text(howToSlides[currentSlide].content[i], width / 2, height * 0.50 + i * 40);
     }
 
-    // Display Slide Image (if available)
+    // Slide image (in-canvas image, optional)
     if (howToSlides[currentSlide].imageIndex !== undefined) {
         const img = slideImages[howToSlides[currentSlide].imageIndex];
         if (img) {
@@ -106,15 +111,10 @@ function draw() {
             const scale = imgWidth / img.width;
             const imgHeight = img.height * scale;
             image(img, width / 2 - imgWidth / 2, height * 0.65, imgWidth, imgHeight);
-        } else {
-            console.error(`Image for slide ${currentSlide} not loaded`);
         }
     }
-
-    // Draw Arrows
-    fill(255);
-    textSize(32);
 }
+
 
 function mousePressed() {
     // Check if left arrow is clicked
