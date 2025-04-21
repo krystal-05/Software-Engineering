@@ -90,8 +90,7 @@ function playerStrike() {
     ball.strikePitch = true;
     strikes++;
     handleStrikeCall();
-    soundEffects["strike"].stop();
-    soundEffects["strike"].play();
+    playSoundEffect("strike");
 
     if (DEBUG) console.log("Swing missed! Strike " + strikes);
 }

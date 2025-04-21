@@ -118,8 +118,6 @@ function preload() {
     soundEffects["homerun"] = loadSound('sounds/yay_1.mp3');
 }
 
-
-
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
@@ -791,9 +789,7 @@ function handleHomerun() {
     showHomerunPopup = true;
     popupTimer = millis();
 
-    soundEffects["homerun"].stop();
-    soundEffects["homerun"].play();
-
+    playSoundEffect("homerun");
 
     setTimeout(() => {
         umpire.armRaisedRight = false;
@@ -814,9 +810,8 @@ function handleFoul() {
     popupMessage = "FOUL BALL";
     showFoulPopup = true;
     popupTimer = millis();
-
-    soundEffects["foul"].stop();
-    soundEffects["foul"].play();
+    
+    playSoundEffect("foul");
 
     setTimeout(() => {
         umpire.armRaisedRight = false;
