@@ -22,6 +22,7 @@ let currentPerspective = "side";
 let pitchCanChange = topInning;
 let batterIterator = 0;
 let playerSideBatting = true;
+let entitiesAssigned = false;
 
 let initialFielderPositions = [];
 let accumulator = 0;
@@ -80,11 +81,17 @@ function preload() {
     redFielderIdleGif = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
     blueFielderIdleGif = loadImage('assets/final_design/BlueTeam/BlueFieldIdle.gif');
 
-    blueRunnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
-    redRunnerRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
+    // blue player running animations
+    blueRunnerRunningRightGif = loadImage('assets/final_design/BlueTeam/BlueBatRunRight.gif');
+    blueRunnerRunningLeftGif = loadImage('assets/final_design/BlueTeam/BlueBatRunLeft.gif');
+    blueFielderRunningRightGif = loadImage('assets/final_design/BlueTeam/BlueFieldRunRight.gif');
+    blueFielderRunningLeftGif = loadImage('assets/final_design/BlueTeam/BlueFieldRunLeft.gif');
 
-    blueFielderRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
-    redFielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
+    // red player running animations
+    redRunnerRunningLeftGif = loadImage('assets/final_design/RedTeam/RedBatRunLeft.gif');
+    redRunnerRunningRightGif = loadImage('assets/final_design/RedTeam/RedBatRunRight.gif');
+    redFielderRunningLeftGif = loadImage('assets/final_design/RedTeam/RedFieldRunLeft.gif');
+    redFielderRunningRightGif = loadImage('assets/final_design/RedTeam/RedFieldRunRight.gif');
 
     RedRunnerIdle = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
     BlueRunnerIdle = loadImage('assets/final_design/BlueTeam/BlueFieldIdle.gif');
@@ -129,6 +136,7 @@ function setup() {
     }
 
     assignEntities();
+    entitiesAssigned = true;
 
     let transformedPitcher = sideToTopDown(pitcher.x, pitcher.y);
     topDownCamera = {
@@ -583,24 +591,57 @@ function drawPlayers() {
     
     fielders.forEach(fielder => {
         let img;
-        if (playerSideBatting) {
-            img = fielder.state === "running" ? redFielderRunningGif : redFielderIdleGif;
-        } else {
-            img = fielder.state === "running" ? blueFielderRunningGif : blueFielderIdleGif;
+    
+        if (fielder.state === "running") {
+            if (fielder.x > fielder.previousX) {
+                // moving right
+                img = playerSideBatting ? redFielderRunningRightGif : blueFielderRunningRightGif;
+            } 
+            else if (fielder.x < fielder.previousX) {
+                // moving left
+                img = playerSideBatting ? redFielderRunningLeftGif : blueFielderRunningLeftGif;
+            } 
+            else {
+                img = playerSideBatting ? redFielderIdleGif : blueFielderIdleGif;
+            }
+        } 
+        else {
+            img = playerSideBatting ? redFielderIdleGif : blueFielderIdleGif;
         }
+    
         drawScaledPlayer(fielder, img, fielder.y);
+        fielder.previousX = fielder.x; 
     });
 
     runners.forEach(runner => {
         let img;
+        let isMovingRight = runner.x > (runner.prevX ?? runner.x); 
+    
         if (runner.player) {
-            img = runner.running ? blueRunnerRunningGif : playerIdleGif;
+            if (runner.running) {
+                img = isMovingRight ? blueRunnerRunningRightGif : blueRunnerRunningLeftGif;
+            } 
+            else {
+                img = playerIdleGif;
+            }
         }
         else if (playerSideBatting) {
-            img = runner.running ? blueRunnerRunningGif : BlueRunnerIdle;
-        } else {
-            img = runner.running ? redRunnerRunningGif : RedRunnerIdle;
+            if (runner.running) {
+                img = isMovingRight ? blueRunnerRunningRightGif : blueRunnerRunningLeftGif;
+            } 
+            else {
+                img = BlueRunnerIdle;
+            }
         }
+        else {
+            if (runner.running) {
+                img = isMovingRight ? redRunnerRunningRightGif : redRunnerRunningLeftGif;
+            } 
+            else {
+                img = RedRunnerIdle;
+            }
+        }
+    
         drawScaledPlayer(runner, img);
     });
 
@@ -843,12 +884,15 @@ function keyPressed() {
     if (key === ' ') {
         if(topInning && inputEnabled) {
             if(!hitPowerSlider && !hitDirectionSlider && !hitSkillCheckComplete) {
-                startHitSkillCheck();
+                setTimeout(() => {
+                    startHitSkillCheck();
+                }, 100);
             }
             else if (hitPowerSlider) {
                 powerMultiplier = evaluatePowerMultiplier();
                 powerSliderFinalX = hitSliderX;
                 hitPowerSlider = false;
+                inputEnabled = false;
                 
                 setTimeout(() => { 
                     if (powerZoneLevel === "high") directionSliderSpeed = 700;
@@ -1224,6 +1268,7 @@ function updateFielders() {
 }
 
 function windowResized() {
+    if(!entitiesAssigned) return;
     let oldWidth = width;
     let oldHeight = height;
 

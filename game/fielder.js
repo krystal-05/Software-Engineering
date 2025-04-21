@@ -12,7 +12,8 @@ function generateFielders() {
         isInfielder: true,  
         position: "first",
         fielderBaseIndex: 1,
-        attemptingForceOut: null
+        attemptingForceOut: null,
+        prevX: bases[1].x * 1.01
     });
     
     // Second Baseman
@@ -22,7 +23,8 @@ function generateFielders() {
         isInfielder: true,  
         position: "second",
         fielderBaseIndex: 2,
-        attemptingForceOut: null
+        attemptingForceOut: null,
+        prevX: bases[2].x * 1.05
     });
 
     // Third Baseman
@@ -32,7 +34,8 @@ function generateFielders() {
         isInfielder: true,  
         position: "third",
         fielderBaseIndex: 3,
-        attemptingForceOut: null
+        attemptingForceOut: null,
+        prevX: bases[3].x * 1.15
     });
     
     // Shortstop
@@ -40,7 +43,8 @@ function generateFielders() {
         x: (bases[2].x + bases[3].x) / 2 * 1.15, 
         y: (bases[2].y + bases[3].y) / 2 * .85,
         isInfielder: false,  
-        position: "short"
+        position: "short",
+        prevX: (bases[2].x + bases[3].x) / 2 * 1.15
     });
   
     // Outfielders
@@ -49,7 +53,8 @@ function generateFielders() {
         x: width * 0.15,
         y: height * 0.35,
         isInfielder: false,
-        position: "left field"
+        position: "left field",
+        prevX: width * 0.15
     });
     
     // Center Field
@@ -57,7 +62,8 @@ function generateFielders() {
         x: width * 0.5,
         y: height * 0.25,
         isInfielder: false,
-        position: "center field"
+        position: "center field",
+        prevX: width * 0.5
     });
     
     // Right Field
@@ -65,7 +71,8 @@ function generateFielders() {
         x: width * 0.85,
         y: height * 0.35,
         isInfielder: false,
-        position: "right field"
+        position: "right field",
+        prevX: width * 0.85
     });
 
     newFielders.forEach(fielder => {

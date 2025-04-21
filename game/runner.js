@@ -24,6 +24,7 @@ function moveRunners(dt) {
             // Calculate each step as distance per time and once the step is larger than 
             // the distance to the base, assign them their target base
             let step = runner.speed * dt * speedScale;
+            runner.prevX = runner.x;
             if (step >= distance) {
                 runner.x = targetBase.x;
                 runner.y = targetBase.y;
@@ -88,15 +89,6 @@ function moveRunners(dt) {
         }
         return true;
     });
-}
-
-// If runner is more than halfway to target base, don't run back
-function shouldBacktrack(runner) {
-    let currentBase = bases[runner.base];
-    let nextBase = bases[(runner.base + 1) % bases.length];
-    let totalDistance = dist(currentBase.x, currentBase.y, nextBase.x, nextBase.y);
-    let runnerDistance = dist(currentBase.x, currentBase.y, runner.x, runner.y);
-    return runnerDistance < totalDistance / 2;
 }
 
 function setBasedRunners() {
