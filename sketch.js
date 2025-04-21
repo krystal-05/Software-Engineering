@@ -18,7 +18,7 @@ function preload() {
     howToImgHover = loadImage('assets/how-to-hover.png');
     currSong = loadSound('sounds/mainScreenSound.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
-    premenuImage = loadImage('assets/black.png');
+    premenuImage = loadImage('assets/green.png');
 }
 
 function setup() {
