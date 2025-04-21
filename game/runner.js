@@ -24,6 +24,7 @@ function moveRunners(dt) {
             // Calculate each step as distance per time and once the step is larger than 
             // the distance to the base, assign them their target base
             let step = runner.speed * dt * speedScale;
+            runner.prevX = runner.x;
             if (step >= distance) {
                 runner.x = targetBase.x;
                 runner.y = targetBase.y;

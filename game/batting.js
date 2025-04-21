@@ -77,6 +77,7 @@ function playerHit() {
         batter.x = batter.x - width * .05;
         batter.relativeX = batter.x / width;
         batter.relativeY = batter.y / height;
+        batter.prevX = batter.x;
         runners.push(batter);
         bases[0].occupied = false;
         ball.advancingRunner = batter;

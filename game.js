@@ -81,11 +81,17 @@ function preload() {
     redFielderIdleGif = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
     blueFielderIdleGif = loadImage('assets/final_design/BlueTeam/BlueFieldIdle.gif');
 
-    blueRunnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
-    redRunnerRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
+    // blue player running animations
+    blueRunnerRunningRightGif = loadImage('assets/final_design/BlueTeam/BlueBatRunRight.gif');
+    blueRunnerRunningLeftGif = loadImage('assets/final_design/BlueTeam/BlueBatRunLeft.gif');
+    blueFielderRunningRightGif = loadImage('assets/final_design/BlueTeam/BlueFieldRunRight.gif');
+    blueFielderRunningLeftGif = loadImage('assets/final_design/BlueTeam/BlueFieldRunLeft.gif');
 
-    blueFielderRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
-    redFielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
+    // red player running animations
+    redRunnerRunningLeftGif = loadImage('assets/final_design/RedTeam/RedBatRunLeft.gif');
+    redRunnerRunningRightGif = loadImage('assets/final_design/RedTeam/RedBatRunRight.gif');
+    redFielderRunningLeftGif = loadImage('assets/final_design/RedTeam/RedFieldRunLeft.gif');
+    redFielderRunningRightGif = loadImage('assets/final_design/RedTeam/RedFieldRunRight.gif');
 
     RedRunnerIdle = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
     BlueRunnerIdle = loadImage('assets/final_design/BlueTeam/BlueFieldIdle.gif');
@@ -586,23 +592,38 @@ function drawPlayers() {
     fielders.forEach(fielder => {
         let img;
         if (playerSideBatting) {
-            img = fielder.state === "running" ? redFielderRunningGif : redFielderIdleGif;
+            img = fielder.state === "running" ? redFielderRunningRightGif : redFielderIdleGif;
         } else {
-            img = fielder.state === "running" ? blueFielderRunningGif : blueFielderIdleGif;
+            img = fielder.state === "running" ? blueFielderRunningRightGif : blueFielderIdleGif;
         }
         drawScaledPlayer(fielder, img, fielder.y);
     });
 
     runners.forEach(runner => {
         let img;
+        let isMovingRight = runner.x > (runner.prevX ?? runner.x); // fallback for first frame
+    
         if (runner.player) {
-            img = runner.running ? blueRunnerRunningGif : playerIdleGif;
+            if (runner.running) {
+                img = isMovingRight ? blueRunnerRunningRightGif : blueRunnerRunningLeftGif;
+            } else {
+                img = playerIdleGif;
+            }
         }
         else if (playerSideBatting) {
-            img = runner.running ? blueRunnerRunningGif : BlueRunnerIdle;
+            if (runner.running) {
+                img = isMovingRight ? blueRunnerRunningRightGif : blueRunnerRunningLeftGif;
+            } else {
+                img = BlueRunnerIdle;
+            }
         } else {
-            img = runner.running ? redRunnerRunningGif : RedRunnerIdle;
+            if (runner.running) {
+                img = isMovingRight ? redRunnerRunningRightGif : redRunnerRunningLeftGif;
+            } else {
+                img = RedRunnerIdle;
+            }
         }
+    
         drawScaledPlayer(runner, img);
     });
 
