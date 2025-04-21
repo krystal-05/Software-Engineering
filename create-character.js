@@ -24,9 +24,9 @@ function setup() {
         currSong.play();
     }
 
-    // Set default character to Character 1 if none selected
+    // Set default character to Clarke if none selected
     if (localStorage.getItem("characterTag") === null || localStorage.getItem("characterTag") === "null") {
-        localStorage.setItem("characterTag", "Character 1");
+        localStorage.setItem("characterTag", "Clarke");
     }
 
     createCharacterButtons();
@@ -54,15 +54,15 @@ function draw() {
     let characterTag = localStorage.getItem("characterTag");
     cursor('default');
 
-    if (characterTag === "Character 1") {
+    if (characterTag === "Clarke") {
         let scopedDynamicSize = width * 0.025;
         textSize(scopedDynamicSize);
-        text("Character 1", width / 2, height * .2);
+        text("Clarke", width / 2, height * .2);
         image(characterImage, width / 2 - imgWidth / 2, height / 1.83 - imgHeight / 2, imgWidth, imgHeight);
-    } else if (characterTag === "Character 2") {
+    } else if (characterTag === "Claira") {
         let scopedDynamicSize = width * 0.025;
         textSize(scopedDynamicSize);
-        text("Character 2", width / 2, height * .2);
+        text("Claira", width / 2, height * .2);
         image(characterImage1, width / 2 - imgWidth / 2, height / 1.83 - imgHeight / 2, imgWidth, imgHeight);
     } else {
         let scopedDynamicSize = width * 0.025;
@@ -135,8 +135,8 @@ function loadVolumeSetting() {
 
 function createCharacterButtons() {
     buttons = [];
-    let buttonHeight = windowHeight * 0.075;
-    let baseDefWidth = width * 0.15;
+    let buttonHeight = windowHeight * 0.05;
+    let baseDefWidth = width * 0.125;
     let baseDefHeight = baseDefWidth / 4;
     let minDefConfirmWidth = 140;
     let minDefWidth = 120;
@@ -146,8 +146,8 @@ function createCharacterButtons() {
     let defButtonHeight = Math.max(baseDefHeight, minDefHeight);
 
     buttons.push(new Button("Back", width * .15, height * .925, defButtonWidth, defButtonHeight, null, null, () => backToMenu()));
-    buttons.push(new Button("<", width * .325, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 1")));
-    buttons.push(new Button(">", width * .675, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Character 2")));
+    buttons.push(new Button("<", width * .325, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Clarke")));
+    buttons.push(new Button(">", width * .675, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Claira")));
 
     confirmButton = new Button("Confirm Character", width / 2, height * .925, defConfirmButtonWidth, defButtonHeight, null, null, () => confirmCharacter());
 }
