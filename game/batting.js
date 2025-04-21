@@ -67,6 +67,7 @@ function playerHit() {
     batter.running = true;
     runners.forEach(runner => {
         if (bases[runner.base - 1].occupied) {
+            if (runner.base === 3 && !bases[runner.base - 2].occupied)return;
             runner.running = true;
             bases[runner.base].occupied = false;
         }
