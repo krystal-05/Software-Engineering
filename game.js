@@ -22,6 +22,7 @@ let currentPerspective = "side";
 let pitchCanChange = topInning;
 let batterIterator = 0;
 let playerSideBatting = true;
+let entitiesAssigned = false;
 
 let initialFielderPositions = [];
 let accumulator = 0;
@@ -129,6 +130,7 @@ function setup() {
     }
 
     assignEntities();
+    entitiesAssigned = true;
 
     let transformedPitcher = sideToTopDown(pitcher.x, pitcher.y);
     topDownCamera = {
@@ -1224,6 +1226,7 @@ function updateFielders() {
 }
 
 function windowResized() {
+    if(!entitiesAssigned) return;
     let oldWidth = width;
     let oldHeight = height;
 
