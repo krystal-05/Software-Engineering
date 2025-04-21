@@ -591,35 +591,53 @@ function drawPlayers() {
     
     fielders.forEach(fielder => {
         let img;
-        if (playerSideBatting) {
-            img = fielder.state === "running" ? redFielderRunningRightGif : redFielderIdleGif;
-        } else {
-            img = fielder.state === "running" ? blueFielderRunningRightGif : blueFielderIdleGif;
+    
+        if (fielder.state === "running") {
+            if (fielder.x > fielder.previousX) {
+                // moving right
+                img = playerSideBatting ? redFielderRunningRightGif : blueFielderRunningRightGif;
+            } 
+            else if (fielder.x < fielder.previousX) {
+                // moving left
+                img = playerSideBatting ? redFielderRunningLeftGif : blueFielderRunningLeftGif;
+            } 
+            else {
+                img = playerSideBatting ? redFielderIdleGif : blueFielderIdleGif;
+            }
+        } 
+        else {
+            img = playerSideBatting ? redFielderIdleGif : blueFielderIdleGif;
         }
+    
         drawScaledPlayer(fielder, img, fielder.y);
+        fielder.previousX = fielder.x; 
     });
 
     runners.forEach(runner => {
         let img;
-        let isMovingRight = runner.x > (runner.prevX ?? runner.x); // fallback for first frame
+        let isMovingRight = runner.x > (runner.prevX ?? runner.x); 
     
         if (runner.player) {
             if (runner.running) {
                 img = isMovingRight ? blueRunnerRunningRightGif : blueRunnerRunningLeftGif;
-            } else {
+            } 
+            else {
                 img = playerIdleGif;
             }
         }
         else if (playerSideBatting) {
             if (runner.running) {
                 img = isMovingRight ? blueRunnerRunningRightGif : blueRunnerRunningLeftGif;
-            } else {
+            } 
+            else {
                 img = BlueRunnerIdle;
             }
-        } else {
+        }
+        else {
             if (runner.running) {
                 img = isMovingRight ? redRunnerRunningRightGif : redRunnerRunningLeftGif;
-            } else {
+            } 
+            else {
                 img = RedRunnerIdle;
             }
         }
