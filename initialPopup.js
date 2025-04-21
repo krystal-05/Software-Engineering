@@ -50,6 +50,7 @@ function createInitialPopup() {
 
 document.body.appendChild(initialPopup);
 document.addEventListener("click", () => {
+    buttonClick();
     hideInitialPopup();
 });
 }
