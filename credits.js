@@ -13,6 +13,7 @@ function setup() {
     loadVolumeSetting();
 
     backButton = new Button("Back", 175, height - 50, 200, 50, null, null, () => backToMenu());
+    createModal();
 }
 
 function draw() {
@@ -44,6 +45,7 @@ function draw() {
 }
 
 function mousePressed() {
+    if(settingMenu) return;
     if (backButton.isHovered()) {
         if (soundEffects["buttonSound"] && soundEffects["buttonSound"] !== null) {
             console.log("IN")
@@ -79,8 +81,8 @@ function loadVolumeSetting() {
 }
 
 function keyPressed() {
-    if (keyCode === ESCAPE) {
-        backToMenu();
+    if (key == 'Escape') {
+        settingsClick();
     }
 }
 
