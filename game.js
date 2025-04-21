@@ -78,7 +78,7 @@ function preload() {
     playerIdleGif = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
     batterGif = loadImage('assets/temp_assets/BATTER.gif');
     fielderIdleGif = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
-    runnerRunningGif = loadImage('assets/temp_assets/RRUNGIF.gif');
+    runnerRunningGif = loadImage('assets/final_design/BlueTeam/BlueBatRunRight.gif');
     fielderRunningGif = loadImage('assets/temp_assets/LRUNGIF.gif');
     runnerIdle = loadImage('assets/temp_assets/sprites/01_idle2.png');
     catcherImg = loadImage('assets/final_design/RedTeam/RedCatcher.png');
