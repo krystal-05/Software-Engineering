@@ -60,9 +60,9 @@ function playerHit() {
         return;
     }
 
-    console.log("angle:", angle.toFixed(2));
-    console.log("ballVector.x:", ballVector.x.toFixed(2), "ballVector.y:", ballVector.y.toFixed(2));
-    console.log("ball.speedX:", ball.speedX.toFixed(2), "ball.speedY:", ball.speedY.toFixed(2));
+    //console.log("angle:", angle.toFixed(2));
+    //console.log("ballVector.x:", ballVector.x.toFixed(2), "ballVector.y:", ballVector.y.toFixed(2));
+    //console.log("ball.speedX:", ball.speedX.toFixed(2), "ball.speedY:", ball.speedY.toFixed(2));
 
     batter.running = true;
     runners.forEach(runner => {
@@ -321,7 +321,6 @@ function getBatterImage(batter, swingAttempt, batterIterator) {
             return swingAttempt ? playerBatterSwung : playerBatterIdle;
         }
     } else {
-        // return swingAttempt ? redBatterSwung : redBatterIdle;
-        return swingAttempt ? blueBatterSwung : blueBatterIdle;
+        return swingAttempt ? redBatterSwung : redBatterIdle;
     }
 }

@@ -28,6 +28,7 @@ function botAttemptHit(pitchMultiplier) {
 }
 
 function botHitBall() {
+    swingAttempt = true;
     ballHit = true;
     ball.inAir = true;
     playSoundEffect("hitBall");

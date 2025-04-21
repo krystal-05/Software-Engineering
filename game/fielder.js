@@ -11,7 +11,8 @@ function generateFielders() {
         y: bases[1].y * .95,    
         isInfielder: true,  
         position: "first",
-        fielderBaseIndex: 1
+        fielderBaseIndex: 1,
+        attemptingForceOut: null
     });
     
     // Second Baseman
@@ -20,7 +21,8 @@ function generateFielders() {
         y: bases[2].y * .975, 
         isInfielder: true,  
         position: "second",
-        fielderBaseIndex: 2
+        fielderBaseIndex: 2,
+        attemptingForceOut: null
     });
 
     // Third Baseman
@@ -29,7 +31,8 @@ function generateFielders() {
         y: bases[3].y * .95, 
         isInfielder: true,  
         position: "third",
-        fielderBaseIndex: 3
+        fielderBaseIndex: 3,
+        attemptingForceOut: null
     });
     
     // Shortstop
@@ -83,22 +86,51 @@ function infielderChaseHelper(fielder) {
     fielder.state = "idle";
     ball.y += height * .025;
     fielder.chasing = null;
+    fielder.attemptingForceOut = null;
     ball.isChasing = false;
 }
+
+// Runner movement logic to something trying to out a runner
+function moveFielderToObject(fielder, toObject, dt) {
+    let angleToObj = atan2(toObject.y - fielder.y, toObject.x - fielder.x);
+    let speed = 250;
+        
+    let newX = fielder.x + cos(angleToObj) * speed * dt;
+    let newY = fielder.y + sin(angleToObj) * speed * dt;
+    fielder.x = newX; ball.x = newX;
+    fielder.y = newY; ball.y = newY - height * .025;
+}
+
 // make infielder chase a runner to tag out
 function moveInfieldersToRunner(dt) {
     fielders.forEach(fielder => {
-        if (fielder.chasing) {
+        let tagRadius = fielder.catchRadius * 1.25;
+        // Infielder will go for force out on runner
+        if (fielder.attemptingForceOut) {
+            nextRunner = fielder.chasing;
+            fielderTargetBase = bases[(nextRunner.base + 1) % 4];
+            let fielderToBaseDist = dist(fielder.x, fielder.y, fielderTargetBase.x, fielderTargetBase.y);
+            if (fielderToBaseDist > tagRadius && !nextRunner.safe) {
+                moveFielderToObject(fielder, fielderTargetBase, dt);
+            } else if (!nextRunner.safe) {
+                outs++;
+                infielderChaseHelper(fielder);
+                if (DEBUG) console.log("FORCED RUNNER OUT, outs now", outs);
+                runners = runners.filter(r => r !== nextRunner);
+                resetBatter();
+                if (outs >= 3) {
+                    nextInning();
+                    return;
+                }
+            } else {
+                infielderChaseHelper(fielder);
+            }
+        // Infielder will go for tag out on runner
+        } else if (fielder.chasing && fielder.attemptingForceOut === null) {
             nextRunner = fielder.chasing;
             let fielderToRunnerDist = dist(fielder.x, fielder.y, nextRunner.x, nextRunner.y);
-            if (fielderToRunnerDist > 12 && !nextRunner.safe) {
-                let angleToBase = atan2(nextRunner.y - fielder.y, nextRunner.x - fielder.x);
-                let speed = 250;
-                
-                let newX = fielder.x + cos(angleToBase) * speed * dt;
-                let newY = fielder.y + sin(angleToBase) * speed * dt;
-                fielder.x = newX; ball.x = newX;
-                fielder.y = newY; ball.y = newY - height * .025;
+            if (fielderToRunnerDist > tagRadius && !nextRunner.safe) {
+                moveFielderToObject(fielder, nextRunner, dt);
             } else if (!nextRunner.safe) {
                 outs++;
                 infielderChaseHelper(fielder);
@@ -263,11 +295,11 @@ function handleThrow(catcher) {
         return;
     }
 
-    // If air catch runner from first base will decide if they should run to back to first
-    let runnerFirstToSecond = runners.find(r => r.base === 1 && r.running);
-    if (runnerFirstToSecond && shouldBacktrack(runnerFirstToSecond)) {
-        runnerFirstToSecond.backtracking = true;
-    }
+    runners.forEach(runner => {
+        runner.backtracking = true;
+        runner.running     = true;
+        runner.targetBase  = undefined;
+    });
 
     // Check for any remaining unsafe runners
     let unsafeRunners = runners.filter(runner => !runner.safe);
@@ -282,11 +314,27 @@ function handleThrow(catcher) {
     resetBatter();
 }
 // fielder runs to targetfielder as last effort to get them out
+// also will try to force out by running to base
+// comments incase of bug
 function attemptTagRunner(nextRunner, currentFielder) {
     if (DEBUG) console.log("attemptTagRunner CALLED, chasing set to", nextRunner.base);
     currentFielder.state = "running";
     currentFielder.chasing = nextRunner;
     ball.isChasing = true;
+    
+    let prevBase = nextRunner.base - 1;
+    if (prevBase>= 0 && !bases[prevBase].wasOccupied) {
+        return;
+    }
+    //let baseBehindRunner = bases[nextRunner.base - 1];
+    
+    let currentBase = bases[(nextRunner.base + 1) % 4]
+    let baseDistance = dist(currentFielder.x, currentFielder.y, currentBase.x, currentBase.y);
+    let nextRunnerDistance = dist(currentFielder.x, currentFielder.y, nextRunner.x, nextRunner.y);
+    let closerToBase = baseDistance < nextRunnerDistance;
+    if (/*(prevBase < 0 || baseBehindRunner.wasOccupied) &&*/ closerToBase) {
+        currentFielder.attemptingForceOut = currentBase;
+    }
 }
 
 // Determine which fielder to throw to 
