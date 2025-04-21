@@ -108,13 +108,14 @@ function moveInfieldersToRunner(dt) {
         // Infielder will go for force out on runner
         if (fielder.attemptingForceOut) {
             nextRunner = fielder.chasing;
-            fielderTargetBase = bases[(nextRunner.base + 1) % 4];
+            let fielderTargetBase = bases[(nextRunner.base + 1) % 4];
             let fielderToBaseDist = dist(fielder.x, fielder.y, fielderTargetBase.x, fielderTargetBase.y);
             if (fielderToBaseDist > tagRadius && !nextRunner.safe) {
                 moveFielderToObject(fielder, fielderTargetBase, dt);
             } else if (!nextRunner.safe) {
                 outs++;
                 infielderChaseHelper(fielder);
+                fielderTargetBase.tryToOccupy = false;
                 if (DEBUG) console.log("FORCED RUNNER OUT, outs now", outs);
                 runners = runners.filter(r => r !== nextRunner);
                 resetBatter();
@@ -128,11 +129,13 @@ function moveInfieldersToRunner(dt) {
         // Infielder will go for tag out on runner
         } else if (fielder.chasing && fielder.attemptingForceOut === null) {
             nextRunner = fielder.chasing;
+            fielderTargetBase = bases[(nextRunner.base + 1) % 4];
             let fielderToRunnerDist = dist(fielder.x, fielder.y, nextRunner.x, nextRunner.y);
             if (fielderToRunnerDist > tagRadius && !nextRunner.safe) {
                 moveFielderToObject(fielder, nextRunner, dt);
             } else if (!nextRunner.safe) {
                 outs++;
+                fielderTargetBase.tryToOccupy = false;
                 infielderChaseHelper(fielder);
                 if (DEBUG) console.log("RAN TO AND TAGGED RUNNER, outs now", outs);
                 runners = runners.filter(r => r !== nextRunner);
@@ -280,6 +283,7 @@ function handleThrow(catcher) {
     let batterOut = ball.advancingRunner;
     if (batterOut) {
         if (DEBUG) console.log("Air catch");
+        bases[1].tryToOccupy = false;
         runners = runners.filter(runner => runner !== batterOut);
         if (!showOutPopup) {
             outs++;
@@ -375,6 +379,7 @@ function throwToNextRunner(currentFielder) {
         bases[freedBaseIndex].occupied = false;
         if (!currentFielder.offBase) {
             outs++;
+            bases[freedBaseIndex].tryToOccupy = false;
             if (DEBUG) console.log("outs is now", outs);
             runners = runners.filter(r => r !== nextRunner);
             if (outs >= 3) {
@@ -445,6 +450,7 @@ function handleCatch(currentFielder) {
             if (dist(ball.x, ball.y, baseCoords.x, baseCoords.y) < currentFielder.catchRadius) {
                 outs++;
                 if (DEBUG) console.log("Tagging out runner at base", intendedBase, "outs now", outs);
+                baseCoords.tryToOccupy = false;
                 bases[intendedBase].occupied = false;
                 runners = runners.filter(r => r !== targetRunner);
                 if (outs >= 3) {

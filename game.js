@@ -915,16 +915,18 @@ function resetBatter() {
 }
 
 function setIfBaseWasOccupied() {
-    let didSetTrue;
-    bases[0].wasOccupied = true;
-    for (let i = 1; i < 4; ++i) {
-        didSetTrue = false;
-        runners.forEach(runner => {
-            if (runner.base === i) bases[i].wasOccupied = true;
-            didSetTrue = true;
-        });
-        if (!didSetTrue) bases[i].wasOccupied = false;
-    }
+    bases.forEach((base) => {
+        if (DEBUG) console.log(base.number, base.occupied);
+        // home plate is always occupied after a reset
+        if (base.number === 0) {
+            base.occupied = true;
+        } else {
+            let runnerHere = runners.some(runner => runner.base === base.number);
+            base.occupied = runnerHere;
+            base.wasOccupied = runnerHere;
+        }
+    });
+    
 }
 
 function assignEntities() {
@@ -936,6 +938,7 @@ function assignEntities() {
     ];
     for (i = 0; i < 4; ++i) {
         bases[i].number = i;
+        bases[i].tryToOccupy = false;
     }
     setBasedRunners();
     

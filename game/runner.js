@@ -31,6 +31,7 @@ function moveRunners(dt) {
                 runner.x += (dx / distance) * step;
                 runner.y += (dy / distance) * step;
             }
+            if (targetBase.number !== 0) targetBase.tryToOccupy = true;
 
             // Lock runner in position relative to base
             if (dist(runner.x, runner.y, targetBase.x, targetBase.y) < 12) {
@@ -74,9 +75,11 @@ function moveRunners(dt) {
                         return false;
                     } else {
                         if (!ball.homeRun) runner.running = false;
-                        else bases[prevBase].occupied = false;
+                        else if (prevBase !== 0) bases[prevBase].occupied = false;
                         bases[prevBase].wasOccupied = false;
+                        targetBase.tryToOccupy = false;
                         targetBase.wasOccupied = true;
+                        targetBase.ran = true;
                         runner.safe = true;
                         if (DEBUG) console.log(`Runner reached base ${runner.base} and is holding.`);
                     }
@@ -147,7 +150,7 @@ function displayRunHint() {
 
     for (let i = 1; i < bases.length; i++) {
         let nextIndex = (i + 1) % bases.length;
-        if (bases[i].occupied && !bases[i-1].occupied && !bases[nextIndex].occupied && !homeRunHit) {
+        if (bases[i].occupied && !bases[nextIndex].tryToOccupy && (!bases[nextIndex].occupied || nextIndex === 0) && !homeRunHit) {
             let label = (i === 1 || i === 3) ? 4 - i : i;
             text(`Press ${label} to Run!`, bases[i].x, bases[i].y + height * .05);
         }
