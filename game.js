@@ -51,6 +51,8 @@ gameState = "game";
 // Difficulty
 let generalDifficultyScale = 1;
 
+let audio8;
+
 function preload() {
     switch (lastSelectedLevel) {
         case 1:
@@ -111,9 +113,10 @@ function preload() {
     audio3 = loadSound('sounds/audio3.mp3');
     audio4 = loadSound('sounds/audio4.mp3');
     audio5 = loadSound('sounds/audio5.mp3');
+    soundEffects["strike"] = loadSound('sounds/roblox_1.mp3');
+    soundEffects["foul"] = loadSound('sounds/nuh_uh_1.mp3');
+    soundEffects["homerun"] = loadSound('sounds/yay_1.mp3');
 }
-
-
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -785,6 +788,9 @@ function handleHomerun() {
     umpire.armTimer = millis();
     showHomerunPopup = true;
     popupTimer = millis();
+
+    playSoundEffect("homerun");
+
     setTimeout(() => {
         umpire.armRaisedRight = false;
         umpire.armRaisedLeft = false;
@@ -804,6 +810,9 @@ function handleFoul() {
     popupMessage = "FOUL BALL";
     showFoulPopup = true;
     popupTimer = millis();
+    
+    playSoundEffect("foul");
+
     setTimeout(() => {
         umpire.armRaisedRight = false;
         setTimeout(() => {

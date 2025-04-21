@@ -54,7 +54,7 @@ function moveRunners(dt) {
                 runner.y = targetBase.y;
                 // occupied used in playerHit()
                 let prevBase = runner.base;
-                targetBase.occupied = true;
+                //targetBase.occupied = true;
 
                 // Mark runner safe/not running when reaching their target
                 if (runner.backtracking) {
@@ -80,6 +80,7 @@ function moveRunners(dt) {
                         bases[prevBase].wasOccupied = false;
                         targetBase.tryToOccupy = false;
                         targetBase.wasOccupied = true;
+                        targetBase.occupied = true;
                         targetBase.ran = true;
                         runner.safe = true;
                         if (DEBUG) console.log(`Runner reached base ${runner.base} and is holding.`);

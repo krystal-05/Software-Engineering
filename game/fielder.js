@@ -122,10 +122,10 @@ function moveInfieldersToRunner(dt) {
             } else if (!nextRunner.safe) {
                 outs++;
                 infielderChaseHelper(fielder);
+                fielderTargetBase.occupied = false;
                 fielderTargetBase.tryToOccupy = false;
                 if (DEBUG) console.log("FORCED RUNNER OUT, outs now", outs);
                 runners = runners.filter(r => r !== nextRunner);
-                resetBatter();
                 if (outs >= 3) {
                     nextInning();
                     return;
@@ -142,6 +142,7 @@ function moveInfieldersToRunner(dt) {
                 moveFielderToObject(fielder, nextRunner, dt);
             } else if (!nextRunner.safe) {
                 outs++;
+                fielderTargetBase.occupied = false;
                 fielderTargetBase.tryToOccupy = false;
                 infielderChaseHelper(fielder);
                 if (DEBUG) console.log("RAN TO AND TAGGED RUNNER, outs now", outs);
