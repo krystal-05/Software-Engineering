@@ -104,6 +104,7 @@ function userBatting() {
 
 
 function startDirectionSlider() {
+    inputEnabled = true;
     hitSliderX = random(0, barWidth);
     directionBarX = width / 2 - barWidth / 2;
     directionBarY = height - 100;

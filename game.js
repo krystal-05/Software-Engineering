@@ -843,12 +843,15 @@ function keyPressed() {
     if (key === ' ') {
         if(topInning && inputEnabled) {
             if(!hitPowerSlider && !hitDirectionSlider && !hitSkillCheckComplete) {
-                startHitSkillCheck();
+                setTimeout(() => {
+                    startHitSkillCheck();
+                }, 100);
             }
             else if (hitPowerSlider) {
                 powerMultiplier = evaluatePowerMultiplier();
                 powerSliderFinalX = hitSliderX;
                 hitPowerSlider = false;
+                inputEnabled = false;
                 
                 setTimeout(() => { 
                     if (powerZoneLevel === "high") directionSliderSpeed = 700;

@@ -87,15 +87,6 @@ function moveRunners(dt) {
     });
 }
 
-// If runner is more than halfway to target base, don't run back
-function shouldBacktrack(runner) {
-    let currentBase = bases[runner.base];
-    let nextBase = bases[(runner.base + 1) % bases.length];
-    let totalDistance = dist(currentBase.x, currentBase.y, nextBase.x, nextBase.y);
-    let runnerDistance = dist(currentBase.x, currentBase.y, runner.x, runner.y);
-    return runnerDistance < totalDistance / 2;
-}
-
 function setBasedRunners() {
     bases.forEach((base, index) => {
         base.occupied = (index === 0);
