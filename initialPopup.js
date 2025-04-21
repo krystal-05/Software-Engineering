@@ -11,39 +11,30 @@ function createInitialPopup() {
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
+        max-width: 100%;
+        max-height: 100%;
     }
     .initialPopup-content {
-        border: 1px solid black;
         background: url('assets/premenu.png');
         background-size: cover;
         padding: 30px 45px;
-        border-radius: 8px;
         text-align: center;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        width: 300px;
-        max-width: 80%;
+        width: 100vh;
+        height: 100vh;
+       
     }
-    .closeButton {
-        background:rgb(233, 201, 23);
-        border: 1px solid black;
-        padding: 10px 20px;
-        font-size: 24px;
-        cursor: pointer;
-        border-radius: 5px;
-        margin-top: 0px;
-        font-weight: bold;
-        color: black; 
-        width: 100%;
+    .initialPopup-content p {
+      color: white;
+      text-align: center;
+      padding-left: 20px;
+      margin: 200px 0;             
     }
-    .closeButton:hover {
-        background-color:rgb(255, 225, 57);
-        color: black;
+    .initialPopup-content .first_message {
+      font-size: 72px;
     }
-    .message{
-        color: white;
-        font-size: 48px;
-        padding: 10px;
-        }
+    .initialPopup-content .second_message {
+      font-size: 32px;
+    }
     `;
     document.head.appendChild(style);
 
@@ -52,20 +43,15 @@ function createInitialPopup() {
     initialPopup.classList.add("initialPopup");
     initialPopup.innerHTML = `
    <div class="initialPopup-content">
-            <p class="message"><b>Welcome to Batterground!</b></p>
-            <button class="closeButton" id="closeButton">Enter Ballpark</button>
+            <p class="first_message"><b>Welcome to Batterground!</b></p>
+            <p class="second_message"><b>Click anywhere to continue</b></p>
     </div>
 `;
 
 document.body.appendChild(initialPopup);
-
-closeButton = initialPopup.querySelector("#closeButton");
- //events- on button click
-closeButton.addEventListener("click", () => {
-    buttonClick();
+document.addEventListener("click", () => {
     hideInitialPopup();
 });
-
 }
 
 function hideInitialPopup(){
