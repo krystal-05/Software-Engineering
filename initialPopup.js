@@ -21,19 +21,18 @@ function createInitialPopup() {
         text-align: center;
         width: 100vh;
         height: 100vh;
-       
     }
     .initialPopup-content p {
-      color: white;
-      text-align: center;
-      padding-left: 20px;
-      margin: 200px 0;             
+        color: white;
+        text-align: center;
+        padding-left: 20px;
+        margin: 200px 0;             
     }
     .initialPopup-content .first_message {
-      font-size: 72px;
+        font-size: 72px;
     }
     .initialPopup-content .second_message {
-      font-size: 32px;
+        font-size: 32px;
     }
     `;
     document.head.appendChild(style);
@@ -43,8 +42,8 @@ function createInitialPopup() {
     initialPopup.classList.add("initialPopup");
     initialPopup.innerHTML = `
    <div class="initialPopup-content">
-            <p class="first_message"><b>Welcome to Batterground!</b></p>
-            <p class="second_message"><b>Click anywhere to continue</b></p>
+        <p class="first_message"><b>Welcome to Batterground!</b></p>
+        <p class="second_message"><b>Click anywhere to continue</b></p>
     </div>
 `;
 
