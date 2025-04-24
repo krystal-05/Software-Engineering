@@ -24,6 +24,8 @@ let batterIterator = 0;
 let playerSideBatting = true;
 let entitiesAssigned = false;
 
+let scoreboard;
+
 let initialFielderPositions = [];
 let accumulator = 0;
 const fixedDt = 1/60;
@@ -78,7 +80,7 @@ function preload() {
     redBatterSwung = loadImage('assets/final_design/RedTeam/RedBatSwing.png');
     playerBatterSwung = loadImage('assets/final_design/Clarke/ClarkBatSwing.png');
 
-    playerIdleGif = loadImage('assets/final_design/Clarke/ClarkeBaseIdle.gif');
+    playerIdleGif = loadImage('assets/final_design/Clarke/ClarkeBaseIdle.gif'); //player idle
 
     redFielderIdleGif = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
     blueFielderIdleGif = loadImage('assets/final_design/BlueTeam/BlueFieldIdle.gif');
@@ -95,8 +97,8 @@ function preload() {
     redFielderRunningLeftGif = loadImage('assets/final_design/RedTeam/RedFieldRunLeft.gif');
     redFielderRunningRightGif = loadImage('assets/final_design/RedTeam/RedFieldRunRight.gif');
 
-    RedRunnerIdle = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
-    BlueRunnerIdle = loadImage('assets/final_design/BlueTeam/BlueFieldIdle.gif');
+    RedRunnerIdle = loadImage('assets/final_design/RedTeam/RedIdle.gif');
+    BlueRunnerIdle = loadImage('assets/final_design/BlueTeam/BlueIdle.gif');
 
     redCatcherImg = loadImage('assets/final_design/RedTeam/RedCatcher.png');
     blueCatcherImg = loadImage('assets/final_design/BlueTeam/BlueCatcher.png');
@@ -105,6 +107,7 @@ function preload() {
     directionImage = loadImage('assets/final_design/DirectArrow.png');
     settingButtonImage = loadImage('assets/final_design/game_setting2.png');
 
+    scoreboard = loadImage('assets/final_design/Scoreboard.png');
     currSong = loadSound('sounds/gamesong.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
     soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3'); 
@@ -669,13 +672,17 @@ function drawPlayers() {
 
 function drawScoreboard() {
     fill(0);
-    rect(20, 20, 190, 90);
+    rect( 30 , 35 , 300, 134 );
+   
     fill(255);
     textSize(14);
-    text(`Inning: ${inning} ${topInning ? '▲' : '▼'}`, 30, 40);
-    text(`Score - Home: ${score.home}  Away: ${score.away}`, 30, 60);
-    text(`Outs: ${outs}`, 30, 80);
-    text(`Strikes: ${strikes}`, 30, 100);
+    text(`${inning} ${topInning ? '▲' : '▼'}`, 126, 62);
+    text(`${score.home}`, 196, 90);
+    text(`${score.away}`, 282, 90);
+    text(`${outs}`, 109 , 118);
+    text(`${strikes}`, 128, 146);
+    
+    image(scoreboard, 0 , 0 , 360 , 200 );
 }
 
 function resizeUmpire(oldWidth, oldHeight) {
