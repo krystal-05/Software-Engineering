@@ -98,10 +98,10 @@ function restart() {
 }
 function advance() {
     if(lastSelectedLevel === 1) {
-        window.location.href = "map.html";
+        window.location.href = "continentMap.html";
     }
     else if(lastSelectedLevel === 2) {
-        window.location.href = "map.html";
+        window.location.href = "continentMap.html";
     }
 }
 function showWinPopup() {

@@ -153,7 +153,7 @@ function loadCharacterSelect() {
 }
 function loadGame() {
     if (isLoad1 === "true") {
-        window.location.href = "map.html";
+        window.location.href = "worldMap.html";
     } else {
         loadCharacterSelect();
     }
@@ -169,7 +169,7 @@ function loadHowTo(){
 }
 function deleteSave() {
     localStorage.removeItem("unlockedLevel");
-    localStorage.removeItem("lastSelectedLevel");
+    localStorage.removeItem("lastSelectedContinent");
 
     localStorage.setItem("isLoad1", false);
     isLoad1 = localStorage.getItem("isLoad1");
