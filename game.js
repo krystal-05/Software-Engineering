@@ -68,7 +68,7 @@ function preload() {
             bgSideImage = loadImage('assets/final_design/batterfield.png');
             break;
     }
-    bgTopImage = loadImage('assets/flat_field1.png');
+    bgTopImage = loadImage('assets/final_design/topDownView.png');
 
     blueBatterIdle = loadImage('assets/final_design/BlueTeam/BlueBatIdle.gif');
     redBatterIdle = loadImage('assets/final_design/RedTeam/RedBatIdle.gif');
@@ -488,7 +488,7 @@ function drawTopDownField() {
     fill(255);
     noStroke();
     for (let base of bases) {
-        let topDownBase = perspectiveToTopDown(base.x, base.y, verticalOffset);
+        let topDownBase = perspectiveToTopDown(base.x, base.y + 35, verticalOffset);
         ellipse(topDownBase.x, topDownBase.y, 10, 10);
     }
 }
@@ -498,7 +498,7 @@ function drawTopDownPlayers() {
     let verticalOffset = height * 0.14;
     let ballOffset = !ballHit ? 0 : verticalOffset;
     let pitcherOffsetY = -0.075 * height;
-    let pitcherPos = perspectiveToTopDown(pitcher.x, pitcher.y);
+    let pitcherPos = perspectiveToTopDown(pitcher.x, pitcher.y + 10);
     pitcherPos.y += pitcherOffsetY;
     fill('red');
     ellipse(pitcherPos.x, pitcherPos.y, 15, 15);
