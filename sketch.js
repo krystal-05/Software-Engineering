@@ -14,8 +14,8 @@ function preload() {
     settingsImgHover = loadImage('assets/OSettings_2.png');
     creditsImg = loadImage('assets/OCredits_1.png');
     creditsImgHover = loadImage('assets/OCredits_2.png');
-    howToImg = loadImage('assets/how-to.png');
-    howToImgHover = loadImage('assets/how-to-hover.png');
+    howToImg = loadImage('assets/OHowTo_1.png');
+    howToImgHover = loadImage('assets/OHowTo_2.png');
     currSong = loadSound('sounds/mainScreenSound.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
     premenuImage = loadImage('assets/green.png');
