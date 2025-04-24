@@ -4,7 +4,7 @@ const PLAYER_WIDTH = 80;
 const PLAYER_HEIGHT = 120;
 const SPRITE_Y_OFFSET = 20;
 const MAX_POWER = 1600;
-const MAX_LEVEL = 3;
+const MAX_LEVEL = 12;
 
 let lastSelectedLevel = localStorage.getItem("lastSelectedLevel");
 if (lastSelectedLevel !== null) lastSelectedLevel = parseInt(lastSelectedLevel);
@@ -1068,15 +1068,53 @@ function nextInning() {
     if (topInning && inning > 4){
         if (score.home < score.away){
             if (lastSelectedLevel < MAX_LEVEL) {
-                
-                let unlockedLevel = localStorage.getItem("unlockedLevel");
-                let thisLevel = localStorage.getItem("thisLevel");
-                if(unlockedLevel === null) {
-                    localStorage.setItem("unlockedLevel", '2');
-                } else if (unlockedLevel === '2' && thisLevel === '2') {
-                    localStorage.setItem("unlockedLevel", '3');
+                let unlocked = localStorage.getItem("unlockedLevel");
+                if(unlocked === null) {
+                    if(lastSelectedLevel === 1) localStorage.setItem("unlockedLevel", '2');
+                } else {
+                    switch(lastSelectedLevel) {
+                        case 2: {
+                            if(unlocked === '2') localStorage.setItem("unlockedLevel", '3');
+                            break;
+                        }
+                        case 3: {
+                            if(unlocked === '3') localStorage.setItem("unlockedLevel", '4');
+                            break;
+                        }
+                        case 4: {
+                            if(unlocked === '4') localStorage.setItem("unlockedLevel", '5');
+                            break;
+                        }
+                        case 5: {
+                            if(unlocked === '5') localStorage.setItem("unlockedLevel", '6');
+                            break;
+                        }
+                        case 6: {
+                            if(unlocked === '6') localStorage.setItem("unlockedLevel", '7');
+                            break;
+                        }
+                        case 7: {
+                            if(unlocked === '7') localStorage.setItem("unlockedLevel", '8');
+                            break;
+                        }
+                        case 8: {
+                            if(unlocked === '8') localStorage.setItem("unlockedLevel", '9');
+                            break;
+                        }
+                        case 9: {
+                            if(unlocked === '9') localStorage.setItem("unlockedLevel", '10');
+                            break;
+                        }
+                        case 10: {
+                            if(unlocked === '10') localStorage.setItem("unlockedLevel", '11');
+                            break;
+                        }
+                        case 11: {
+                            if(unlocked === '11') localStorage.setItem("unlockedLevel", '12');
+                            break;
+                        }
+                    }   
                 }
-
                 showWinPopup();
             } else {
                 showDonePopup();
@@ -1178,17 +1216,57 @@ function loseClick(){
     showLosePopup();
 }
 function winClick(){
-    if (lastSelectedLevel === 3){
+    if (lastSelectedLevel === 12){
         showDonePopup();
     }
     else{
-        let unlockedLevel = localStorage.getItem("unlockedLevel");
-        let thisLevel = localStorage.getItem("thisLevel");
+        let unlocked = localStorage.getItem("unlockedLevel");
 
-        if(unlockedLevel === null) {
+        if(unlocked === null) {
             localStorage.setItem("unlockedLevel", '2');
-        } else if (thisLevel === '2') {
-            localStorage.setItem("unlockedLevel", '3');
+        } else {
+            switch(lastSelectedLevel) {
+                case 2: {
+                    if(unlocked === '2') localStorage.setItem("unlockedLevel", '3');
+                    break;
+                }
+                case 3: {
+                    if(unlocked === '3') localStorage.setItem("unlockedLevel", '4');
+                    break;
+                }
+                case 4: {
+                    if(unlocked === '4') localStorage.setItem("unlockedLevel", '5');
+                    break;
+                }
+                case 5: {
+                    if(unlocked === '5') localStorage.setItem("unlockedLevel", '6');
+                    break;
+                }
+                case 6: {
+                    if(unlocked === '6') localStorage.setItem("unlockedLevel", '7');
+                    break;
+                }
+                case 7: {
+                    if(unlocked === '7') localStorage.setItem("unlockedLevel", '8');
+                    break;
+                }
+                case 8: {
+                    if(unlocked === '8') localStorage.setItem("unlockedLevel", '9');
+                    break;
+                }
+                case 9: {
+                    if(unlocked === '9') localStorage.setItem("unlockedLevel", '10');
+                    break;
+                }
+                case 10: {
+                    if(unlocked === '10') localStorage.setItem("unlockedLevel", '11');
+                    break;
+                }
+                case 11: {
+                    if(unlocked === '11') localStorage.setItem("unlockedLevel", '12');
+                    break;
+                }
+            }   
         }
         showWinPopup();
     }
@@ -1196,13 +1274,12 @@ function winClick(){
 function startGameClick(){
     buttonClick();
 }
-if(lastSelectedLevel === 1){
+
+if(lastSelectedLevel < 5){
     changeDifficulty(1);
-}
-if(lastSelectedLevel === 2){
+} else if(lastSelectedLevel < 9){
     changeDifficulty(2);      
-}
-if(lastSelectedLevel === 3){
+} else {
     changeDifficulty(3);
 }
 

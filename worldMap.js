@@ -76,29 +76,35 @@ class level {
         image(this.img, this.x, this.y, this.width, this.height);
 
         if(this.lock) {
-            image(levelLockImg, this.x + 20, this.y + 20, 25, 30);
+            image(levelLockImg, this.x + 20, this.y + 20, 25, 29);
         }
+    }
+}
+
+function createLevelButtons() {
+    continentOneLocation = [windowWidth / 5.5, windowHeight / 2];
+    continentTwoLocation = [windowWidth / 3.4, windowHeight / 1.3];
+    continentThreeLocation = [windowWidth / 1.6, windowHeight / 2.6];
+    
+    levels = [];
+    levels.push(new level(levelOneImg, continentOneLocation[0], continentOneLocation[1], false));
+    levels.push(new level(levelTwoImg, continentTwoLocation[0], continentTwoLocation[1]));
+    levels.push(new level(levelThreeImg, continentThreeLocation[0], continentThreeLocation[1]));
+    if(unlocked >= 5) {
+        levels[1].lock = false;
+    }
+    if(unlocked >= 9) {
+        levels[2].lock = false;
     }
 }
 
 function setup(){
     createCanvas(windowWidth, windowHeight);
+    
+    createLevelButtons();
 
-    continentOneLocation = [(windowWidth / 3) - (windowWidth / 6), (windowHeight / 2) - (windowHeight / 10)];
-    continentTwoLocation = [(windowWidth / 2) - (windowWidth / 5), (windowHeight / 2) + (windowHeight / 5)];
-    continentThreeLocation = [(windowWidth / 2) + (windowWidth / 5), (windowHeight / 2) - (windowHeight / 5)];
 
     char = new character;
-
-    levels.push(new level(levelOneImg, continentOneLocation[0], continentOneLocation[1], false));
-    levels.push(new level(levelTwoImg, continentTwoLocation[0], continentTwoLocation[1]));
-    if(unlocked >= 5) {
-        levels[1].lock = false;
-    }
-    levels.push(new level(levelThreeImg, continentThreeLocation[0], continentThreeLocation[1]));
-    if(unlocked >= 9) {
-        levels[2].lock = false;
-    }
 
     lvlIndx['1'] = [levels[0], continentOne];
     lvlIndx['2'] = [levels[1], continentTwo];
@@ -107,6 +113,7 @@ function setup(){
     loadVolumeSetting();
     createModal();
 }
+
 
 class character {
     constructor() {
@@ -168,6 +175,26 @@ class character {
         return false;
     }
 
+    updatePos() {
+        switch(this.levelPosition) {
+            case '1': {
+                this.x = continentOneLocation[0];
+                this.y = continentOneLocation[1] - (windowHeight / 7.5);
+                break;
+            }
+            case '2': {
+                this.x = continentTwoLocation[0];
+                this.y = continentTwoLocation[1] - (windowHeight / 7.5);
+                break;
+            }
+            case '3': {
+                this.x = continentThreeLocation[0];
+                this.y = continentThreeLocation[1] - (windowHeight / 7.5);
+                break;
+            }
+        }
+    }
+
     drawChar() {
         image(char.img, char.x, char.y, char.width, char.height);
     }
@@ -195,6 +222,8 @@ function keyPressed() {
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
+    createLevelButtons();
+    char.updatePos();
 }
 
 function draw() {
@@ -219,9 +248,9 @@ function draw() {
             char.x = char.x - charMoveSpeed;
         }
 
-        if(nextPos[1] > char.y) {
+        if(nextPos[1] - (windowHeight / 7.5) > char.y) {
             char.y = char.y + charMoveSpeed;
-        } else if (nextPos[1] < char.y) {
+        } else if (nextPos[1] - (windowHeight / 7.5) < char.y) {
             char.y = char.y - charMoveSpeed;
         }
 
@@ -229,11 +258,11 @@ function draw() {
             char.x = nextPos[0];
         }
 
-        if(abs(nextPos[1] - char.y) < charMoveSpeed) {
-            char.y = nextPos[1];
+        if(abs(nextPos[1] - (windowHeight / 7.5) - char.y) < charMoveSpeed) {
+            char.y = nextPos[1] - (windowHeight / 7.5);
         }
 
-        if(nextPos[0] === char.x && nextPos[1] === char.y) {
+        if(nextPos[0] === char.x && nextPos[1] - (windowHeight / 7.5) === char.y) {
             animFinished = true;
             char.levelPosition = nextPos[2];
             char.img = idleAnimation;

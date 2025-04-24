@@ -97,11 +97,16 @@ function restart() {
     topInning = true;
 }
 function advance() {
-    if(lastSelectedLevel === 1) {
-        window.location.href = "continentMap.html";
-    }
-    else if(lastSelectedLevel === 2) {
-        window.location.href = "continentMap.html";
+    if(lastSelectedLevel < 4) {
+        window.location.href = "continentOneMap.html";
+    } else if(lastSelectedLevel === 4) {
+        window.location.href = "worldMap.html";
+    } else if(lastSelectedLevel < 8) {
+        window.location.href = "continentTwoMap.html";
+    } else if(lastSelectedLevel === 8) {
+        window.location.href = "worldMap.html";
+    } else if(lastSelectedLevel < 12) {
+        window.location.href = "continentThreeMap.html";
     }
 }
 function showWinPopup() {
@@ -110,8 +115,6 @@ function showWinPopup() {
 function hideWinPopup(){
     winPopup.style.display = "none";
 }
-
-
 
 function createLosePopup() {
     const style = document.createElement("style")

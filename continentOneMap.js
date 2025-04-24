@@ -104,6 +104,8 @@ class character {
                     return cityFourLocation.concat(['4']);
                 } else if(input === 'a' && unlocked >= 3) {
                     return cityThreeLocation.concat(['3']);
+                } else if(input === 'd') {
+                    return cityOneLocation.concat(['1']);
                 }
                 break;
             }
@@ -120,6 +122,31 @@ class character {
             }
         }
         return false;
+    }
+
+    updatePos() {
+        switch(this.levelPosition) {
+            case '1': {
+                this.x = cityOneLocation[0];
+                this.y = cityOneLocation[1] - (windowHeight / 7.5);
+                break;
+            }
+            case '2': {
+                this.x = cityTwoLocation[0];
+                this.y = cityTwoLocation[1] - (windowHeight / 7.5);
+                break;
+            }
+            case '3': {
+                this.x = cityThreeLocation[0];
+                this.y = cityThreeLocation[1] - (windowHeight / 7.5);
+                break;
+            }
+            case '4': {
+                this.x = cityFourLocation[0];
+                this.y = cityFourLocation[1] - (windowHeight / 7.5);
+                break;
+            }
+        }
     }
 
     drawChar() {
@@ -141,7 +168,7 @@ class level {
         image(this.img, this.x, this.y, this.width, this.height);
 
         if(this.lock) {
-            image(levelLockImg, this.x + 20, this.y + 20, 25, 30);
+            image(levelLockImg, this.x + 20, this.y + 20, 25, 29);
         }
     }
 }
@@ -159,20 +186,18 @@ function preload() {
     unlocked = parseInt(localStorage.getItem("unlockedLevel"));
 }
 
-function setup() {
-    createCanvas(windowWidth, windowHeight);
-
-
+function createLevelButtons() {
     cityOneLocation = [windowWidth / 1.56, windowHeight / 2.3];
     cityTwoLocation = [windowWidth / 2.95, windowHeight / 2.2];
     cityThreeLocation = [windowWidth / 7.7, windowHeight / 4.4];
     cityFourLocation = [windowWidth / 2.5, windowHeight / 1.22];
 
+    levels = [];
+
     levels.push(new level(levelOneImg, cityOneLocation[0], cityOneLocation[1], false));
     levels.push(new level(levelTwoImg, cityTwoLocation[0], cityTwoLocation[1]));
     levels.push(new level(levelThreeImg, cityThreeLocation[0], cityThreeLocation[1]));
     levels.push(new level(levelFourImg, cityFourLocation[0], cityFourLocation[1]));
-
     if(unlocked >= 2) {
         levels[1].lock = false;
     }
@@ -182,6 +207,13 @@ function setup() {
     if(unlocked >= 4) {
         levels[3].lock = false;
     } 
+}
+
+function setup() {
+    createCanvas(windowWidth, windowHeight);
+    
+    createLevelButtons();
+    
 
     lvlIndx['1'] = [levels[0], cityOne];
     lvlIndx['2'] = [levels[1], cityTwo];
@@ -217,6 +249,8 @@ function keyPressed() {
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
+    createLevelButtons();
+    char.updatePos();
 }
 
 function draw() {
@@ -239,9 +273,9 @@ function draw() {
             char.x = char.x - charMoveSpeed;
         }
 
-        if(nextPos[1] > char.y) {
+        if(nextPos[1] - (windowHeight / 7.5) > char.y) {
             char.y = char.y + charMoveSpeed;
-        } else if (nextPos[1] < char.y) {
+        } else if (nextPos[1] - (windowHeight / 7.5) < char.y) {
             char.y = char.y - charMoveSpeed;
         }
 
@@ -249,11 +283,11 @@ function draw() {
             char.x = nextPos[0];
         }
 
-        if(abs(nextPos[1] - char.y) < charMoveSpeed) {
-            char.y = nextPos[1];
+        if(abs(nextPos[1] - (windowHeight / 7.5) - char.y) < charMoveSpeed) {
+            char.y = nextPos[1] - (windowHeight / 7.5);
         }
 
-        if(nextPos[0] === char.x && nextPos[1] === char.y) {
+        if(nextPos[0] === char.x && nextPos[1] - (windowHeight / 7.5) === char.y) {
             animFinished = true;
             char.levelPosition = nextPos[2];
             char.img = idleAnimation;
