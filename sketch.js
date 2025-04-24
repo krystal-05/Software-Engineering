@@ -170,6 +170,7 @@ function loadHowTo(){
 function deleteSave() {
     localStorage.removeItem("unlockedLevel");
     localStorage.removeItem("lastSelectedContinent");
+    localStorage.removeItem("lastSelectedLevel");
 
     localStorage.setItem("isLoad1", false);
     isLoad1 = localStorage.getItem("isLoad1");

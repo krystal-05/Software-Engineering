@@ -14,12 +14,13 @@ let settingMenu = false;
 let audioSelectionMenu = false;
 let animFinished = true;
 let char;
+let charOffset;
 gameState = "worldmap";
 
 function preload() {
     map = loadImage('assets/final_design/MapStuff/Temp_Map.png');
-    idleAnimation = loadImage('assets/temp_assets/IDLE1.gif');
-    runningAnimation = loadImage('assets/temp_assets/LRUNGIF.gif');
+    idleAnimation = loadImage('assets/final_design/MapStuff/Team_Plane_Idle.png');
+    runningAnimation = loadImage('assets/final_design/MapStuff/Team_Plane.gif');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
     levelOneImg = loadImage('assets/final_design/MapStuff/levelMarkers/1.png');
     levelTwoImg = loadImage('assets/final_design/MapStuff/levelMarkers/2.png');
@@ -96,13 +97,14 @@ function createLevelButtons() {
     if(unlocked >= 9) {
         levels[2].lock = false;
     }
+
+    charOffset = windowHeight / 13;
 }
 
 function setup(){
     createCanvas(windowWidth, windowHeight);
     
     createLevelButtons();
-
 
     char = new character;
 
@@ -125,23 +127,23 @@ class character {
             case '2': {
                 this.levelPosition = '2';
                 this.x = continentTwoLocation[0];
-                this.y = continentTwoLocation[1] - (windowHeight / 7.5);
+                this.y = continentTwoLocation[1] - charOffset;
                 break;
             }
             case '3': {
                 this.levelPosition = '3';
                 this.x = continentThreeLocation[0];
-                this.y = continentThreeLocation[1] - (windowHeight / 7.5);
+                this.y = continentThreeLocation[1] - charOffset;
                 break;
             }
             default: {
                 this.levelPosition = '1';
                 this.x = continentOneLocation[0];
-                this.y = continentOneLocation[1] - (windowHeight / 7.5);
+                this.y = continentOneLocation[1] - charOffset;
             }
         }
-        this.width = 100;
-        this.height = 100;
+        this.width = 113;
+        this.height = 50;
     }
     
     // returns location of city to be moved to if a move can be made
@@ -150,7 +152,7 @@ class character {
             case '1': {
                 if(input === 's' && unlocked >= 5) {
                     return continentTwoLocation.concat(['2']);
-                } else if (input === 'd' && unlocked === 3) {
+                } else if (input === 'd' && unlocked >= 9) {
                     return continentThreeLocation.concat(['3']);
                 }
                 break;
@@ -158,7 +160,7 @@ class character {
             case '2': {
                 if(input === 'd' && unlocked >= 9) {
                     return continentThreeLocation.concat(['3']);
-                } else if(input === 'w') {
+                } else if(input === 'w' || input === 'a') {
                     return continentOneLocation.concat(['1']);
                 }
                 break;
@@ -179,17 +181,17 @@ class character {
         switch(this.levelPosition) {
             case '1': {
                 this.x = continentOneLocation[0];
-                this.y = continentOneLocation[1] - (windowHeight / 7.5);
+                this.y = continentOneLocation[1] - charOffset;
                 break;
             }
             case '2': {
                 this.x = continentTwoLocation[0];
-                this.y = continentTwoLocation[1] - (windowHeight / 7.5);
+                this.y = continentTwoLocation[1] - charOffset;
                 break;
             }
             case '3': {
                 this.x = continentThreeLocation[0];
-                this.y = continentThreeLocation[1] - (windowHeight / 7.5);
+                this.y = continentThreeLocation[1] - charOffset;
                 break;
             }
         }
@@ -248,9 +250,9 @@ function draw() {
             char.x = char.x - charMoveSpeed;
         }
 
-        if(nextPos[1] - (windowHeight / 7.5) > char.y) {
+        if(nextPos[1] - charOffset > char.y) {
             char.y = char.y + charMoveSpeed;
-        } else if (nextPos[1] - (windowHeight / 7.5) < char.y) {
+        } else if (nextPos[1] - charOffset < char.y) {
             char.y = char.y - charMoveSpeed;
         }
 
@@ -258,11 +260,11 @@ function draw() {
             char.x = nextPos[0];
         }
 
-        if(abs(nextPos[1] - (windowHeight / 7.5) - char.y) < charMoveSpeed) {
-            char.y = nextPos[1] - (windowHeight / 7.5);
+        if(abs(nextPos[1] - charOffset - char.y) < charMoveSpeed) {
+            char.y = nextPos[1] - charOffset;
         }
 
-        if(nextPos[0] === char.x && nextPos[1] - (windowHeight / 7.5) === char.y) {
+        if(nextPos[0] === char.x && nextPos[1] - charOffset === char.y) {
             animFinished = true;
             char.levelPosition = nextPos[2];
             char.img = idleAnimation;

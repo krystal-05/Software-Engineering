@@ -19,6 +19,7 @@ let animFinished = true;
 let animCounter = 0;
 gamestate = "continent1map";
 
+
 function loadVolumeSetting() {
     const savedVolume = localStorage.getItem("volume");
     const savedMute = localStorage.getItem("isMuted");
@@ -40,20 +41,20 @@ function loadVolumeSetting() {
     });
 }
 
-function cityOne() {
-    localStorage.setItem("lastSelectedLevel", '1');
+function cityFive() {
+    localStorage.setItem("lastSelectedLevel", '5');
     window.location.href = "game.html";
 }
-function cityTwo() {
-    localStorage.setItem('lastSelectedLevel', '2');
+function citySix() {
+    localStorage.setItem('lastSelectedLevel', '6');
     window.location.href = "game.html";
 }
-function cityThree() {
-    localStorage.setItem('lastSelectedLevel', '3');
+function citySeven() {
+    localStorage.setItem('lastSelectedLevel', '7');
     window.location.href = "game.html";
 }
-function cityFour() {
-    localStorage.setItem('lastSelectedLevel', '4');
+function cityEight() {
+    localStorage.setItem('lastSelectedLevel', '8');
     window.location.href = "game.html";
 }
 
@@ -65,25 +66,25 @@ class character {
         // Uses locally stored "lastSelectedLevel" to set char starting position
         let lastSelected = localStorage.getItem("lastSelectedLevel");
         switch(lastSelected) {
-            case '2': {
-                this.levelPosition = '2';
+            case '6': {
+                this.levelPosition = '6';
                 this.x = cityTwoLocation[0];
                 this.y = cityTwoLocation[1] - charOffset;
                 break;
             }
-            case '3': {
-                this.levelPosition = '3';
+            case '7': {
+                this.levelPosition = '7';
                 this.x = cityThreeLocation[0];
                 this.y = cityThreeLocation[1] - charOffset;
                 break;
             }
-            case '4': {
-                this.levelPosition = '4';
+            case '8': {
+                this.levelPosition = '8';
                 this.x = cityFourLocation[0];
                 this.y = cityFourLocation[1] - charOffset;
             }
             default: {
-                this.levelPosition = '1';
+                this.levelPosition = '5';
                 this.x = cityOneLocation[0];
                 this.y = cityOneLocation[1] - charOffset;
             }
@@ -95,31 +96,35 @@ class character {
     // returns location of city to be moved to if a move can be made
     move(input) {
         switch(this.levelPosition) {
-            case '1': {
-                if(input === 'a' && unlocked >= 2) {
-                    return cityTwoLocation.concat(['2']);
-                } 
+            case '5': {
+                if(input === 'a' && unlocked >= 6) {
+                    return cityTwoLocation.concat(['6']);
+                } if(input === 's' && unlocked >= 7) {
+                    return cityThreeLocation.concat(['7']);
+                }
                 break;
             } 
-            case '2': {
-                if(input === 's' && unlocked >= 4) {
-                    return cityFourLocation.concat(['4']);
-                } else if(input === 'a' && unlocked >= 3) {
-                    return cityThreeLocation.concat(['3']);
+            case '6': {
+                if(input === 'a' && unlocked >= 8) {
+                    return cityFourLocation.concat(['8']);
                 } else if(input === 'd') {
-                    return cityOneLocation.concat(['1']);
+                    return cityOneLocation.concat(['5']);
                 }
                 break;
             }
-            case '3': {
-                if(input === 'd') {
-                    return cityTwoLocation.concat(['2']);
-                } 
+            case '7': {
+                if(input === 'w') {
+                    return cityOneLocation.concat(['5']);
+                } else if(input === 'a') {
+                    return cityFourLocation.concat(['8']);
+                }
                 break;
             }
-            case '4': {
-                if(input === 'w') {
-                    return cityTwoLocation.concat(['2']);
+            case '8': {
+                if(input === 'w' || input === 'd') {
+                    return cityTwoLocation.concat(['6']);
+                } else if(input === 's') {
+                    return cityThreeLocation.concat(['7']);
                 }
             }
         }
@@ -128,22 +133,22 @@ class character {
 
     updatePos() {
         switch(this.levelPosition) {
-            case '1': {
+            case '5': {
                 this.x = cityOneLocation[0];
                 this.y = cityOneLocation[1] - charOffset;
                 break;
             }
-            case '2': {
+            case '6': {
                 this.x = cityTwoLocation[0];
                 this.y = cityTwoLocation[1] - charOffset;
                 break;
             }
-            case '3': {
+            case '7': {
                 this.x = cityThreeLocation[0];
                 this.y = cityThreeLocation[1] - charOffset;
                 break;
             }
-            case '4': {
+            case '8': {
                 this.x = cityFourLocation[0];
                 this.y = cityFourLocation[1] - charOffset;
                 break;
@@ -176,12 +181,12 @@ class level {
 }
 
 function preload() {
-    map = loadImage('assets/final_design/MapStuff/Island_1.png');
+    map = loadImage('assets/final_design/MapStuff/Island_2.png');
     levelLockImg = loadImage('assets/final_design/MapStuff/levelMarkers/Fancy_Lock_Closed.png');
-    levelOneImg = loadImage('assets/final_design/MapStuff/levelMarkers/1.png');
-    levelTwoImg = loadImage('assets/final_design/MapStuff/levelMarkers/2.png');
-    levelThreeImg = loadImage('assets/final_design/MapStuff/levelMarkers/3.png');
-    levelFourImg = loadImage('assets/final_design/MapStuff/levelMarkers/4.png');
+    levelOneImg = loadImage('assets/final_design/MapStuff/levelMarkers/5.png');
+    levelTwoImg = loadImage('assets/final_design/MapStuff/levelMarkers/6.png');
+    levelThreeImg = loadImage('assets/final_design/MapStuff/levelMarkers/7.png');
+    levelFourImg = loadImage('assets/final_design/MapStuff/levelMarkers/8.png');
 
     idleAnimation = loadImage('assets/final_design/MapStuff/Team_Bus.gif');
     runningAnimation = idleAnimation;
@@ -189,10 +194,10 @@ function preload() {
 }
 
 function createLevelButtons() {
-    cityOneLocation = [windowWidth / 1.56, windowHeight / 2.3];
-    cityTwoLocation = [windowWidth / 2.95, windowHeight / 2.2];
-    cityThreeLocation = [windowWidth / 7.7, windowHeight / 4.4];
-    cityFourLocation = [windowWidth / 2.5, windowHeight / 1.22];
+    cityOneLocation = [windowWidth / 1.37, windowHeight / 2.23];
+    cityTwoLocation = [windowWidth / 2.25, windowHeight / 3.2];
+    cityThreeLocation = [windowWidth / 1.54, windowHeight / 1.3];
+    cityFourLocation = [windowWidth / 4.5, windowHeight / 1.8];
 
     levels = [];
 
@@ -200,13 +205,13 @@ function createLevelButtons() {
     levels.push(new level(levelTwoImg, cityTwoLocation[0], cityTwoLocation[1]));
     levels.push(new level(levelThreeImg, cityThreeLocation[0], cityThreeLocation[1]));
     levels.push(new level(levelFourImg, cityFourLocation[0], cityFourLocation[1]));
-    if(unlocked >= 2) {
+    if(unlocked >= 6) {
         levels[1].lock = false;
     }
-    if(unlocked >= 3) {
+    if(unlocked >= 7) {
         levels[2].lock = false;
     }
-    if(unlocked >= 4) {
+    if(unlocked >= 8) {
         levels[3].lock = false;
     }
 
@@ -219,10 +224,10 @@ function setup() {
     createLevelButtons();
     
 
-    lvlIndx['1'] = [levels[0], cityOne];
-    lvlIndx['2'] = [levels[1], cityTwo];
-    lvlIndx['3'] = [levels[2], cityThree];
-    lvlIndx['4'] = [levels[3], cityFour];
+    lvlIndx['5'] = [levels[0], cityFive];
+    lvlIndx['6'] = [levels[1], citySix];
+    lvlIndx['7'] = [levels[2], citySeven];
+    lvlIndx['8'] = [levels[3], cityEight];
 
     char = new character;
 
@@ -286,12 +291,106 @@ function generalAnimAlgo() {
     }
 }
 
-function fourtotwo() {
-    if(animCounter < 3) {
+function fivetosix() {
+    if(char.x > windowWidth / 2.4) {
+        char.x -= charMoveSpeed;
+    } else {
+        generalAnimAlgo();
+    }
+}
+
+function sixtofive() {
+    if(char.x < windowWidth / 2.1) {
+        char.x += charMoveSpeed;
+    } else {
+        generalAnimAlgo();
+    }
+}
+
+function fivetoseven() {
+    if(char.x > windowWidth / 1.5) {
         char.x -= charMoveSpeed;
         ++animCounter;
-    } else if(animCounter < 36) {
+    } else if(char.y < windowHeight / 1.7) {
+        char.y += charMoveSpeed;
+        ++animCounter;
+    } else if(animCounter < 34) {
+        char.x -= charMoveSpeed;
+        ++animCounter
+    } else if(animCounter < 45) {
+        char.y += charMoveSpeed;
+        ++animCounter
+    } else {
+        generalAnimAlgo();
+    }
+}
+
+function seventofive() {
+    if(animCounter < 5) {
+        char.x -= charMoveSpeed;
+        ++animCounter;
+    } else if (animCounter < 24) {
         char.y -= charMoveSpeed;
+        ++animCounter;
+    } else if (animCounter < 38) {
+        char.x += charMoveSpeed;
+        ++animCounter;
+    } else {
+        generalAnimAlgo();
+    }
+}
+
+function seventoeight() {
+    if (animCounter < 33) {
+        char.x -= charMoveSpeed;
+        ++animCounter;
+    } else if (animCounter < 45) {
+        char.y -= charMoveSpeed;
+        ++animCounter;
+    } else if (animCounter < 85) {
+        char.x -= charMoveSpeed;
+        ++animCounter;
+    } else {
+        generalAnimAlgo();
+    }
+}
+
+function eighttoseven() {
+    if(animCounter < 3) {
+        char.x += charMoveSpeed;
+        ++animCounter;
+    } else if (animCounter < 10) {
+        char.y += charMoveSpeed;
+        ++animCounter;
+    } else if (animCounter < 56) {
+        char.x += charMoveSpeed;
+        ++animCounter;
+    } else if (animCounter < 68) {
+        char.y += charMoveSpeed;
+        ++animCounter;
+    } else {
+        generalAnimAlgo();
+    }
+}
+
+function eighttosix() {
+    if(animCounter < 22) {
+        char.x += charMoveSpeed;
+        ++animCounter;
+    } else if (animCounter < 44) {
+        char.y -= charMoveSpeed;
+        ++animCounter;
+    } else {
+        generalAnimAlgo();
+    }
+}
+
+function sixtoeight() {
+    if(animCounter < 19) {
+        char.x -= charMoveSpeed;
+        ++animCounter;
+    } else if(animCounter < 41) {
+        char.y += charMoveSpeed;
         ++animCounter;
     } else {
         generalAnimAlgo();
@@ -312,8 +411,23 @@ function draw() {
     char.drawChar();
 
     if(!animFinished) {
-        if(char.levelPosition === '4' && nextPos[2] === '2') {
-            fourtotwo();
+        
+        if(char.levelPosition === '5' && nextPos[2] === '6') {
+            fivetosix();
+        } else if (char.levelPosition === '6' && nextPos[2] === '5') {
+            sixtofive();
+        } else if (char.levelPosition === '5' && nextPos[2] === '7') {
+            fivetoseven();
+        } else if (char.levelPosition === '7' && nextPos[2] === '5') {
+            seventofive();
+        } else if (char.levelPosition === '7' && nextPos[2] === '8') {
+            seventoeight();
+        } else if (char.levelPosition === '8' && nextPos[2] === '7') {
+            eighttoseven();
+        } else if (char.levelPosition === '8' && nextPos[2] === '6') {
+            eighttosix();
+        } else if (char.levelPosition === '6' && nextPos[2] === '8') {
+            sixtoeight();
         } else {
             generalAnimAlgo();
         }
