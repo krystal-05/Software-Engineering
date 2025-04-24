@@ -52,7 +52,7 @@ let audioButton;
 gameState = "game";
 // Difficulty
 let generalDifficultyScale = 1;
-
+const selectedCharacter = localStorage.getItem("confirmedPreset");
 let audio8;
 
 function preload() {
@@ -72,15 +72,28 @@ function preload() {
     }
     bgTopImage = loadImage('assets/final_design/topDownView.png');
 
+    if(selectedCharacter === "Claira") {
+        playerImage = loadImage('assets/final_design/Claira/Claira.png');
+        playerIdleGif = loadImage('assets/final_design/Claira/ClairaBaseIdle.gif');
+        playerBatterIdle = loadImage('assets/final_design/Claira/ClairaBatIdle.gif');
+        ClairaBatRunLft = loadImage('assets/final_design/Claira/ClairaBatRunLft.gif');
+        ClairaBatRunRight = loadImage('assets/final_design/Claira/ClairaBatRunRght.gif');
+        playerBatterSwung = loadImage('assets/final_design/Claira/ClairaBatSwing.png');
+    }
+    else if(selectedCharacter === "Clarke"){
+        playerImage = loadImage('assets/final_design/Clarke/Clarke.png');
+        playerIdleGif = loadImage('assets/final_design/Clarke/ClarkeBaseIdle.gif');
+        playerBatterIdle = loadImage('assets/final_design/Clarke/ClarkeBatIdle.gif');
+        ClarkeBatRunLft = loadImage('assets/final_design/Clarke/ClarkeBatRunLft.gif');
+        ClarkeBatRunRight = loadImage('assets/final_design/Clarke/ClarkeBatRunRght.gif');
+        playerBatterSwung = loadImage('assets/final_design/Clarke/ClarkeBatSwing.png');
+    }
+
     blueBatterIdle = loadImage('assets/final_design/BlueTeam/BlueBatIdle.gif');
     redBatterIdle = loadImage('assets/final_design/RedTeam/RedBatIdle.gif');
-    playerBatterIdle = loadImage('assets/final_design/Clarke/ClarkeBatIdle.gif');
 
     blueBatterSwung = loadImage('assets/final_design/BlueTeam/BlueBatSwing.png');
     redBatterSwung = loadImage('assets/final_design/RedTeam/RedBatSwing.png');
-    playerBatterSwung = loadImage('assets/final_design/Clarke/ClarkBatSwing.png');
-
-    playerIdleGif = loadImage('assets/final_design/Clarke/ClarkeBaseIdle.gif'); //player idle
 
     redFielderIdleGif = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
     blueFielderIdleGif = loadImage('assets/final_design/BlueTeam/BlueFieldIdle.gif');
@@ -625,7 +638,15 @@ function drawPlayers() {
     
         if (runner.player) {
             if (runner.running) {
-                img = isMovingRight ? blueRunnerRunningRightGif : blueRunnerRunningLeftGif;
+                if(selectedCharacter === "Claira") {
+                    img = isMovingRight ? ClairaBatRunRight : ClairaBatRunLft;
+                }
+                else if(selectedCharacter === "Clarke"){
+                    img = isMovingRight ? ClarkeBatRunRight : ClarkeBatRunLft;
+                }
+                else {
+                    img = isMovingRight ? blueRunnerRunningRightGif : blueRunnerRunningLeftGif;
+                }
             } 
             else {
                 img = playerIdleGif;
