@@ -231,6 +231,7 @@ function setup() {
 
     loadVolumeSetting();
     createModal();
+    hideLoadingScreen();
 }
 
 function keyPressed() {

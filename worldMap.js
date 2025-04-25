@@ -114,6 +114,7 @@ function setup(){
     
     loadVolumeSetting();
     createModal();
+    hideLoadingScreen();
 }
 
 
