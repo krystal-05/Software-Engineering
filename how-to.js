@@ -68,6 +68,7 @@ function setup() {
         }
         
     ];
+    hideLoadingScreen();
 }
 
 function draw() {

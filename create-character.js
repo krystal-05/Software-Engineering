@@ -31,6 +31,7 @@ function setup() {
 
     createCharacterButtons();
     createModal();
+    hideLoadingScreen();
 }
 
 function draw() {

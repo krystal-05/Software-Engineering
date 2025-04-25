@@ -191,6 +191,7 @@ function setup() {
     createWinPopup();
     createLosePopup();
     createDonePopup();
+    hideLoadingScreen();
 }
 
 function draw() {

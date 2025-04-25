@@ -108,6 +108,7 @@ function setup(){
     
     loadVolumeSetting();
     createModal();
+    hideLoadingScreen();
 }
 
 class character {
