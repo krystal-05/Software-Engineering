@@ -1,5 +1,7 @@
 let map;
 let unlocked;
+let backButton;
+let buttonImg, buttonImgHover;
 let idleAnimation;
 let runningAnimation;
 let levelOneImg, levelTwoImg, levelThreeImg, levelFourImg;
@@ -56,6 +58,9 @@ function cityThree() {
 function cityFour() {
     localStorage.setItem('lastSelectedLevel', '4');
     window.location.href = "game.html";
+}
+function goBack() {
+    window.location.href = "worldMap.html";
 }
 
 class character {
@@ -185,6 +190,9 @@ function preload() {
     levelTwoImg = loadImage('assets/final_design/MapStuff/levelMarkers/2.png');
     levelThreeImg = loadImage('assets/final_design/MapStuff/levelMarkers/3.png');
     levelFourImg = loadImage('assets/final_design/MapStuff/levelMarkers/4.png');
+    buttonImg = loadImage('assets/final_design/MapStuff/backbuttonMap.png');
+    buttonImgHover = loadImage('assets/final_design/MapStuff/backbuttonMapHover.png');
+
 
     idleAnimation = loadImage('assets/final_design/MapStuff/Team_Bus.gif');
     runningAnimation = idleAnimation;
@@ -213,6 +221,8 @@ function createLevelButtons() {
         levels[3].lock = false;
     }
 
+    backButton = new Button('', windowWidth * .1, windowHeight * .9, 258.3, 100, buttonImg, buttonImgHover, goBack);
+
     charXOffset = windowWidth / 25;
     charYOffset = windowHeight / 17;
 }
@@ -222,7 +232,6 @@ function setup() {
     
     createLevelButtons();
     
-
     lvlIndx['1'] = [levels[0], cityOne];
     lvlIndx['2'] = [levels[1], cityTwo];
     lvlIndx['3'] = [levels[2], cityThree];
@@ -233,6 +242,15 @@ function setup() {
     loadVolumeSetting();
     createModal();
     hideLoadingScreen();
+}
+
+function mousePressed() {
+    if(inputEnabled) {
+        if(backButton.isHovered() && backButton.action) {
+            buttonClick();
+                setTimeout(() => backButton.action(), 200);
+        }
+    }
 }
 
 function keyPressed() {
@@ -351,6 +369,8 @@ function draw() {
     background(0);
     image(map, 0, 0, windowWidth, windowHeight);
     cursor('default');
+
+    backButton.display();
 
     imageMode(CENTER);
     for (let lvl of levels) {
