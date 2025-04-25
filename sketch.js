@@ -39,6 +39,7 @@ function setup() {
     loadMenuButtons();
     createModal();
     createInitialPopup();
+    hideLoadingScreen();
 }
 
 function draw() {

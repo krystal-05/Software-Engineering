@@ -14,6 +14,7 @@ function setup() {
 
     backButton = new Button("Back", 175, height - 50, 200, 50, null, null, () => backToMenu());
     createModal();
+    hideLoadingScreen();
 }
 
 function draw() {
