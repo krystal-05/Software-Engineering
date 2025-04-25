@@ -9,7 +9,7 @@ let cityTwoLocation;
 let cityThreeLocation;
 let cityFourLocation;
 let charMoveSpeed = 10;
-let charOffset;
+let charXOffset, charYOffset;
 let nextPos = [];
 let levels = [];
 let lvlIndx = {};
@@ -67,25 +67,25 @@ class character {
         switch(lastSelected) {
             case '2': {
                 this.levelPosition = '2';
-                this.x = cityTwoLocation[0];
-                this.y = cityTwoLocation[1] - charOffset;
+                this.x = cityTwoLocation[0] + charXOffset;
+                this.y = cityTwoLocation[1] - charYOffset;
                 break;
             }
             case '3': {
                 this.levelPosition = '3';
-                this.x = cityThreeLocation[0];
-                this.y = cityThreeLocation[1] - charOffset;
+                this.x = cityThreeLocation[0] + charXOffset;
+                this.y = cityThreeLocation[1] - charYOffset;
                 break;
             }
             case '4': {
                 this.levelPosition = '4';
-                this.x = cityFourLocation[0];
-                this.y = cityFourLocation[1] - charOffset;
+                this.x = cityFourLocation[0] + charXOffset;
+                this.y = cityFourLocation[1] - charYOffset;
             }
             default: {
                 this.levelPosition = '1';
-                this.x = cityOneLocation[0];
-                this.y = cityOneLocation[1] - charOffset;
+                this.x = cityOneLocation[0] + charXOffset;
+                this.y = cityOneLocation[1] - charYOffset;
             }
         }
         this.width = 108;
@@ -129,30 +129,32 @@ class character {
     updatePos() {
         switch(this.levelPosition) {
             case '1': {
-                this.x = cityOneLocation[0];
-                this.y = cityOneLocation[1] - charOffset;
+                this.x = cityOneLocation[0] + charXOffset;
+                this.y = cityOneLocation[1] - charYOffset;
                 break;
             }
             case '2': {
-                this.x = cityTwoLocation[0];
-                this.y = cityTwoLocation[1] - charOffset;
+                this.x = cityTwoLocation[0] + charXOffset;
+                this.y = cityTwoLocation[1] - charYOffset;
                 break;
             }
             case '3': {
-                this.x = cityThreeLocation[0];
-                this.y = cityThreeLocation[1] - charOffset;
+                this.x = cityThreeLocation[0] + charXOffset;
+                this.y = cityThreeLocation[1] - charYOffset;
                 break;
             }
             case '4': {
-                this.x = cityFourLocation[0];
-                this.y = cityFourLocation[1] - charOffset;
+                this.x = cityFourLocation[0] + charXOffset;
+                this.y = cityFourLocation[1] - charYOffset;
                 break;
             }
         }
     }
 
     drawChar() {
+        imageMode(CENTER);
         image(char.img, char.x, char.y, char.width, char.height);
+        imageMode(CORNER);
     }
 }
 
@@ -190,9 +192,9 @@ function preload() {
 
 function createLevelButtons() {
     cityOneLocation = [windowWidth / 1.56, windowHeight / 2.3];
-    cityTwoLocation = [windowWidth / 2.95, windowHeight / 2.2];
+    cityTwoLocation = [windowWidth / 2.95, windowHeight / 2.13];
     cityThreeLocation = [windowWidth / 7.7, windowHeight / 4.4];
-    cityFourLocation = [windowWidth / 2.5, windowHeight / 1.22];
+    cityFourLocation = [windowWidth / 2.5, windowHeight / 1.21];
 
     levels = [];
 
@@ -210,7 +212,8 @@ function createLevelButtons() {
         levels[3].lock = false;
     }
 
-    charOffset = windowHeight / 12;
+    charXOffset = windowWidth / 25;
+    charYOffset = windowHeight / 17;
 }
 
 function setup() {
@@ -258,32 +261,38 @@ function windowResized() {
 }
 
 function generalAnimAlgo() {
-    if(nextPos[0] === char.x && nextPos[1] - charOffset === char.y) {
+    if(nextPos[0] + charXOffset === char.x && nextPos[1] - charYOffset === char.y) {
         animFinished = true;
         animCounter = 0;
         char.levelPosition = nextPos[2];
         char.img = idleAnimation;
+        animLock = true;
+        animLock2 = true;
     }
 
-    if(abs(nextPos[0] - char.x) < charMoveSpeed) {
-        char.x = nextPos[0];
+    if(abs(nextPos[0] + charXOffset - char.x) < charMoveSpeed) {
+        char.x = nextPos[0] + charXOffset;
     }
 
-    if(abs(nextPos[1] - charOffset - char.y) < charMoveSpeed) {
-        char.y = nextPos[1] - charOffset;
+    if(abs(nextPos[1] - charYOffset - char.y) < charMoveSpeed) {
+        char.y = nextPos[1] - charYOffset;
     }
 
-    if (nextPos[0] < char.x) {
+    if (nextPos[0] + charXOffset < char.x) {
         char.x -= charMoveSpeed;
-    } else if (nextPos[0] > char.x) {
+    } else if (nextPos[0] + charXOffset > char.x) {
         char.x += charMoveSpeed;
     }
 
-    if (nextPos[1] - charOffset < char.y) {
+    if (nextPos[1] - charYOffset < char.y) {
         char.y -= charMoveSpeed;
-    } else if (nextPos[1] - charOffset > char.y){
+    } else if (nextPos[1] - charYOffset > char.y){
         char.y += charMoveSpeed;
     }
+}
+
+function onetotwo() {
+    
 }
 
 function fourtotwo() {
@@ -312,7 +321,9 @@ function draw() {
     char.drawChar();
 
     if(!animFinished) {
-        if(char.levelPosition === '4' && nextPos[2] === '2') {
+        if(char.levelPosition === '1' && nextPos[2] === '2') {
+            onetotwo();
+        } else if(char.levelPosition === '4' && nextPos[2] === '2') {
             fourtotwo();
         } else {
             generalAnimAlgo();

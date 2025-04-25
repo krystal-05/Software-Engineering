@@ -8,8 +8,11 @@ let cityOneLocation;
 let cityTwoLocation;
 let cityThreeLocation;
 let cityFourLocation;
+let firstStop, secondStop, thirdStop, fourthStop;
+let animLock = true;
+let animLock2 = true;
 let charMoveSpeed = 10;
-let charOffset;
+let charXOffset, charYOffset;
 let nextPos = [];
 let levels = [];
 let lvlIndx = {};
@@ -68,25 +71,25 @@ class character {
         switch(lastSelected) {
             case '6': {
                 this.levelPosition = '6';
-                this.x = cityTwoLocation[0];
-                this.y = cityTwoLocation[1] - charOffset;
+                this.x = cityTwoLocation[0] + charXOffset;
+                this.y = cityTwoLocation[1] - charYOffset;
                 break;
             }
             case '7': {
                 this.levelPosition = '7';
-                this.x = cityThreeLocation[0];
-                this.y = cityThreeLocation[1] - charOffset;
+                this.x = cityThreeLocation[0] + charXOffset;
+                this.y = cityThreeLocation[1] - charYOffset;
                 break;
             }
             case '8': {
                 this.levelPosition = '8';
-                this.x = cityFourLocation[0];
-                this.y = cityFourLocation[1] - charOffset;
+                this.x = cityFourLocation[0] + charXOffset;
+                this.y = cityFourLocation[1] - charYOffset;
             }
             default: {
                 this.levelPosition = '5';
-                this.x = cityOneLocation[0];
-                this.y = cityOneLocation[1] - charOffset;
+                this.x = cityOneLocation[0] + charXOffset;
+                this.y = cityOneLocation[1] - charYOffset;
             }
         }
         this.width = 108;
@@ -134,30 +137,32 @@ class character {
     updatePos() {
         switch(this.levelPosition) {
             case '5': {
-                this.x = cityOneLocation[0];
-                this.y = cityOneLocation[1] - charOffset;
+                this.x = cityOneLocation[0] + charXOffset;
+                this.y = cityOneLocation[1] - charYOffset;
                 break;
             }
             case '6': {
-                this.x = cityTwoLocation[0];
-                this.y = cityTwoLocation[1] - charOffset;
+                this.x = cityTwoLocation[0] + charXOffset;
+                this.y = cityTwoLocation[1] - charYOffset;
                 break;
             }
             case '7': {
-                this.x = cityThreeLocation[0];
-                this.y = cityThreeLocation[1] - charOffset;
+                this.x = cityThreeLocation[0] + charXOffset;
+                this.y = cityThreeLocation[1] - charYOffset;
                 break;
             }
             case '8': {
-                this.x = cityFourLocation[0];
-                this.y = cityFourLocation[1] - charOffset;
+                this.x = cityFourLocation[0] + charXOffset;
+                this.y = cityFourLocation[1] - charYOffset;
                 break;
             }
         }
     }
 
     drawChar() {
+        imageMode(CENTER);
         image(char.img, char.x, char.y, char.width, char.height);
+        imageMode(CORNER);
     }
 }
 
@@ -215,7 +220,8 @@ function createLevelButtons() {
         levels[3].lock = false;
     }
 
-    charOffset = windowHeight / 12;
+    charXOffset = windowWidth / 25;
+    charYOffset = windowHeight / 17;
 }
 
 function setup() {
@@ -263,136 +269,173 @@ function windowResized() {
 }
 
 function generalAnimAlgo() {
-    if(nextPos[0] === char.x && nextPos[1] - charOffset === char.y) {
+    if(nextPos[0] + charXOffset === char.x && nextPos[1] - charYOffset === char.y) {
         animFinished = true;
         animCounter = 0;
         char.levelPosition = nextPos[2];
         char.img = idleAnimation;
+        animLock = true;
+        animLock2 = true;
     }
 
-    if(abs(nextPos[0] - char.x) < charMoveSpeed) {
-        char.x = nextPos[0];
+    if(abs(nextPos[0] + charXOffset - char.x) < charMoveSpeed) {
+        char.x = nextPos[0] + charXOffset;
     }
 
-    if(abs(nextPos[1] - charOffset - char.y) < charMoveSpeed) {
-        char.y = nextPos[1] - charOffset;
+    if(abs(nextPos[1] - charYOffset - char.y) < charMoveSpeed) {
+        char.y = nextPos[1] - charYOffset;
     }
 
-    if (nextPos[0] < char.x) {
+    if (nextPos[0] + charXOffset < char.x) {
         char.x -= charMoveSpeed;
-    } else if (nextPos[0] > char.x) {
+    } else if (nextPos[0] + charXOffset > char.x) {
         char.x += charMoveSpeed;
     }
 
-    if (nextPos[1] - charOffset < char.y) {
+    if (nextPos[1] - charYOffset < char.y) {
         char.y -= charMoveSpeed;
-    } else if (nextPos[1] - charOffset > char.y){
+    } else if (nextPos[1] - charYOffset > char.y){
         char.y += charMoveSpeed;
     }
 }
 
 function fivetosix() {
-    if(char.x > windowWidth / 2.4) {
+    firstStop = windowWidth * .59;
+    if(char.x > firstStop && animLock) {
         char.x -= charMoveSpeed;
     } else {
+        animLock = false;
         generalAnimAlgo();
     }
 }
 
 function sixtofive() {
-    if(char.x < windowWidth / 2.1) {
+    let firstStop = windowWidth * .5;
+    if(char.x < firstStop) {
         char.x += charMoveSpeed;
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
     } else {
         generalAnimAlgo();
     }
 }
 
 function fivetoseven() {
-    if(char.x > windowWidth / 1.5) {
+    firstStop = windowWidth * .73;
+    secondStop = windowHeight * .52;
+    thirdStop = windowWidth * .65;
+    fourthStop = (windowHeight / 1.3) - charYOffset;
+
+    if(char.x > firstStop && animLock) {
         char.x -= charMoveSpeed;
-        ++animCounter;
-    } else if(char.y < windowHeight / 1.7) {
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else if (char.y < secondStop && animLock) { 
         char.y += charMoveSpeed;
-        ++animCounter;
-    } else if(animCounter < 34) {
+        if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop;
+    } else if (char.x > thirdStop && animLock) {
         char.x -= charMoveSpeed;
-        ++animCounter
-    } else if(animCounter < 45) {
+        if(abs(char.x - thirdStop) < charMoveSpeed) char.x = thirdStop;
+    } else if (char.y < fourthStop && animLock) {
         char.y += charMoveSpeed;
-        ++animCounter
+        if(abs(char.y - fourthStop) < charMoveSpeed) char.y = fourthStop;
     } else {
+        animLock = false;
         generalAnimAlgo();
     }
 }
 
 function seventofive() {
-    if(animCounter < 5) {
+    firstStop = windowWidth * .65;
+    secondStop = windowHeight * .52;
+    thirdStop = windowWidth * .73;
+    fourthStop = (windowHeight / 2.23) - charYOffset;
+
+    if(char.x > firstStop && animLock && animLock2) {
         char.x -= charMoveSpeed;
-        ++animCounter;
-    } else if (animCounter < 24) {
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else if(char.y > secondStop && animLock && animLock2) {
         char.y -= charMoveSpeed;
-        ++animCounter;
-    } else if (animCounter < 38) {
+        if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop;
+    } else if(char.x < thirdStop && animLock) {
+        animLock2 = false;
         char.x += charMoveSpeed;
-        ++animCounter;
+        if(abs(char.x - thirdStop) < charMoveSpeed) char.x = thirdStop;
+    } else if(char.y > fourthStop && animLock) {
+        char.y -= charMoveSpeed;
+        if(abs(char.y - fourthStop) < charMoveSpeed) char.y = fourthStop;
     } else {
+        animLock = false;
         generalAnimAlgo();
     }
 }
 
 function seventoeight() {
-    if (animCounter < 33) {
+    firstStop = windowWidth * .51;
+    secondStop = windowHeight * .58;
+    thirdStop = windowWidth * .27;
+
+    if(char.x > firstStop && animLock) {
         char.x -= charMoveSpeed;
-        ++animCounter;
-    } else if (animCounter < 45) {
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else if(char.y > secondStop && animLock) { 
         char.y -= charMoveSpeed;
-        ++animCounter;
-    } else if (animCounter < 85) {
+        if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop;
+    } else if(char.x > thirdStop && animLock) {
         char.x -= charMoveSpeed;
-        ++animCounter;
+        if(abs(char.x - thirdStop) < charMoveSpeed) char.x = thirdStop;
     } else {
+        animLock = false;
         generalAnimAlgo();
     }
 }
 
 function eighttoseven() {
-    if(animCounter < 3) {
-        char.x += charMoveSpeed;
-        ++animCounter;
-    } else if (animCounter < 10) {
+    firstStop = windowHeight * .58;
+    secondStop = windowWidth * .51;
+    thirdStop = (windowHeight / 1.3) - charYOffset;
+
+    if(char.y < firstStop && animLock) {
         char.y += charMoveSpeed;
-        ++animCounter;
-    } else if (animCounter < 56) {
+        if(abs(char.y - firstStop) < charMoveSpeed) char.y = firstStop;
+    } else if (char.x < secondStop && animLock) {
         char.x += charMoveSpeed;
-        ++animCounter;
-    } else if (animCounter < 68) {
+        if(abs(char.x - secondStop) < charMoveSpeed) char.x = secondStop;
+    } else if (char.y < thirdStop && animLock) {
         char.y += charMoveSpeed;
-        ++animCounter;
+        if(abs(char.y - thirdStop) < charMoveSpeed) char.y = thirdStop;
     } else {
+        animLock = false;
         generalAnimAlgo();
     }
 }
 
 function eighttosix() {
-    if(animCounter < 22) {
+    firstStop = windowWidth * .37;
+    secondStop = (windowHeight / 3.2) - charYOffset;
+
+    if(char.x < firstStop && animLock) {
         char.x += charMoveSpeed;
-        ++animCounter;
-    } else if (animCounter < 44) {
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else if(char.y > secondStop && animLock) { 
         char.y -= charMoveSpeed;
-        ++animCounter;
+        if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop
     } else {
+        animLock = false;
         generalAnimAlgo();
     }
 }
 
 function sixtoeight() {
-    if(animCounter < 19) {
+    firstStop = windowWidth * .37;
+    secondStop = (windowHeight / 1.8) - charYOffset;
+
+    if(char.x > firstStop && animLock) {
         char.x -= charMoveSpeed;
-        ++animCounter;
-    } else if(animCounter < 41) {
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else if (char.y < secondStop && animLock) {
         char.y += charMoveSpeed;
-        ++animCounter;
+        if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop;
     } else {
+        animLock = false;
         generalAnimAlgo();
     }
 }
