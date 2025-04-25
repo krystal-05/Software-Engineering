@@ -16,7 +16,8 @@ let lvlIndx = {};
 let settingMenu = false;
 let audioSelectionMenu = false;
 let animFinished = true;
-let animCounter = 0;
+let animLock = true;
+let animLock2 = true;
 gamestate = "continent1map";
 
 function loadVolumeSetting() {
@@ -191,7 +192,7 @@ function preload() {
 }
 
 function createLevelButtons() {
-    cityOneLocation = [windowWidth / 1.56, windowHeight / 2.3];
+    cityOneLocation = [windowWidth / 1.56, windowHeight / 2.28];
     cityTwoLocation = [windowWidth / 2.95, windowHeight / 2.13];
     cityThreeLocation = [windowWidth / 7.7, windowHeight / 4.4];
     cityFourLocation = [windowWidth / 2.5, windowHeight / 1.21];
@@ -247,7 +248,6 @@ function keyPressed() {
             animFinished = false;
         } else if (keyCode === ENTER) {
             playSoundEffect("buttonSound");
-            localStorage.setItem("thisLevel", char.levelPosition);
             lvlIndx[char.levelPosition][1]();
         }
         
@@ -264,7 +264,6 @@ function windowResized() {
 function generalAnimAlgo() {
     if(nextPos[0] + charXOffset === char.x && nextPos[1] - charYOffset === char.y) {
         animFinished = true;
-        animCounter = 0;
         char.levelPosition = nextPos[2];
         char.img = idleAnimation;
         animLock = true;
@@ -293,17 +292,57 @@ function generalAnimAlgo() {
 }
 
 function onetotwo() {
-    
+    firstStop = windowWidth * .46;
+
+    if(char.x > firstStop && animLock) { 
+        char.x -= charMoveSpeed;
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else {
+        animLock = false;
+        generalAnimAlgo();
+    }
+}
+
+function twotoone() {
+    firstStop = windowWidth * .46;
+
+    if(char.x < firstStop && animLock) { 
+        char.x += charMoveSpeed;
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else {
+        animLock = false;
+        generalAnimAlgo();
+    }
+}
+
+function twotofour() {
+    firstStop = windowWidth * .41;
+    secondStop = windowHeight * .73;
+
+    if(char.x < firstStop && animLock) {
+        char.x += charMoveSpeed;
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else if (char.y < secondStop && animLock) { 
+        char.y += charMoveSpeed;
+        if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop;
+    } else {
+        animLock = false;
+        generalAnimAlgo();
+    }
 }
 
 function fourtotwo() {
-    if(animCounter < 3) {
+    firstStop = windowWidth * .41;
+    secondStop = (windowHeight / 2.13) - charYOffset
+
+    if(char.x > firstStop && animLock) {
         char.x -= charMoveSpeed;
-        ++animCounter;
-    } else if(animCounter < 36) {
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else if (char.y > secondStop && animLock) {
         char.y -= charMoveSpeed;
-        ++animCounter;
+        if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop;
     } else {
+        animLock = false;
         generalAnimAlgo();
     }
 }
@@ -324,6 +363,10 @@ function draw() {
     if(!animFinished) {
         if(char.levelPosition === '1' && nextPos[2] === '2') {
             onetotwo();
+        } else if (char.levelPosition === '2' && nextPos[2] === '1'){
+            twotoone()
+        } else if (char.levelPosition === '2' && nextPos[2] === '4') {
+            twotofour()
         } else if(char.levelPosition === '4' && nextPos[2] === '2') {
             fourtotwo();
         } else {

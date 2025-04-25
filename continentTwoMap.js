@@ -20,7 +20,7 @@ let settingMenu = false;
 let audioSelectionMenu = false;
 let animFinished = true;
 let animCounter = 0;
-gamestate = "continent1map";
+gamestate = "continent2map";
 
 
 function loadVolumeSetting() {
@@ -302,8 +302,10 @@ function generalAnimAlgo() {
 
 function fivetosix() {
     firstStop = windowWidth * .59;
+
     if(char.x > firstStop && animLock) {
         char.x -= charMoveSpeed;
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
     } else {
         animLock = false;
         generalAnimAlgo();
