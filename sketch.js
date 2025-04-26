@@ -255,7 +255,7 @@ function keyPressed() {
     if(key === 'Escape' && gameState == "menu") {
         settingsClick();
     }
-    else if (key === 'Escape' && !(gameState == "menu")) {
+    else if (key === 'Escape' && (gameState == "loadGame")) {
         goBack();
     }
 }

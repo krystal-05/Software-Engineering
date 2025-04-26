@@ -32,7 +32,7 @@ function createInitialPopup() {
     initialPopup = document.createElement("div");
     initialPopup.classList.add("initialPopup");
     initialPopup.innerHTML = `
-   <div class="initialPopup-content">
+    <div class="initialPopup-content">
     </div>
 `;
 
@@ -42,7 +42,7 @@ function hideInitialPopup() {
     initialPopup.style.display = "none";
     gameState = "menu";  
     currSong.play();
-
+    currSong.loop();
 }
 
 function showInitialPopup() {
