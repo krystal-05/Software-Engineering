@@ -18,7 +18,7 @@ function preload() {
     howToImgHover = loadImage('assets/OHowTo_2.png');
     currSong = loadSound('sounds/mainScreenSound.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
-    premenuImage = loadImage('assets/green.png');
+    premenuImage = loadImage('assets/black.png');
 }
 
 function setup() {

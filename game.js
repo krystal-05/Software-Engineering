@@ -503,6 +503,8 @@ function perspectiveToTopDownForThrownBall(worldX, worldY, extraYOffset = 0, thr
 
 // Draw function for the top down bases and other field objects
 function drawTopDownField() {
+    if (!DEBUG) return;
+    
     stroke(255);
     strokeWeight(2);
     noFill();
