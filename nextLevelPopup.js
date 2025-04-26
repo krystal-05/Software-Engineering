@@ -95,6 +95,9 @@ function restart() {
     outs = 0;
     strikes = 0;
     topInning = true;
+    playerSideBatting = true;
+    runners = [];
+    resetBatter();
 }
 function advance() {
     if(lastSelectedLevel < 4) {
