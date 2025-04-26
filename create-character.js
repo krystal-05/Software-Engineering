@@ -110,7 +110,7 @@ function confirmCharacter() {
     localStorage.setItem("confirmedPreset", characterTag);
     localStorage.setItem("isLoad1", "true");
     localStorage.setItem("characterTag", null);
-    window.location.href = "map.html";
+    window.location.href = "worldMap.html";
 }
 
 function loadVolumeSetting() {
