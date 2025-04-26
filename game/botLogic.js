@@ -25,9 +25,14 @@ function botAttemptHit(pitchMultiplier) {
     if (hitChance >= adjustedAntiChance) {
         botHitScheduled = true;
     }
+    else {
+        totalStrikesByPlayer++;
+    }
 }
 
 function botHitBall() {
+    totalSwingsOpponent++;
+
     swingAttempt = true;
     ballHit = true;
     ball.inAir = true;
@@ -60,6 +65,7 @@ function botHitBall() {
         if (strikes < 2) strikes++;
         return;
     }
+    totalHitsOpponent++; // only count hits that are not foul
 
     powerXSaveVal = random(-xPower * 2, xPower * 2);
     ball.speedX = powerXSaveVal * 60;

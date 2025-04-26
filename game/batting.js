@@ -16,6 +16,19 @@ let powerZoneLevel = "low";
 let targetImage;
 let directionImage;
 
+let totalHomeRunsPlayer = 0;
+let totalHomeRunsOpponent = 0;
+let totalFoulsPlayer = 0;
+let totalFoulsOpponent = 0;
+let totalHitsPlayer = 0;
+let totalHitsOpponent = 0;
+let totalSwingsPlayer = 0;
+let totalSwingsOpponent = 0;
+let totalStrikeoutsPlayer = 0;
+let totalStrikeoutsOpponent = 0;
+let totalStrikesByPlayer = 0;
+let totalStrikesByOpponent = 0;
+
 function playerHit() {
     ballHit = true;
     ball.inAir = true;
@@ -59,6 +72,7 @@ function playerHit() {
         ball.foul = true;
         return;
     }
+    totalHitsPlayer++; // only count hits that are not foul
 
     //console.log("angle:", angle.toFixed(2));
     //console.log("ballVector.x:", ballVector.x.toFixed(2), "ballVector.y:", ballVector.y.toFixed(2));
@@ -97,10 +111,12 @@ function playerStrike() {
 }
 
 function userBatting() {
+    totalSwingsPlayer++;
+
     if (ball.y >= batter.y - hitZoneHeight && ball.y <= batter.y && abs(ball.x - batter.x) < hitZoneWidth * 0.5) {
-        // Successful swing/hit.
-        playerHit()
+        playerHit();
     } else {
+        totalStrikesByOpponent++;
         playerStrike();
     }
     swingAttempt = true;

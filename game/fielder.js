@@ -618,6 +618,7 @@ function handleStrikeCatch(catcher) {
     setTimeout(() => {
         resetBall();
         if (strikes >= 3) {
+            handleSideSwitchStrikeout();
             outs++;
             resetBatter();
             if (DEBUG) console.log("Strikeout! Batter is out.");
@@ -627,4 +628,12 @@ function handleStrikeCatch(catcher) {
             }
         }
     }, 500);
+}
+
+function handleSideSwitchStrikeout() {
+    if (playerSideBatting) {
+        totalStrikeoutsOpponent++;
+    } else {
+        totalStrikeoutsPlayer++;
+    }
 }
