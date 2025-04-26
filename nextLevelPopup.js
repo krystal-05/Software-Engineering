@@ -94,7 +94,6 @@ function createWinPopup() {
                 <tr><td>Strikeouts</td><td id="stat-your-strikeouts">0</td><td id="stat-opponent-strikeouts">0</td></tr>
                 <tr><td>Home Runs</td><td id="stat-your-homeruns">0</td><td id="stat-opponent-homeruns">0</td></tr>
                 <tr><td>Fouls</td><td id="stat-your-fouls">0</td><td id="stat-opponent-fouls">0</td></tr>
-                <tr><td>Outs</td><td id="stat-your-outs">0</td><td id="stat-opponent-outs">0</td></tr>
             </tbody>
         </table>
         <div class="buttons">
@@ -131,7 +130,6 @@ function updateStatsTableSingleSide(stats, isPlayerBatting, popupType = "win") {
         document.getElementById(`${prefix}stat-your-strikeouts`).textContent = stats.strikeouts;
         document.getElementById(`${prefix}stat-your-homeruns`).textContent = stats.homeruns;
         document.getElementById(`${prefix}stat-your-fouls`).textContent = stats.fouls;
-        document.getElementById(`${prefix}stat-your-outs`).textContent = stats.outs;
     } else {
         document.getElementById(`${prefix}stat-opponent-score`).textContent = stats.score;
         document.getElementById(`${prefix}stat-opponent-hits`).textContent = stats.hits;
@@ -139,7 +137,6 @@ function updateStatsTableSingleSide(stats, isPlayerBatting, popupType = "win") {
         document.getElementById(`${prefix}stat-opponent-strikeouts`).textContent = stats.strikeouts;
         document.getElementById(`${prefix}stat-opponent-homeruns`).textContent = stats.homeruns;
         document.getElementById(`${prefix}stat-opponent-fouls`).textContent = stats.fouls;
-        document.getElementById(`${prefix}stat-opponent-outs`).textContent = stats.outs;
     }
 }
 
@@ -151,8 +148,16 @@ function restart() {
     strikes = 0;
     strikeouts = 0;
     topInning = true;
+    totalHomeRunsPlayer = 0;
+    totalHomeRunsOpponent = 0;
     totalFoulsPlayer = 0;
     totalFoulsOpponent = 0;
+    totalHitsPlayer = 0;
+    totalHitsOpponent = 0;
+    totalSwingsPlayer = 0;
+    totalSwingsOpponent = 0;
+    totalStrikeoutsPlayer = 0;
+    totalStrikeoutsOpponent = 0;
 }
 
 function advance() {
@@ -179,7 +184,6 @@ function showWinPopup() {
             strikeouts: totalStrikeoutsPlayer,
             homeruns: totalHomeRunsPlayer ,
             fouls: totalFoulsPlayer,
-            outs: outs
         },
         true,
         "win"
@@ -193,7 +197,6 @@ function showWinPopup() {
             strikeouts: totalStrikeoutsOpponent,
             homeruns: totalHomeRunsOpponent,
             fouls: totalFoulsOpponent,
-            outs: outs
         },
         false, 
         "win"
@@ -294,7 +297,6 @@ function createLosePopup() {
                 <tr><td>Strikeouts</td><td id="lose-stat-your-strikeouts">0</td><td id="lose-stat-opponent-strikeouts">0</td></tr>
                 <tr><td>Home Runs</td><td id="lose-stat-your-homeruns">0</td><td id="lose-stat-opponent-homeruns">0</td></tr>
                 <tr><td>Fouls</td><td id="lose-stat-your-fouls">0</td><td id="lose-stat-opponent-fouls">0</td></tr>
-                <tr><td>Outs</td><td id="lose-stat-your-outs">0</td><td id="lose-stat-opponent-outs">0</td></tr>
             </tbody>
         </table>
 
@@ -326,7 +328,6 @@ function showLosePopup() {
             strikeouts: totalStrikeoutsPlayer,
             homeruns: totalHomeRunsPlayer ,
             fouls: totalFoulsPlayer,
-            outs: outs
         },
         true,
         "lose"
@@ -340,7 +341,6 @@ function showLosePopup() {
             strikeouts: totalStrikeoutsOpponent,
             homeruns: totalHomeRunsOpponent,
             fouls: totalFoulsOpponent,
-            outs: outs
         },
         false, 
         "lose"

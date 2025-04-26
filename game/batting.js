@@ -28,8 +28,6 @@ let totalStrikeoutsPlayer = 0;
 let totalStrikeoutsOpponent = 0;
 
 function playerHit() {
-    totalHitsPlayer++;
-
     ballHit = true;
     ball.inAir = true;
     playSoundEffect("hitBall");
@@ -72,6 +70,7 @@ function playerHit() {
         ball.foul = true;
         return;
     }
+    totalHitsPlayer++; // only count hits that are not foul
 
     //console.log("angle:", angle.toFixed(2));
     //console.log("ballVector.x:", ballVector.x.toFixed(2), "ballVector.y:", ballVector.y.toFixed(2));
