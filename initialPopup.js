@@ -11,29 +11,20 @@ function createInitialPopup() {
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
-        max-width: 100%;
-        max-height: 100%;
     }
     .initialPopup-content {
+        border: 1px solid black;
         background: url('assets/premenu.png');
         background-size: cover;
-        padding: 30px 45px;
+        padding: 100px 100px;
+        border-radius: 8px;
         text-align: center;
-        width: 100vh;
-        height: 100vh;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        width: 800px;
+        height: 600px;
+        max-width: 100%;
     }
-    .initialPopup-content p {
-        color: white;
-        text-align: center;
-        padding-left: 20px;
-        margin: 200px 0;             
-    }
-    .initialPopup-content .first_message {
-        font-size: 72px;
-    }
-    .initialPopup-content .second_message {
-        font-size: 32px;
-    }
+
     `;
     document.head.appendChild(style);
 
@@ -42,19 +33,20 @@ function createInitialPopup() {
     initialPopup.classList.add("initialPopup");
     initialPopup.innerHTML = `
    <div class="initialPopup-content">
-        <p class="first_message"><b>Welcome to Batterground!</b></p>
-        <p class="second_message"><b>Click anywhere to continue</b></p>
     </div>
 `;
 
 document.body.appendChild(initialPopup);
 }
-
-function hideInitialPopup(){
+function hideInitialPopup() {
     initialPopup.style.display = "none";
-    gameState = "menu";  // Set game state to menu after popup closes
+    gameState = "menu";  
+    currSong.play();
+
 }
 
-function showInitialPopup(){
-    initialPopup.style.display = "flex"; 
+function showInitialPopup() {
+    initialPopup.style.display = "flex";
+    document.addEventListener('click', hideInitialPopup, { once: true });
+    //set once: true so the sound doesn't repeatedly start when clicking on main menu
 }
