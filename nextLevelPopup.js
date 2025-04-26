@@ -133,7 +133,7 @@ function updateStatsTableSingleSide(stats, isPlayerBatting, popupType = "win") {
     } else {
         document.getElementById(`${prefix}stat-opponent-score`).textContent = stats.score;
         document.getElementById(`${prefix}stat-opponent-hits`).textContent = stats.hits;
-        document.getElementById(`${prefix}stat-your-strikes`).textContent = stats.strikes;
+        document.getElementById(`${prefix}stat-opponent-strikes`).textContent = stats.strikes;
         document.getElementById(`${prefix}stat-opponent-strikeouts`).textContent = stats.strikeouts;
         document.getElementById(`${prefix}stat-opponent-homeruns`).textContent = stats.homeruns;
         document.getElementById(`${prefix}stat-opponent-fouls`).textContent = stats.fouls;
@@ -182,7 +182,7 @@ function showWinPopup() {
         {
             score: score.away,
             hits: totalHitsPlayer,
-            strikes: strikes,
+            strikes: totalStrikesByPlayer,
             strikeouts: totalStrikeoutsPlayer,
             homeruns: totalHomeRunsPlayer ,
             fouls: totalFoulsPlayer,
@@ -191,11 +191,11 @@ function showWinPopup() {
         "win"
     );
 
-    updateStatsTableSingleSide(
+    updateStatsTableSingleSide( 
         {
             score: score.home,
             hits: totalHitsOpponent,
-            strikes: strikes,
+            strikes: totalStrikesByOpponent,
             strikeouts: totalStrikeoutsOpponent,
             homeruns: totalHomeRunsOpponent,
             fouls: totalFoulsOpponent,
@@ -326,7 +326,7 @@ function showLosePopup() {
         {
             score: score.away,
             hits: totalHitsPlayer,
-            strikes: strikes,
+            strikes: totalStrikesByPlayer,
             strikeouts: totalStrikeoutsPlayer,
             homeruns: totalHomeRunsPlayer ,
             fouls: totalFoulsPlayer,
@@ -339,7 +339,7 @@ function showLosePopup() {
         {
             score: score.home,
             hits: totalHitsOpponent,
-            strikes: strikes,
+            strikes: totalStrikesByOpponent,
             strikeouts: totalStrikeoutsOpponent,
             homeruns: totalHomeRunsOpponent,
             fouls: totalFoulsOpponent,

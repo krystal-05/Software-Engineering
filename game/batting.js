@@ -26,6 +26,8 @@ let totalSwingsPlayer = 0;
 let totalSwingsOpponent = 0;
 let totalStrikeoutsPlayer = 0;
 let totalStrikeoutsOpponent = 0;
+let totalStrikesByPlayer = 0;
+let totalStrikesByOpponent = 0;
 
 function playerHit() {
     ballHit = true;
@@ -114,6 +116,7 @@ function userBatting() {
     if (ball.y >= batter.y - hitZoneHeight && ball.y <= batter.y && abs(ball.x - batter.x) < hitZoneWidth * 0.5) {
         playerHit();
     } else {
+        totalStrikesByOpponent++;
         playerStrike();
     }
     swingAttempt = true;

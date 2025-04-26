@@ -25,6 +25,9 @@ function botAttemptHit(pitchMultiplier) {
     if (hitChance >= adjustedAntiChance) {
         botHitScheduled = true;
     }
+    else {
+        totalStrikesByPlayer++;
+    }
 }
 
 function botHitBall() {
