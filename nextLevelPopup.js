@@ -4,14 +4,6 @@ let donePopup;
 let restartButton;
 let nextLevelButton;
 let menuButton;
-let totalHitsPlayer = 0;
-let totalHitsOpponent = 0;
-let totalStrikeoutsPlayer = 0;
-let totalStrikeoutsOpponent = 0;
-let totalWalksPlayer = 0;
-let totalWalksOpponent = 0;
-let totalHomeRunsPlayer = 0;
-let totalHomeRunsOpponent = 0;
 
 
 function createWinPopup() {
@@ -100,7 +92,6 @@ function createWinPopup() {
                 <tr><td>Hits</td><td id="stat-your-hits">0</td><td id="stat-opponent-hits">0</td></tr>
                 <tr><td>Strikes</td><td id="stat-your-strikes">0</td><td id="stat-opponent-strikes">0</td></tr>
                 <tr><td>Strikeouts</td><td id="stat-your-strikeouts">0</td><td id="stat-opponent-strikeouts">0</td></tr>
-                <tr><td>Walks</td><td id="stat-your-walks">0</td><td id="stat-opponent-walks">0</td></tr>
                 <tr><td>Home Runs</td><td id="stat-your-homeruns">0</td><td id="stat-opponent-homeruns">0</td></tr>
                 <tr><td>Fouls</td><td id="stat-your-fouls">0</td><td id="stat-opponent-fouls">0</td></tr>
                 <tr><td>Outs</td><td id="stat-your-outs">0</td><td id="stat-opponent-outs">0</td></tr>
@@ -182,16 +173,29 @@ function showWinPopup() {
     let opponentHitAverage = (totalSwingsOpponent > 0) ? (totalHitsOpponent / totalSwingsOpponent) : 0;
     updateStatsTableSingleSide(
         {
-            score: playerSideBatting ? score.home : score.away,
-            hits: playerSideBatting ? totalHitsPlayer : totalHitsOpponent,
+            score: score.away,
+            hits: totalHitsPlayer,
             strikes: strikes,
-            strikeouts: playerSideBatting ? totalStrikeoutsPlayer : totalStrikeoutsOpponent,
-            walks: playerSideBatting ? totalWalksPlayer : totalWalksOpponent,
-            homeruns: playerSideBatting ? totalHomeRunsPlayer : totalHomeRunsOpponent,
-            fouls: playerSideBatting ? totalFoulsPlayer : totalFoulsOpponent,
+            strikeouts: totalStrikeoutsPlayer,
+            homeruns: totalHomeRunsPlayer ,
+            fouls: totalFoulsPlayer,
             outs: outs
         },
-        playerSideBatting,
+        true,
+        "win"
+    );
+
+    updateStatsTableSingleSide(
+        {
+            score: score.home,
+            hits: totalHitsOpponent,
+            strikes: strikes,
+            strikeouts: totalStrikeoutsOpponent,
+            homeruns: totalHomeRunsOpponent,
+            fouls: totalFoulsOpponent,
+            outs: outs
+        },
+        false, 
         "win"
     );
     winPopup.style.display = "flex";
@@ -316,16 +320,29 @@ function showLosePopup() {
     let opponentHitAverage = (totalSwingsOpponent > 0) ? (totalHitsOpponent / totalSwingsOpponent) : 0;
     updateStatsTableSingleSide(
         {
-            score: score.home,
-            hits: playerSideBatting ? totalHitsPlayer : totalHitsOpponent,
+            score: score.away,
+            hits: totalHitsPlayer,
             strikes: strikes,
-            strikeouts: playerSideBatting ? totalStrikeoutsPlayer : totalStrikeoutsOpponent,
-            walks: playerSideBatting ? totalWalksPlayer : totalWalksOpponent,
-            homeruns: playerSideBatting ? totalHomeRunsPlayer : totalHomeRunsOpponent,
-            fouls: playerSideBatting ? totalFoulsPlayer : totalFoulsOpponent,
+            strikeouts: totalStrikeoutsPlayer,
+            homeruns: totalHomeRunsPlayer ,
+            fouls: totalFoulsPlayer,
             outs: outs
         },
-        playerSideBatting,
+        true,
+        "lose"
+    );
+
+    updateStatsTableSingleSide(
+        {
+            score: score.home,
+            hits: totalHitsOpponent,
+            strikes: strikes,
+            strikeouts: totalStrikeoutsOpponent,
+            homeruns: totalHomeRunsOpponent,
+            fouls: totalFoulsOpponent,
+            outs: outs
+        },
+        false, 
         "lose"
     );
     losePopup.style.display = "flex";

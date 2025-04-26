@@ -16,12 +16,20 @@ let powerZoneLevel = "low";
 let targetImage;
 let directionImage;
 
+let totalHomeRunsPlayer = 0;
+let totalHomeRunsOpponent = 0;
+let totalFoulsPlayer = 0;
+let totalFoulsOpponent = 0;
+let totalHitsPlayer = 0;
+let totalHitsOpponent = 0;
+let totalSwingsPlayer = 0;
+let totalSwingsOpponent = 0;
+let totalStrikeoutsPlayer = 0;
+let totalStrikeoutsOpponent = 0;
+
 function playerHit() {
-    if (playerSideBatting) {
-        totalHitsPlayer++;
-    } else {
-        totalHitsOpponent++;
-    }
+    totalHitsPlayer++;
+
     ballHit = true;
     ball.inAir = true;
     playSoundEffect("hitBall");
@@ -102,11 +110,7 @@ function playerStrike() {
 }
 
 function userBatting() {
-    if (playerSideBatting) {
-        totalSwingsPlayer++;
-    } else {
-        totalSwingsOpponent++;
-    }
+    totalSwingsPlayer++;
 
     if (ball.y >= batter.y - hitZoneHeight && ball.y <= batter.y && abs(ball.x - batter.x) < hitZoneWidth * 0.5) {
         playerHit();

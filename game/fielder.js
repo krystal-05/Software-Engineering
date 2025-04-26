@@ -618,11 +618,11 @@ function handleStrikeCatch(catcher) {
     setTimeout(() => {
         resetBall();
         if (strikes >= 3) {
+            handleSideSwitchStrikeout();
             outs++;
             resetBatter();
             if (DEBUG) console.log("Strikeout! Batter is out.");
             if (outs >= 3) {
-                handleSideSwitchStrikeout();
                 nextInning();
                 return;
             }
@@ -632,8 +632,8 @@ function handleStrikeCatch(catcher) {
 
 function handleSideSwitchStrikeout() {
     if (playerSideBatting) {
-        totalStrikeoutsPlayer++;
-    } else {
         totalStrikeoutsOpponent++;
+    } else {
+        totalStrikeoutsPlayer++;
     }
 }

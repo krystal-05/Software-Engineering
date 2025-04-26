@@ -25,11 +25,6 @@ let playerSideBatting = true;
 let entitiesAssigned = false;
 
 let scoreboard;
-let totalFoulsPlayer = 0;
-let totalFoulsOpponent = 0;
-
-let totalSwingsPlayer = 0;
-let totalSwingsOpponent = 0;
 
 let initialFielderPositions = [];
 let accumulator = 0;
@@ -872,10 +867,8 @@ function handleHomerun() {
 
     if (playerSideBatting) {
         totalHomeRunsPlayer++;
-        score.home++;
     } else {
         totalHomeRunsOpponent++;
-        score.away++;
     }
 
     playSoundEffect("homerun");

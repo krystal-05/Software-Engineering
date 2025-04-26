@@ -28,11 +28,7 @@ function botAttemptHit(pitchMultiplier) {
 }
 
 function botHitBall() {
-    if (playerSideBatting) {
-        totalSwingsOpponent++;
-    } else {
-        totalSwingsPlayer++;
-    }
+    totalSwingsOpponent++;
 
     swingAttempt = true;
     ballHit = true;
