@@ -87,6 +87,7 @@ class character {
                 this.levelPosition = '4';
                 this.x = cityFourLocation[0] + charXOffset;
                 this.y = cityFourLocation[1] - charYOffset;
+                break;
             }
             default: {
                 this.levelPosition = '1';

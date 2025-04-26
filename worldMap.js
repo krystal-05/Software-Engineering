@@ -83,9 +83,9 @@ class level {
 }
 
 function createLevelButtons() {
-    continentOneLocation = [windowWidth / 5.5, windowHeight / 2];
-    continentTwoLocation = [windowWidth / 3.4, windowHeight / 1.3];
-    continentThreeLocation = [windowWidth / 1.6, windowHeight / 2.6];
+    continentOneLocation = [windowWidth / 4.2, windowHeight / 2.5];
+    continentTwoLocation = [windowWidth / 5, windowHeight / 1.3];
+    continentThreeLocation = [windowWidth / 1.25, windowHeight / 2.6];
     
     levels = [];
     levels.push(new level(levelOneImg, continentOneLocation[0], continentOneLocation[1], false));

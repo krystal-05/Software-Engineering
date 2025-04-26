@@ -10,9 +10,9 @@ let cityOneLocation;
 let cityTwoLocation;
 let cityThreeLocation;
 let cityFourLocation;
-let intermediateLocation;
-let firstStop, secondStop;
+let firstStop, secondStop, thirdStop, fourthStop;
 let animLock = true;
+let animLock2 = true;
 let charMoveSpeed = 10;
 let charXOffset, charYOffset;
 let nextPos = [];
@@ -45,20 +45,20 @@ function loadVolumeSetting() {
     });
 }
 
-function cityFive() {
-    localStorage.setItem("lastSelectedLevel", '5');
+function cityNine() {
+    localStorage.setItem("lastSelectedLevel", '9');
     window.location.href = "game.html";
 }
-function citySix() {
-    localStorage.setItem('lastSelectedLevel', '6');
+function cityTen() {
+    localStorage.setItem('lastSelectedLevel', '10');
     window.location.href = "game.html";
 }
-function citySeven() {
-    localStorage.setItem('lastSelectedLevel', '7');
+function cityEleven() {
+    localStorage.setItem('lastSelectedLevel', '11');
     window.location.href = "game.html";
 }
-function cityEight() {
-    localStorage.setItem('lastSelectedLevel', '8');
+function cityTwelve() {
+    localStorage.setItem('lastSelectedLevel', '12');
     window.location.href = "game.html";
 }
 function goBack() {
@@ -73,26 +73,26 @@ class character {
         // Uses locally stored "lastSelectedLevel" to set char starting position
         let lastSelected = localStorage.getItem("lastSelectedLevel");
         switch(lastSelected) {
-            case '6': {
-                this.levelPosition = '6';
+            case '10': {
+                this.levelPosition = '10';
                 this.x = cityTwoLocation[0] + charXOffset;
                 this.y = cityTwoLocation[1] - charYOffset;
                 break;
             }
-            case '7': {
-                this.levelPosition = '7';
+            case '11': {
+                this.levelPosition = '11';
                 this.x = cityThreeLocation[0] + charXOffset;
                 this.y = cityThreeLocation[1] - charYOffset;
                 break;
             }
-            case '8': {
-                this.levelPosition = '8';
+            case '12': {
+                this.levelPosition = '12';
                 this.x = cityFourLocation[0] + charXOffset;
                 this.y = cityFourLocation[1] - charYOffset;
                 break;
             }
             default: {
-                this.levelPosition = '5';
+                this.levelPosition = '9';
                 this.x = cityOneLocation[0] + charXOffset;
                 this.y = cityOneLocation[1] - charYOffset;
             }
@@ -104,39 +104,35 @@ class character {
     // returns location of city to be moved to if a move can be made
     move(input) {
         switch(this.levelPosition) {
-            case '5': {
-                if(input === 'd' && unlocked >= 6) {
-                    return cityTwoLocation.concat(['6']);
+            case '9': {
+                if(input === 'a' && unlocked >= 10) {
+                    return cityTwoLocation.concat(['10']);
+                } if(input === 's' && unlocked >= 11) {
+                    return cityThreeLocation.concat(['11']);
                 }
                 break;
             } 
-            case '6': {
+            case '10': {
+                if(input === 'a' && unlocked >= 12) {
+                    return cityFourLocation.concat(['12']);
+                } else if(input === 'd') {
+                    return cityOneLocation.concat(['9']);
+                }
+                break;
+            }
+            case '11': {
                 if(input === 'w') {
-                    return intermediateLocation.concat(['il']);
-                } else if (input === 'a') { 
-                    return cityOneLocation.concat(['5']);
+                    return cityOneLocation.concat(['9']);
+                } else if(input === 'a' && unlocked >= 12) {
+                    return cityFourLocation.concat(['12']);
                 }
                 break;
             }
-            case 'il': {
-                if(input === 'd' && unlocked >= 7) { 
-                    return cityThreeLocation.concat(['7']);
-                } else if (input === 'a' && unlocked >= 8) {
-                    return cityFourLocation.concat(['8']);
-                } else if (input === 's') {
-                    return cityTwoLocation.concat(['6']);
-                }
-                break;
-            }
-            case '7': {
-                if(input === 'a') {
-                    return intermediateLocation.concat(['il']);
-                }
-                break;
-            }
-            case '8': {
-                if(input === 's') {
-                    return intermediateLocation.concat(['il']);
+            case '12': {
+                if(input === 'w' || input === 'd') {
+                    return cityTwoLocation.concat(['10']);
+                } else if(input === 's') {
+                    return cityThreeLocation.concat(['11']);
                 }
             }
         }
@@ -145,26 +141,22 @@ class character {
 
     updatePos() {
         switch(this.levelPosition) {
-            case '5': {
+            case '9': {
                 this.x = cityOneLocation[0] + charXOffset;
                 this.y = cityOneLocation[1] - charYOffset;
                 break;
             }
-            case '6': {
+            case '10': {
                 this.x = cityTwoLocation[0] + charXOffset;
                 this.y = cityTwoLocation[1] - charYOffset;
                 break;
             }
-            case 'il': {
-                this.x = intermediateLocation[0] + charXOffset;
-                this.y = intermediateLocation[1] - charYOffset;
-            }
-            case '7': {
+            case '11': {
                 this.x = cityThreeLocation[0] + charXOffset;
                 this.y = cityThreeLocation[1] - charYOffset;
                 break;
             }
-            case '8': {
+            case '12': {
                 this.x = cityFourLocation[0] + charXOffset;
                 this.y = cityFourLocation[1] - charYOffset;
                 break;
@@ -199,12 +191,12 @@ class level {
 }
 
 function preload() {
-    map = loadImage('assets/final_design/MapStuff/Island_2.png');
+    map = loadImage('assets/final_design/MapStuff/Island_3.png');
     levelLockImg = loadImage('assets/final_design/MapStuff/levelMarkers/Fancy_Lock_Closed.png');
-    levelOneImg = loadImage('assets/final_design/MapStuff/levelMarkers/5.png');
-    levelTwoImg = loadImage('assets/final_design/MapStuff/levelMarkers/6.png');
-    levelThreeImg = loadImage('assets/final_design/MapStuff/levelMarkers/7.png');
-    levelFourImg = loadImage('assets/final_design/MapStuff/levelMarkers/8.png');
+    levelOneImg = loadImage('assets/final_design/MapStuff/levelMarkers/9.png');
+    levelTwoImg = loadImage('assets/final_design/MapStuff/levelMarkers/10.png');
+    levelThreeImg = loadImage('assets/final_design/MapStuff/levelMarkers/11.png');
+    levelFourImg = loadImage('assets/final_design/MapStuff/levelMarkers/12.png');
     buttonImg = loadImage('assets/final_design/MapStuff/backbuttonMap.png');
     buttonImgHover = loadImage('assets/final_design/MapStuff/backbuttonMapHover.png');
 
@@ -214,34 +206,31 @@ function preload() {
 }
 
 function createLevelButtons() {
-    cityOneLocation = [windowWidth * .25, windowHeight * .625];
-    cityTwoLocation = [windowWidth * .55, windowHeight * .605];
-    cityThreeLocation = [windowWidth * .78, windowHeight * 0.4];
-    cityFourLocation = [windowWidth * .45, windowHeight * .259];
+    cityOneLocation = [windowWidth / 1.37, windowHeight / 2.23];
+    cityTwoLocation = [windowWidth / 2.25, windowHeight / 3.2];
+    cityThreeLocation = [windowWidth / 1.54, windowHeight / 1.3];
+    cityFourLocation = [windowWidth / 4.5, windowHeight / 1.8];
 
-    
     levels = [];
-    
+
     levels.push(new level(levelOneImg, cityOneLocation[0], cityOneLocation[1], false));
     levels.push(new level(levelTwoImg, cityTwoLocation[0], cityTwoLocation[1]));
     levels.push(new level(levelThreeImg, cityThreeLocation[0], cityThreeLocation[1]));
     levels.push(new level(levelFourImg, cityFourLocation[0], cityFourLocation[1]));
-    if(unlocked >= 6) {
+    if(unlocked >= 10) {
         levels[1].lock = false;
     }
-    if(unlocked >= 7) {
+    if(unlocked >= 11) {
         levels[2].lock = false;
     }
-    if(unlocked >= 8) {
+    if(unlocked >= 12) {
         levels[3].lock = false;
     }
-    
+
     backButton = new Button('', windowWidth * .1, windowHeight * .9, 258.3, 100, buttonImg, buttonImgHover, goBack);
-    
+
     charXOffset = windowWidth / 25;
     charYOffset = windowHeight / 17;
-
-    intermediateLocation = [(windowWidth * .55) - charXOffset, (windowHeight * .38) + charYOffset];
 }
 
 function setup() {
@@ -250,10 +239,10 @@ function setup() {
     createLevelButtons();
     
 
-    lvlIndx['5'] = [levels[0], cityFive];
-    lvlIndx['6'] = [levels[1], citySix];
-    lvlIndx['7'] = [levels[2], citySeven];
-    lvlIndx['8'] = [levels[3], cityEight];
+    lvlIndx['9'] = [levels[0], cityNine];
+    lvlIndx['10'] = [levels[1], cityTen];
+    lvlIndx['11'] = [levels[2], cityEleven];
+    lvlIndx['12'] = [levels[3], cityTwelve];
 
     char = new character;
 
@@ -284,9 +273,7 @@ function keyPressed() {
             animFinished = false;
         } else if (keyCode === ENTER) {
             playSoundEffect("buttonSound");
-            if(char.levelPosition != 'il') {
-                lvlIndx[char.levelPosition][1]();
-            }
+            lvlIndx[char.levelPosition][1]();
         }
         
         return false;
@@ -305,6 +292,7 @@ function generalAnimAlgo() {
         char.levelPosition = nextPos[2];
         char.img = idleAnimation;
         animLock = true;
+        animLock2 = true;
     }
 
     if(abs(nextPos[0] + charXOffset - char.x) < charMoveSpeed) {
@@ -328,20 +316,8 @@ function generalAnimAlgo() {
     }
 }
 
-function fivetosix() {
-    firstStop = windowWidth * .4;
-
-    if(char.x < firstStop && animLock) {
-        char.x += charMoveSpeed;
-        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
-    } else {
-        animLock = false;
-        generalAnimAlgo();
-    }
-}
-
-function sixtofive() {
-    firstStop = windowWidth * .42;
+function ninetoten() {
+    firstStop = windowWidth * .59;
 
     if(char.x > firstStop && animLock) {
         char.x -= charMoveSpeed;
@@ -352,78 +328,129 @@ function sixtofive() {
     }
 }
 
-function sixtoil() {
-    firstStop = windowWidth * .55;
-
-    if(char.x > firstStop && animLock) { 
-        char.x -= charMoveSpeed;
-        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
-    } else {
-        animLock = false;
-        generalAnimAlgo();
-    }
-}
-
-function iltosix() {
-    firstStop = (windowHeight * .605) - charYOffset;
-
-    if(char.y < firstStop && animLock) {
-        char.y += charMoveSpeed;
-        if(abs(char.y - firstStop) < charMoveSpeed) char.y = firstStop;
-    } else {
-        animLock = false;
-        generalAnimAlgo();
-    }
-}
-
-function iltoseven() {
-    firstStop = windowWidth * .62;
-
-    if(char.x < firstStop && animLock) {
+function tentonine() {
+    let firstStop = windowWidth * .5;
+    if(char.x < firstStop) {
         char.x += charMoveSpeed;
         if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
     } else {
-        animLock = false;
         generalAnimAlgo();
     }
 }
 
-function seventoil() {
-    firstStop = windowWidth * .64;
-
-    if(char.x > firstStop && animLock) { 
-        char.x -= charMoveSpeed;
-        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
-    } else {
-        animLock = false;
-        generalAnimAlgo();
-    }
-}
-
-function iltoeight() {
-    firstStop = windowWidth * .47;
-    secondStop = (windowHeight * .259) - charYOffset;
-
-    if(char.x > firstStop && animLock) { 
-        char.x -= charMoveSpeed;
-        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
-    } else if (char.y > secondStop && animLock) {
-        char.y -= charMoveSpeed;
-        if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop;
-    } else {
-        animLock = false;
-        generalAnimAlgo();
-    }
-}
-
-function eighttoil() {
-    firstStop = windowWidth * .47;
-    secondStop = windowHeight * .38;
+function ninetoeleven() {
+    firstStop = windowWidth * .73;
+    secondStop = windowHeight * .52;
+    thirdStop = windowWidth * .65;
+    fourthStop = (windowHeight / 1.3) - charYOffset;
 
     if(char.x > firstStop && animLock) {
         char.x -= charMoveSpeed;
         if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
     } else if (char.y < secondStop && animLock) { 
+        char.y += charMoveSpeed;
+        if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop;
+    } else if (char.x > thirdStop && animLock) {
+        char.x -= charMoveSpeed;
+        if(abs(char.x - thirdStop) < charMoveSpeed) char.x = thirdStop;
+    } else if (char.y < fourthStop && animLock) {
+        char.y += charMoveSpeed;
+        if(abs(char.y - fourthStop) < charMoveSpeed) char.y = fourthStop;
+    } else {
+        animLock = false;
+        generalAnimAlgo();
+    }
+}
+
+function eleventonine() {
+    firstStop = windowWidth * .65;
+    secondStop = windowHeight * .52;
+    thirdStop = windowWidth * .73;
+    fourthStop = (windowHeight / 2.23) - charYOffset;
+
+    if(char.x > firstStop && animLock && animLock2) {
+        char.x -= charMoveSpeed;
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else if(char.y > secondStop && animLock && animLock2) {
+        char.y -= charMoveSpeed;
+        if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop;
+    } else if(char.x < thirdStop && animLock) {
+        animLock2 = false;
+        char.x += charMoveSpeed;
+        if(abs(char.x - thirdStop) < charMoveSpeed) char.x = thirdStop;
+    } else if(char.y > fourthStop && animLock) {
+        char.y -= charMoveSpeed;
+        if(abs(char.y - fourthStop) < charMoveSpeed) char.y = fourthStop;
+    } else {
+        animLock = false;
+        generalAnimAlgo();
+    }
+}
+
+function eleventotwelve() {
+    firstStop = windowWidth * .51;
+    secondStop = windowHeight * .58;
+    thirdStop = windowWidth * .27;
+
+    if(char.x > firstStop && animLock) {
+        char.x -= charMoveSpeed;
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else if(char.y > secondStop && animLock) { 
+        char.y -= charMoveSpeed;
+        if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop;
+    } else if(char.x > thirdStop && animLock) {
+        char.x -= charMoveSpeed;
+        if(abs(char.x - thirdStop) < charMoveSpeed) char.x = thirdStop;
+    } else {
+        animLock = false;
+        generalAnimAlgo();
+    }
+}
+
+function twelvetoeleven() {
+    firstStop = windowHeight * .58;
+    secondStop = windowWidth * .51;
+    thirdStop = (windowHeight / 1.3) - charYOffset;
+
+    if(char.y < firstStop && animLock) {
+        char.y += charMoveSpeed;
+        if(abs(char.y - firstStop) < charMoveSpeed) char.y = firstStop;
+    } else if (char.x < secondStop && animLock) {
+        char.x += charMoveSpeed;
+        if(abs(char.x - secondStop) < charMoveSpeed) char.x = secondStop;
+    } else if (char.y < thirdStop && animLock) {
+        char.y += charMoveSpeed;
+        if(abs(char.y - thirdStop) < charMoveSpeed) char.y = thirdStop;
+    } else {
+        animLock = false;
+        generalAnimAlgo();
+    }
+}
+
+function twelvetoten() {
+    firstStop = windowWidth * .37;
+    secondStop = (windowHeight / 3.2) - charYOffset;
+
+    if(char.x < firstStop && animLock) {
+        char.x += charMoveSpeed;
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else if(char.y > secondStop && animLock) { 
+        char.y -= charMoveSpeed;
+        if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop
+    } else {
+        animLock = false;
+        generalAnimAlgo();
+    }
+}
+
+function tentotwelve() {
+    firstStop = windowWidth * .37;
+    secondStop = (windowHeight / 1.8) - charYOffset;
+
+    if(char.x > firstStop && animLock) {
+        char.x -= charMoveSpeed;
+        if(abs(char.x - firstStop) < charMoveSpeed) char.x = firstStop;
+    } else if (char.y < secondStop && animLock) {
         char.y += charMoveSpeed;
         if(abs(char.y - secondStop) < charMoveSpeed) char.y = secondStop;
     } else {
@@ -448,22 +475,23 @@ function draw() {
     char.drawChar();
 
     if(!animFinished) {
-        if(char.levelPosition === '5' && nextPos[2] === '6') {
-            fivetosix();
-        } else if(char.levelPosition === '6' && nextPos[2] === '5') {
-            sixtofive();
-        } else if(char.levelPosition === '6' && nextPos[2] === 'il') {
-            sixtoil();
-        } else if(char.levelPosition === 'il' && nextPos[2] === '6') {
-            iltosix();
-        } else if(char.levelPosition === 'il' && nextPos[2] === '7') {
-            iltoseven();
-        } else if(char.levelPosition === '7' && nextPos[2] === 'il') {
-            seventoil();
-        } else if(char.levelPosition === 'il' && nextPos[2] === '8') {
-            iltoeight();
-        } else if(char.levelPosition === '8' && nextPos[2] === 'il') {
-            eighttoil();
+        
+        if(char.levelPosition === '9' && nextPos[2] === '10') {
+            ninetoten();
+        } else if (char.levelPosition === '10' && nextPos[2] === '9') {
+            tentonine();
+        } else if (char.levelPosition === '9' && nextPos[2] === '11') {
+            ninetoeleven();
+        } else if (char.levelPosition === '11' && nextPos[2] === '9') {
+            eleventonine();
+        } else if (char.levelPosition === '11' && nextPos[2] === '12') {
+            eleventotwelve();
+        } else if (char.levelPosition === '12' && nextPos[2] === '11') {
+            twelvetoeleven();
+        } else if (char.levelPosition === '12' && nextPos[2] === '10') {
+            twelvetoten();
+        } else if (char.levelPosition === '10' && nextPos[2] === '12') {
+            tentotwelve();
         } else {
             generalAnimAlgo();
         }
