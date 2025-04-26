@@ -79,6 +79,7 @@ function preload() {
         ClairaBatRunLft = loadImage('assets/final_design/Claira/ClairaBatRunLft.gif');
         ClairaBatRunRight = loadImage('assets/final_design/Claira/ClairaBatRunRght.gif');
         playerBatterSwung = loadImage('assets/final_design/Claira/ClairaBatSwing.png');
+        playerTopDown = loadImage('assets/final_design/Claira/ClairaTD.png');
     }
     else if(selectedCharacter === "Clarke"){
         playerImage = loadImage('assets/final_design/Clarke/Clarke.png');
@@ -87,6 +88,7 @@ function preload() {
         ClarkeBatRunLft = loadImage('assets/final_design/Clarke/ClarkeBatRunLft.gif');
         ClarkeBatRunRight = loadImage('assets/final_design/Clarke/ClarkeBatRunRght.gif');
         playerBatterSwung = loadImage('assets/final_design/Clarke/ClarkeBatSwing.png');
+        playerTopDown = loadImage('assets/final_design/Clarke/ClarkeTD.png');
     }
 
     blueBatterIdle = loadImage('assets/final_design/BlueTeam/BlueBatIdle.gif');
@@ -119,6 +121,10 @@ function preload() {
     targetImage = loadImage('assets/final_design/Target2.png');
     directionImage = loadImage('assets/final_design/DirectArrow.png');
     settingButtonImage = loadImage('assets/final_design/game_setting2.png');
+
+    // Top down players
+    redTopDown = loadImage('assets/final_design/RedTeam/RedTD.png');
+    blueTopDown = loadImage('assets/final_design/BlueTeam/BlueTD.png');
 
     scoreboard = loadImage('assets/final_design/Scoreboard.png');
     currSong = loadSound('sounds/gamesong.mp3');
@@ -516,10 +522,12 @@ function drawTopDownPlayers() {
     let ballOffset = !ballHit ? 0 : verticalOffset;
     let pitcherOffsetY = -0.075 * height;
     let pitcherPos = perspectiveToTopDown(pitcher.x, pitcher.y + 10);
+    let playerImageSize = height * .075;
     pitcherPos.y += pitcherOffsetY;
-    fill('red');
-    ellipse(pitcherPos.x, pitcherPos.y, 15, 15);
-    
+
+    let pitcherImg = playerSideBatting ? redTopDown : playerTopDown;
+    image(pitcherImg, pitcherPos.x - playerImageSize / 2, pitcherPos.y - height * .05, playerImageSize, playerImageSize);
+
     if (ball.throwing && ball.throwingFielder && ball.targetFielder) {
         // thrower as the anchor and targetFielder as the target
         let ballPos = perspectiveToTopDownForThrownBall(
@@ -530,39 +538,56 @@ function drawTopDownPlayers() {
             ball.targetFielder
         );
         fill('white');
-        ellipse(ballPos.x, ballPos.y, 10, 10);
+        image(ballImg, ballPos.x - 5, ballPos.y, 10, 10);
     } else {
         if (!ballHit) ballOffset -= pitcherOffsetY + .04 * height;
         let useSlowFactor = !ballHit;
         let ballPos = perspectiveToTopDownBall(ball.x, ball.y, ballOffset, pitcher, useSlowFactor);
         fill('white');
-        ellipse(ballPos.x, ballPos.y, 10, 10);
+        image(ballImg, ballPos.x - 7.5, ballPos.y, 15, 15);
     }
 
-    // Draw batter (if needed)
+    // Draw batter
     if (batter) {
+        let img;
+        if (playerSideBatting) {
+            if (batterIterator > 0) {
+                img = blueTopDown;
+            } else {
+                img = playerTopDown;
+            }
+        } else {
+            img = redTopDown;
+        }
+        
         let batterPos = perspectiveToTopDown(batter.x, batter.y, verticalOffset);
-        fill('orange');
-        ellipse(batterPos.x, batterPos.y, 15, 15);
+        image(img, batterPos.x - width * .05, batterPos.y - height * .025, playerImageSize, playerImageSize);
     }
     
     // Draw catcher
     let catcherPos = perspectiveToTopDown(catcherPlayer.x, catcherPlayer.y, verticalOffset);
-    fill('blue');
-    ellipse(catcherPos.x, catcherPos.y, 15, 15);
+    let catcherImg = playerSideBatting ? redTopDown : blueTopDown;
+    image(catcherImg, catcherPos.x - playerImageSize / 2, catcherPos.y - height * .04, playerImageSize, playerImageSize);
     
     // Draw fielders
-    fill('purple');
     fielders.forEach(fielder => {
+        let img = playerSideBatting ? redTopDown : blueTopDown;
         let fielderPos = perspectiveToTopDown(fielder.x, fielder.y, verticalOffset);
-        ellipse(fielderPos.x, fielderPos.y, 15, 15);
+        image(img, fielderPos.x - playerImageSize / 2, fielderPos.y, playerImageSize, playerImageSize);
     });
     
     // Draw runners
-    fill('yellow');
     runners.forEach(runner => {
+        let img;
+        if (runner.player) {
+            img = playerTopDown;
+        } else if (playerSideBatting) {
+            img = blueTopDown;
+        } else {
+            img = redTopDown;
+        }
         let runnerPos = perspectiveToTopDown(runner.x, runner.y, verticalOffset);
-        ellipse(runnerPos.x, runnerPos.y, 15, 15);
+        image(img, runnerPos.x - playerImageSize / 2, runnerPos.y, playerImageSize, playerImageSize);
     });
 }
 

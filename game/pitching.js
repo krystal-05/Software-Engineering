@@ -155,7 +155,7 @@ function drawPitchSelectionBox() {
     fill(255);
     let dynamicSize = boxX * .025;
     textSize(dynamicSize);
-    text("Select Pitch Type:", boxX * 1.01, boxY * 1.05);
+    text("Select Pitch Type:", boxX * 1.01, boxY + boxHeight * .15);
     text("1: Fastball", boxX * 1.01, boxY + boxHeight * .4);
     text("2: Curveball", boxX * 1.01, boxY + boxHeight * .525);
     text("3: Change-Up", boxX * 1.01, boxY + boxHeight * .65);
