@@ -17,6 +17,11 @@ let targetImage;
 let directionImage;
 
 function playerHit() {
+    if (playerSideBatting) {
+        totalHitsPlayer++;
+    } else {
+        totalHitsOpponent++;
+    }
     ballHit = true;
     ball.inAir = true;
     playSoundEffect("hitBall");
@@ -97,9 +102,14 @@ function playerStrike() {
 }
 
 function userBatting() {
+    if (playerSideBatting) {
+        totalSwingsPlayer++;
+    } else {
+        totalSwingsOpponent++;
+    }
+
     if (ball.y >= batter.y - hitZoneHeight && ball.y <= batter.y && abs(ball.x - batter.x) < hitZoneWidth * 0.5) {
-        // Successful swing/hit.
-        playerHit()
+        playerHit();
     } else {
         playerStrike();
     }

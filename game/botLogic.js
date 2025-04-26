@@ -28,6 +28,12 @@ function botAttemptHit(pitchMultiplier) {
 }
 
 function botHitBall() {
+    if (playerSideBatting) {
+        totalSwingsOpponent++;
+    } else {
+        totalSwingsPlayer++;
+    }
+
     swingAttempt = true;
     ballHit = true;
     ball.inAir = true;

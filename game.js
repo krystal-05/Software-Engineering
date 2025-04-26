@@ -25,6 +25,11 @@ let playerSideBatting = true;
 let entitiesAssigned = false;
 
 let scoreboard;
+let totalFoulsPlayer = 0;
+let totalFoulsOpponent = 0;
+
+let totalSwingsPlayer = 0;
+let totalSwingsOpponent = 0;
 
 let initialFielderPositions = [];
 let accumulator = 0;
@@ -707,6 +712,28 @@ function drawScoreboard() {
     image(scoreboard, 0 , 0 , 360 , 200 );
 }
 
+function updateStatsTableSingleSide(stats, isPlayerBatting, popupType = "win") {
+    const prefix = popupType === "win" ? "" : "lose-";
+
+    if (isPlayerBatting) {
+        document.getElementById(`${prefix}stat-your-score`).textContent = stats.score;
+        document.getElementById(`${prefix}stat-your-hits`).textContent = stats.hits;
+        document.getElementById(`${prefix}stat-your-strikes`).textContent = stats.strikes;
+        document.getElementById(`${prefix}stat-your-strikeouts`).textContent = stats.strikeouts;
+        document.getElementById(`${prefix}stat-your-homeruns`).textContent = stats.homeruns;
+        document.getElementById(`${prefix}stat-your-fouls`).textContent = stats.fouls;
+        document.getElementById(`${prefix}stat-your-outs`).textContent = stats.outs;
+    } else {
+        document.getElementById(`${prefix}stat-opponent-score`).textContent = stats.score;
+        document.getElementById(`${prefix}stat-opponent-hits`).textContent = stats.hits;
+        document.getElementById(`${prefix}stat-your-strikes`).textContent = stats.strikes;
+        document.getElementById(`${prefix}stat-opponent-strikeouts`).textContent = stats.strikeouts;
+        document.getElementById(`${prefix}stat-opponent-homeruns`).textContent = stats.homeruns;
+        document.getElementById(`${prefix}stat-opponent-fouls`).textContent = stats.fouls;
+        document.getElementById(`${prefix}stat-opponent-outs`).textContent = stats.outs;
+    }
+}
+
 function resizeUmpire(oldWidth, oldHeight) {
     umpire.relativeX = umpire.x / oldWidth;
     umpire.relativeY = umpire.y / oldHeight;
@@ -818,6 +845,14 @@ function handleHomerun() {
     showHomerunPopup = true;
     popupTimer = millis();
 
+    if (playerSideBatting) {
+        totalHomeRunsPlayer++;
+        score.home++;
+    } else {
+        totalHomeRunsOpponent++;
+        score.away++;
+    }
+
     playSoundEffect("homerun");
 
     setTimeout(() => {
@@ -833,13 +868,19 @@ function handleHomerun() {
     }, 500);
 }
 
+
 function handleFoul() {
+    if (topInning) {
+        totalFoulsPlayer++;
+    } else {
+        totalFoulsOpponent++;
+    }
     umpire.armRaisedRight = true;
     umpire.armTimer = millis();
     popupMessage = "FOUL BALL";
     showFoulPopup = true;
     popupTimer = millis();
-    
+
     playSoundEffect("foul");
 
     setTimeout(() => {
@@ -1241,7 +1282,8 @@ function audioClick(){
     audioSelectionMenu = true;
     showAudioMenu();
 }
-function loseClick(){
+function loseClick() {
+    console.log("Lose Click Triggered");
     showLosePopup();
 }
 function winClick(){
