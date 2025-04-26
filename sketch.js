@@ -59,11 +59,7 @@ function draw() {
     }
 }
 function drawInitialPopup(){
-    background(premenuImage);
-    let scaleFactor = Math.max(width / premenuImage.width, height / premenuImage.height);
-    let drawWidth = premenuImage.width * scaleFactor;
-    let drawHeight = premenuImage.height * scaleFactor;
-    image(premenuImage, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
+    background(0);
     showInitialPopup();
 }
 
