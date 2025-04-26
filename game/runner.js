@@ -145,7 +145,13 @@ function displayRunHint() {
         let nextIndex = (i + 1) % bases.length;
         if (bases[i].occupied && !bases[nextIndex].tryToOccupy && (!bases[nextIndex].occupied || nextIndex === 0) && !homeRunHit) {
             let label = (i === 1 || i === 3) ? 4 - i : i;
-            text(`Press ${label} to Run!`, bases[i].x, bases[i].y + height * .05);
+            if (currentPerspective === "side") {
+                text(`Press ${label} to Run!`, bases[i].x, bases[i].y + height * .05);
+            } else {
+                let verticalOffset = height * 0.14;
+                let topDownBase = perspectiveToTopDown(bases[i].x, bases[i].y + 35, verticalOffset);
+                text(`Press ${label} to Run!`, topDownBase.x, topDownBase.y + height * .05);
+            }
         }
     }
 }

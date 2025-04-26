@@ -158,6 +158,9 @@ function restart() {
     totalSwingsOpponent = 0;
     totalStrikeoutsPlayer = 0;
     totalStrikeoutsOpponent = 0;
+    playerSideBatting = true;
+    runners = [];
+    resetBatter();
 }
 
 function advance() {
