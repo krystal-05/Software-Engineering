@@ -105,37 +105,37 @@ class character {
     move(input) {
         switch(this.levelPosition) {
             case '5': {
-                if(input === 'd' && unlocked >= 6) {
+                if(input === 'd' || input === 'RightArrow' && unlocked >= 6) {
                     return cityTwoLocation.concat(['6']);
                 }
                 break;
             } 
             case '6': {
-                if(input === 'w') {
+                if(input === 'w' || input === 'UpArrow') {
                     return intermediateLocation.concat(['il']);
-                } else if (input === 'a') { 
+                } else if (input === 'a' || input === 'LeftArrow') { 
                     return cityOneLocation.concat(['5']);
                 }
                 break;
             }
             case 'il': {
-                if(input === 'd' && unlocked >= 7) { 
+                if(input === 'd' || input === 'RightArrow' && unlocked >= 7) { 
                     return cityThreeLocation.concat(['7']);
-                } else if (input === 'a' && unlocked >= 8) {
+                } else if (input === 'a' || input === 'LeftArrow' && unlocked >= 8) {
                     return cityFourLocation.concat(['8']);
-                } else if (input === 's') {
+                } else if (input === 's' || input === 'DownArrow') {
                     return cityTwoLocation.concat(['6']);
                 }
                 break;
             }
             case '7': {
-                if(input === 'a') {
+                if(input === 'a' || input === 'LeftArrow') {
                     return intermediateLocation.concat(['il']);
                 }
                 break;
             }
             case '8': {
-                if(input === 's') {
+                if(input === 's' || input === 'DownArrow') {
                     return intermediateLocation.concat(['il']);
                 }
             }
@@ -272,9 +272,46 @@ function mousePressed() {
 }
 
 function keyPressed() {
-    if(key === 'Escape') {
+    console.log(`Key pressed: ${key}, KeyCode: ${keyCode}`); // Debugging log
+
+    if (key === 'Escape') {
         settingsClick();
     }
+
+    if (inputEnabled) {
+        let inputKey;
+        switch (keyCode) {
+            case LEFT_ARROW:
+                inputKey = 'LeftArrow';
+                break;
+            case RIGHT_ARROW:
+                inputKey = 'RightArrow';
+                break;
+            case UP_ARROW:
+                inputKey = 'UpArrow';
+                break;
+            case DOWN_ARROW:
+                inputKey = 'DownArrow';
+                break;
+            default:
+                inputKey = key; // For other keys like 'a', 's', etc.
+        }
+
+        console.log(`Mapped inputKey: ${inputKey}`); // Debugging log
+
+        let tmp = char.move(inputKey);
+        if (tmp && animFinished) {
+            nextPos = tmp;
+            char.img = runningAnimation;
+            animFinished = false;
+        } else if (keyCode === ENTER) {
+            playSoundEffect("buttonSound");
+            lvlIndx[char.levelPosition][1]();
+        }
+
+        return false;
+    }
+
     
     if(inputEnabled) {
         let tmp = char.move(key);

@@ -105,31 +105,31 @@ class character {
     move(input) {
         switch(this.levelPosition) {
             case '9': {
-                if(input === 'a' && unlocked >= 10) {
+                if(input === 'a' || input === 'LeftArrow' && unlocked >= 10) {
                     return cityTwoLocation.concat(['10']);
-                } if(input === 's' && unlocked >= 11) {
+                } if(input === 's' || input === 'DownArrow' && unlocked >= 11) {
                     return cityThreeLocation.concat(['11']);
                 }
                 break;
             } 
             case '10': {
-                if(input === 'a' && unlocked >= 12) {
+                if(input === 'a' || input === 'LeftArrow' && unlocked >= 12) {
                     return cityFourLocation.concat(['12']);
-                } else if(input === 'd') {
+                } else if(input === 'd' || input === 'RightArrow') {
                     return cityOneLocation.concat(['9']);
                 }
                 break;
             }
             case '11': {
-                if(input === 'w') {
+                if(input === 'w' || input === 'UpArrow') {
                     return cityOneLocation.concat(['9']);
-                } else if(input === 'a' && unlocked >= 12) {
+                } else if(input === 'a' || input === ' LeftArrow' && unlocked >= 12) {
                     return cityFourLocation.concat(['12']);
                 }
                 break;
             }
             case '12': {
-                if(input === 'w' || input === 'd') {
+                if(input === 'w' || input === 'UpArrow' || input === 'd' || input === 'RightArrow') {
                     return cityTwoLocation.concat(['10']);
                 } else if(input === 's') {
                     return cityThreeLocation.concat(['11']);
@@ -261,8 +261,40 @@ function mousePressed() {
 }
 
 function keyPressed() {
-    if(key === 'Escape') {
+    if (key === 'Escape') {
         settingsClick();
+    }
+
+    if (inputEnabled) {
+        let inputKey;
+        switch (keyCode) {
+            case LEFT_ARROW:
+                inputKey = 'a'; // Map left arrow to 'a'
+                break;
+            case RIGHT_ARROW:
+                inputKey = 'd'; // Map right arrow to 'd'
+                break;
+            case UP_ARROW:
+                inputKey = 'w'; // Map up arrow to 'w'
+                break;
+            case DOWN_ARROW:
+                inputKey = 's'; // Map down arrow to 's'
+                break;
+            default:
+                inputKey = key; // Use the key directly for other inputs
+        }
+
+        let tmp = char.move(inputKey);
+        if (tmp && animFinished) {
+            nextPos = tmp;
+            char.img = runningAnimation;
+            animFinished = false;
+        } else if (keyCode === ENTER) {
+            playSoundEffect("buttonSound");
+            lvlIndx[char.levelPosition][1]();
+        }
+
+        return false;
     }
     
     if(inputEnabled) {

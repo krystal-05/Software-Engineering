@@ -151,25 +151,25 @@ class character {
     move(input) {
         switch(this.levelPosition) {
             case '1': {
-                if(input === 's' && unlocked >= 5) {
+                if(input === 's' || input === 'DownArrow' && unlocked >= 5) {
                     return continentTwoLocation.concat(['2']);
-                } else if (input === 'd' && unlocked >= 9) {
+                } else if (input === 'd' || input === 'RightArrow' && unlocked >= 9) {
                     return continentThreeLocation.concat(['3']);
                 }
                 break;
             } 
             case '2': {
-                if(input === 'd' && unlocked >= 9) {
+                if(input === 'd' || input === 'RightArrow' && unlocked >= 9) {
                     return continentThreeLocation.concat(['3']);
-                } else if(input === 'w' || input === 'a') {
+                } else if(input === 'w' || input === 'UpArrow' || input === 'a' || input === 'LeftArrow') {
                     return continentOneLocation.concat(['1']);
                 }
                 break;
             }
             case '3': {
-                if(input === 's') {
+                if(input === 's' || input === 'DownArrow') {
                     return continentTwoLocation.concat(['2']);
-                } else if (input === 'a') {
+                } else if (input === 'a' || input === 'LeftArrow') {
                     return continentOneLocation.concat(['1'])
                 }
                 break;
@@ -204,8 +204,44 @@ class character {
 }
     
 function keyPressed() {
-    if(key === 'Escape') {
+    console.log(`Key pressed: ${key}, KeyCode: ${keyCode}`); // Debugging log
+
+    if (key === 'Escape') {
         settingsClick();
+    }
+
+    if (inputEnabled) {
+        let inputKey;
+        switch (keyCode) {
+            case LEFT_ARROW:
+                inputKey = 'LeftArrow';
+                break;
+            case RIGHT_ARROW:
+                inputKey = 'RightArrow';
+                break;
+            case UP_ARROW:
+                inputKey = 'UpArrow';
+                break;
+            case DOWN_ARROW:
+                inputKey = 'DownArrow';
+                break;
+            default:
+                inputKey = key; // For other keys like 'a', 's', etc.
+        }
+
+        console.log(`Mapped inputKey: ${inputKey}`); // Debugging log
+
+        let tmp = char.move(inputKey);
+        if (tmp && animFinished) {
+            nextPos = tmp;
+            char.img = runningAnimation;
+            animFinished = false;
+        } else if (keyCode === ENTER) {
+            playSoundEffect("buttonSound");
+            lvlIndx[char.levelPosition][1]();
+        }
+
+        return false;
     }
     
     if(inputEnabled) {
