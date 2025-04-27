@@ -98,8 +98,8 @@ function preload() {
     redFielderIdleGif = loadImage('assets/final_design/RedTeam/RedFieldIdle.gif');
     blueFielderIdleGif = loadImage('assets/final_design/BlueTeam/BlueFieldIdle.gif');
 
-    //redPitcherIdleGif = loadImage('assets/final_design/RedTeam/RedPitchIdle.gif');
-    //redPitcherThrowGif = loadImage('assets/final_design/RedTeam/RedPitchAction.gif');
+    redPitcherIdleGif = loadImage('assets/final_design/RedTeam/RedPitchIdle.gif');
+    redPitcherThrowGif = loadImage('assets/final_design/RedTeam/RedPitchAction.gif');
     
     // blue player running animations
     blueRunnerRunningRightGif = loadImage('assets/final_design/BlueTeam/BlueBatRunRight.gif');
@@ -677,7 +677,7 @@ function drawPlayers() {
     });
 
     let pitcherImg;
-    if (playerSideBatting) pitcherImg = redFielderIdleGif;
+    if (playerSideBatting) pitcherImg = redPitcherIdleGif;
     else pitcherImg = playerIdleGif;
     drawScaledPlayer(pitcher, pitcherImg);
 
