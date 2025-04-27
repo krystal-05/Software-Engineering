@@ -99,8 +99,7 @@ function preload() {
     blueFielderIdleGif = loadImage('assets/final_design/BlueTeam/BlueFieldIdle.gif');
 
     redPitcherIdleGif = loadImage('assets/final_design/RedTeam/RedPitchIdle.gif');
-
-    redPitcherThrowGif = loadImage('assets/final_design/RedTeam/RedPitchAction.gif');
+    //redPitcherThrowGif = loadImage('assets/final_design/RedTeam/RedPitchAction.gif');
     
     // blue player running animations
     blueRunnerRunningRightGif = loadImage('assets/final_design/BlueTeam/BlueBatRunRight.gif');
