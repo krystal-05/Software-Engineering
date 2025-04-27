@@ -16,7 +16,7 @@ function preload() {
     creditsImgHover = loadImage('assets/OCredits_2.png');
     howToImg = loadImage('assets/OHowTo_1.png');
     howToImgHover = loadImage('assets/OHowTo_2.png');
-    currSong = loadSound('sounds/Wise Young Gent - Destiny.mp3');
+    currSong = loadSound('sounds/WiseYoungGent-Destiny.mp3');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
     premenuImage = loadImage('assets/black.png');
 }

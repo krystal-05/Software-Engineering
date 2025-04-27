@@ -9,7 +9,7 @@ function preload() {
     characterImage = loadImage('assets/final_design/Clarke/ClarkeBaseIdle.gif');
     characterImage1 = loadImage('/assets/final_design/Claira/ClairaBaseIdle.gif');  // Load option 2's character
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
-    currSong = loadSound('sounds/Aso - Bones.mp3');
+    currSong = loadSound('sounds/Aso-Bones.mp3');
 }
 
 function setup() {
