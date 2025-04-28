@@ -2,54 +2,162 @@ let backButton;
 let settingMenu = false;
 let audioSelectionMenu = false;
 gameState = "credits";
+let boyImage, girlImage;
+
+let teammates = [
+    { name: "Oscar \nArtistic Director/Designer", gender: "boy", x: 0, y: 0 },
+    { name: "Vidhi \nLead Programmer", gender: "girl", x: 0, y: 0 },
+    { name: "Keegan \nLead Programmer", gender: "boy", x: 0, y: 0 },
+    { name: "Trevor \nLead Programmer", gender: "boy", x: 0, y: 0 },
+    { name: "Krystal \nDesigner/Programmer", gender: "girl", x: 0, y: 0 },
+    { name: "Isra \nProgrammer", gender: "girl", x: 0, y: 0 },
+    { name: "Antonio \nMap Programmer", gender: "boy", x: 0, y: 0 },
+    { name: "Tristian \nMap Programmer", gender: "boy", x: 0, y: 0 },
+    { name: "Josh \nMap Designer", gender: "boy", x: 0, y: 0 }
+];
+
+let currentTeammateIndex = 0;
+let teammateTimer = 0;
+let isStopped = false;
+let nameVisible = false;
 
 function preload() {
     soundEffects["buttonSound"] = loadSound("sounds/buttonClick.mp3");
+    boyImage = loadImage('assets/final_design/Clarke/ClarkeBatRunLft.gif');
+    girlImage = loadImage('assets/final_design/Claira/ClairaBatRunLft.gif');
 }
 
 function setup() {
-    createCanvas(windowWidth, windowHeight); // Canvas size
-    background(20); // Dark background color
+    createCanvas(windowWidth, windowHeight);
+    background(20);
     loadVolumeSetting();
 
     backButton = new Button("Back", 175, height - 50, 200, 50, null, null, () => backToMenu());
     createModal();
     hideLoadingScreen();
+
+    teammates.forEach(teammate => {
+        teammate.x = width + 100;
+        teammate.y = height - 150;
+    });
 }
 
 function draw() {
-    background(20); // Keep background consistent
+    background(252, 157, 154);
+    drawSkyElements();
+    drawGrass();
 
-    // Text styling
-    textAlign(CENTER, CENTER);
-    fill(255); // White text
-    textSize(32);
-    cursor('default');
+    if (gameState === "credits") {
+        let currentTeammate = teammates[currentTeammateIndex];
+        moveTeammate(currentTeammate);
+        displayTeammate(currentTeammate);
 
-    // Title
-    text("Game Credits", width / 2, height / 5);
+        if (isStopped) {
+            teammateTimer += deltaTime / 1000;
+            if (teammateTimer >= 2) { 
+                isStopped = false;
+                nameVisible = false;
+            }
+        }
 
-    // Credits list
-    textSize(24);
-    text("Developed by:", width / 2, height / 3);
-    text("Antonio", width / 2, height / 3 + 35);
-    text("Keegan", width / 2, height / 3 + (35 * 2));
-    text("Isra", width / 2, height / 3 + (35 * 3));
-    text("Josh", width / 2, height / 3 + (35 * 4));
-    text("Krystal", width / 2, height / 3 + (35 * 5));
-    text("Oscar", width / 2, height / 3 + (35 * 6));
-    text("Trevor", width / 2, height / 3 + (35 * 7));
-    text("Tristian", width / 2, height / 3 + (35 * 8));
-    text("Vidhi", width / 2, height / 3 + (35 * 9));
+        if (!isStopped && currentTeammate.x < -100) {
+            teammateTimer = 0;
+            currentTeammateIndex++;
+            if (currentTeammateIndex >= teammates.length) {
+                currentTeammateIndex = 0;
+            }
+            resetTeammatePosition(teammates[currentTeammateIndex]);
+        }
+    }
 
     backButton.display();
 }
 
+function moveTeammate(teammate) {
+    if (!isStopped) {
+        teammate.x -= 6;
+
+        if (teammate.x <= width / 2 && !nameVisible) {
+            isStopped = true;
+            nameVisible = true;
+        }
+    }
+}
+
+function drawGrass() {
+    fill(34, 139, 34);
+    rect(0, height - 300, width, 300);
+
+    stroke(0, 100, 0);
+    for (let i = 0; i < width; i += 8) {
+        let bladeHeight = random(20, 40);
+        line(i, height - 300, i + random(-5, 5), height - 300 - bladeHeight);
+    }
+    noStroke();
+}
+
+
+function drawSkyElements() {
+    fill(255, 94, 77);
+    noStroke();
+    ellipse(width - 150, height - 300, 100, 100);
+
+    
+    fill(255, 200);
+    drawCloud(250, 150);
+    drawCloud(500, 200);
+    drawCloud(750, 120);
+
+    stroke(80);
+    strokeWeight(2);
+    noFill();
+    drawBird(350, 250);
+    drawBird(600, 300);
+    drawBird(700, 230);
+    noStroke();
+}
+
+function drawCloud(x, y) {
+    ellipse(x, y, 60, 60);
+    ellipse(x + 30, y + 10, 50, 50);
+    ellipse(x - 30, y + 10, 50, 50);
+}
+
+function drawBird(x, y) {
+    beginShape();
+    vertex(x, y);
+    vertex(x + 10, y - 10);
+    vertex(x + 20, y);
+    endShape();
+}
+
+function displayTeammate(teammate) {
+    let img = (teammate.gender === "boy") ? boyImage : girlImage;
+    imageMode(CENTER);
+    image(img, teammate.x, teammate.y, 200, 200);
+
+    if (nameVisible) {
+        textAlign(CENTER, BOTTOM);
+        textSize(24);
+        fill(0);
+        text(teammate.name, teammate.x, teammate.y - 90);
+    }
+}
+
+function resetTeammatePosition(teammate) {
+    teammate.x = width + 100;
+    teammate.y = height - 150;
+}
+
+function drawGrass() {
+    fill(34, 139, 34); // Grass green
+    rect(0, height - 100, width, 100);
+}
+
 function mousePressed() {
-    if(settingMenu) return;
+    if (settingMenu) return;
     if (backButton.isHovered()) {
         if (soundEffects["buttonSound"] && soundEffects["buttonSound"] !== null) {
-            console.log("IN")
             buttonClick();
         }
         setTimeout(() => backButton.action(), 200);
