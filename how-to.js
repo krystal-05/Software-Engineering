@@ -5,8 +5,11 @@ let currentSlide = 0;
 let leftArrow, rightArrow;
 let titleImage;
 let bgImages = [];
+let audio6;
 
 function preload() {
+    audio6 = loadSound('sounds/how-to.mp3');
+
     // Title + slide images already loaded...
     slideImages.push(loadImage('assets/game-start.png'));
     slideImages.push(loadImage('assets/log-in.png'));
@@ -25,6 +28,10 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     textAlign(CENTER, CENTER);
     textSize(28);
+
+    if (audio6) {
+        audio6.play();
+    }
 
     howToSlides = [
         {
