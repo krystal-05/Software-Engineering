@@ -7,9 +7,9 @@ let audio7;
 
 let teammates = [
     { name: "Oscar \nArtistic Director/Designer", gender: "boy", x: 0, y: 0 },
-    { name: "Vidhi \nLead Programmer", gender: "girl", x: 0, y: 0 },
-    { name: "Keegan \nLead Programmer", gender: "boy", x: 0, y: 0 },
-    { name: "Trevor \nLead Programmer", gender: "boy", x: 0, y: 0 },
+    { name: "Vidhi \nCo-Lead Developer", gender: "girl", x: 0, y: 0 },
+    { name: "Keegan \nLead Developer", gender: "boy", x: 0, y: 0 },
+    { name: "Trevor \nLead Developer", gender: "boy", x: 0, y: 0 },
     { name: "Krystal \nDesigner/Programmer", gender: "girl", x: 0, y: 0 },
     { name: "Isra \nProgrammer", gender: "girl", x: 0, y: 0 },
     { name: "Antonio \nMap Programmer", gender: "boy", x: 0, y: 0 },
