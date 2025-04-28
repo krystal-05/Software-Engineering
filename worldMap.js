@@ -151,15 +151,15 @@ class character {
     move(input) {
         switch(this.levelPosition) {
             case '1': {
-                if(input === 's' || input === 'DownArrow' && unlocked >= 5) {
+                if((input === 's' || input === 'DownArrow') && unlocked >= 5) {
                     return continentTwoLocation.concat(['2']);
-                } else if (input === 'd' || input === 'RightArrow' && unlocked >= 9) {
+                } else if ((input === 'd' || input === 'RightArrow') && unlocked >= 9) {
                     return continentThreeLocation.concat(['3']);
                 }
                 break;
             } 
             case '2': {
-                if(input === 'd' || input === 'RightArrow' && unlocked >= 9) {
+                if((input === 'd' || input === 'RightArrow') && unlocked >= 9) {
                     return continentThreeLocation.concat(['3']);
                 } else if(input === 'w' || input === 'UpArrow' || input === 'a' || input === 'LeftArrow') {
                     return continentOneLocation.concat(['1']);
@@ -204,7 +204,7 @@ class character {
 }
     
 function keyPressed() {
-    console.log(`Key pressed: ${key}, KeyCode: ${keyCode}`); // Debugging log
+    if(DEBUG) console.log(`Key pressed: ${key}, KeyCode: ${keyCode}`);
 
     if (key === 'Escape') {
         settingsClick();
@@ -229,7 +229,7 @@ function keyPressed() {
                 inputKey = key; // For other keys like 'a', 's', etc.
         }
 
-        console.log(`Mapped inputKey: ${inputKey}`); // Debugging log
+        if(DEBUG) console.log(`Mapped inputKey: ${inputKey}`);
 
         let tmp = char.move(inputKey);
         if (tmp && animFinished) {
