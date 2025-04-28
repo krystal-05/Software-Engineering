@@ -8,7 +8,7 @@ let bgImages = [];
 let audio6;
 
 function preload() {
-    audio6 = loadSound('sounds/how-to.mp3');
+    audio6 = loadSound('sounds/how_to.mp3');
 
     // Title + slide images already loaded...
     slideImages.push(loadImage('assets/game-start.png'));
