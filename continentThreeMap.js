@@ -105,15 +105,15 @@ class character {
     move(input) {
         switch(this.levelPosition) {
             case '9': {
-                if(input === 'a' || input === 'LeftArrow' && unlocked >= 10) {
+                if((input === 'a' || input === 'LeftArrow') && unlocked >= 10) {
                     return cityTwoLocation.concat(['10']);
-                } if(input === 's' || input === 'DownArrow' && unlocked >= 11) {
+                } if((input === 's' || input === 'DownArrow') && unlocked >= 11) {
                     return cityThreeLocation.concat(['11']);
                 }
                 break;
             } 
             case '10': {
-                if(input === 'a' || input === 'LeftArrow' && unlocked >= 12) {
+                if((input === 'a' || input === 'LeftArrow') && unlocked >= 12) {
                     return cityFourLocation.concat(['12']);
                 } else if(input === 'd' || input === 'RightArrow') {
                     return cityOneLocation.concat(['9']);
@@ -123,7 +123,7 @@ class character {
             case '11': {
                 if(input === 'w' || input === 'UpArrow') {
                     return cityOneLocation.concat(['9']);
-                } else if(input === 'a' || input === ' LeftArrow' && unlocked >= 12) {
+                } else if((input === 'a' || input === ' LeftArrow') && unlocked >= 12) {
                     return cityFourLocation.concat(['12']);
                 }
                 break;
