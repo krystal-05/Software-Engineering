@@ -6,6 +6,10 @@ let leftArrow, rightArrow;
 let titleImage;
 let bgImages = [];
 let audio6;
+currVolume = 0.5;
+isMuted = false;
+let settingMenu = false;
+let audioSelectionMenu = false;
 
 function preload() {
     audio6 = loadSound('sounds/how_to.mp3');
@@ -20,17 +24,21 @@ function preload() {
     bgImages.push(loadImage('assets/start-screen.png'));       // bgImages[1] = Navigating website
     bgImages.push(loadImage('assets/character-select.png')); // bgImages[2] = Character select
     bgImages.push(loadImage('assets/map-screen.png')); // bgImages[3] = Map navigation
-
 }
-
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
+    createModal();
     textAlign(CENTER, CENTER);
     textSize(28);
 
+    // Initialize volume settings
+    loadVolumeSetting();
+
+    // Play the sound if it is loaded
     if (audio6) {
         audio6.play();
+        audio6.loop();
     }
 
     howToSlides = [
@@ -52,19 +60,18 @@ function setup() {
                 "• Select an open level to play.",
                 "• You can only move on to the next level once the initial one has been completed."
             ],
-            bgIndex:2 // character-select.png
+            bgIndex: 2 // character-select.png
         },
         {
             title: "Map Navigation",
             content: [
                 "• Select a level to play.",
                 "• You can only move on to the next level after beating the previous one.",
-                "• Click the 'Secret Level' button to unlock a special level.",
+                "• Click the 'Secret Level' button to unlock a special level."
             ],
-            bgIndex:3 // character-select.png
+            bgIndex: 3 // map-screen.png
         },
-     
-                {
+        {
             title: "Navigating the Website",
             content: [
                 "• Use the Settings gear for volume & preferences.",
@@ -73,9 +80,9 @@ function setup() {
             ],
             bgIndex: 1 // start-screen.png
         }
-        
     ];
-    hideLoadingScreen();
+
+    hideLoadingScreen(); // hide loading screen once everything is set up
 }
 
 function draw() {
@@ -87,7 +94,7 @@ function draw() {
         image(bgImages[bgIndex], 0, 0, width, height);
     }
 
-    fill(255,215, 0);
+    fill(255, 215, 0);
 
     // Display Title Image
     if (titleImage) {
@@ -123,7 +130,6 @@ function draw() {
     }
 }
 
-
 function mousePressed() {
     // Check if left arrow is clicked
     if (mouseX < width * 0.2 && mouseY > height * 0.85) {
@@ -133,5 +139,52 @@ function mousePressed() {
     if (mouseX > width * 0.8 && mouseY > height * 0.85) {
         currentSlide = (currentSlide + 1) % howToSlides.length;
     }
+    if (currSong && !currSong.isPlaying()) {
+        currSong.amp(isMuted ? 0 : currVolume);
+        currSong.play();
+        currSong.loop();
+    }
 }
 
+function loadVolumeSetting() {
+    const savedVolume = localStorage.getItem("volume");
+    const savedMute = localStorage.getItem("isMuted");
+    const savedEffectsVolume = localStorage.getItem("effectsVolume");
+
+    if (savedVolume !== null) {
+        currVolume = parseFloat(savedVolume);
+    }
+    if (savedEffectsVolume !== null) {
+        currEffectsVolume = parseFloat(savedEffectsVolume);
+    }
+    isMuted = savedMute !== null ? (savedMute === "true") : false;
+
+    if (audio6) {
+        audio6.amp(isMuted ? 0 : currVolume);
+    }
+    Object.values(soundEffects).forEach((sound) => {
+        sound.amp(isMuted ? 0 : currEffectsVolume);
+    });
+}
+
+function updateVolume(newVolume) {
+    currVolume = newVolume;
+
+    // Ensure audio6 is initialized and playing
+    if (audio6 && audio6.isPlaying()) {
+        audio6.amp(isMuted ? 0 : currVolume);
+    }
+
+    // Save volume setting
+    localStorage.setItem("volume", currVolume);
+}
+
+function goBack() {
+    gameState = "menu";
+}
+
+function keyPressed() {
+    if (key == 'Escape') {
+        settingsClick();
+    }
+}
