@@ -5,14 +5,13 @@ let currentSlide = 0;
 let leftArrow, rightArrow;
 let titleImage;
 let bgImages = [];
-let audio6;
 currVolume = 0.5;
 isMuted = false;
 let settingMenu = false;
 let audioSelectionMenu = false;
 
 function preload() {
-    audio6 = loadSound('sounds/how_to.mp3');
+    currSong = loadSound('sounds/how_to.mp3');
 
     // Title + slide images already loaded...
     slideImages.push(loadImage('assets/game-start.png'));
@@ -36,9 +35,10 @@ function setup() {
     loadVolumeSetting();
 
     // Play the sound if it is loaded
-    if (audio6) {
-        audio6.play();
-        audio6.loop();
+    if (!currSong.isPlaying()) {
+        currSong.loop();
+        loadVolumeSetting();
+        currSong.play();
     }
 
     howToSlides = [
@@ -139,9 +139,8 @@ function mousePressed() {
     if (mouseX > width * 0.8 && mouseY > height * 0.85) {
         currentSlide = (currentSlide + 1) % howToSlides.length;
     }
-    if (currSong && !currSong.isPlaying()) {
-        currSong.amp(isMuted ? 0 : currVolume);
-        currSong.play();
+    
+    if (!currSong.isPlaying()) {
         currSong.loop();
     }
 }
@@ -159,24 +158,12 @@ function loadVolumeSetting() {
     }
     isMuted = savedMute !== null ? (savedMute === "true") : false;
 
-    if (audio6) {
-        audio6.amp(isMuted ? 0 : currVolume);
+    if (currSong) {
+        currSong.amp(isMuted ? 0 : currVolume);
     }
     Object.values(soundEffects).forEach((sound) => {
         sound.amp(isMuted ? 0 : currEffectsVolume);
     });
-}
-
-function updateVolume(newVolume) {
-    currVolume = newVolume;
-
-    // Ensure audio6 is initialized and playing
-    if (audio6 && audio6.isPlaying()) {
-        audio6.amp(isMuted ? 0 : currVolume);
-    }
-
-    // Save volume setting
-    localStorage.setItem("volume", currVolume);
 }
 
 function goBack() {
