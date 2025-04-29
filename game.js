@@ -4,7 +4,6 @@ const PLAYER_WIDTH = 80;
 const PLAYER_HEIGHT = 120;
 const SPRITE_Y_OFFSET = 20;
 const MAX_POWER = 1600;
-const MAX_LEVEL = 12;
 
 let lastSelectedLevel = localStorage.getItem("lastSelectedLevel");
 if (lastSelectedLevel !== null) lastSelectedLevel = parseInt(lastSelectedLevel);

@@ -9,6 +9,10 @@ let currEffectsVolume = 0.5;
 let soundEffects = {};
 let DEBUG = false;
 let popupDisableInput = false, settingsDisableInput = false, inputEnabled = true;
+let levelUnlockIncrement;
+
+const MAX_LEVEL = 12;
+
 if (typeof gameState === 'undefined') {
     var gameState = "preMenu"; 
 }
@@ -199,6 +203,23 @@ function updateVolume() {
 
 function buttonClick() {
     playSoundEffect("buttonSound");
+}
+
+function createUnlockIncrement(unlocked) {
+    console.log(unlocked);
+    if (!(unlocked >= 0)) unlocked = 0;
+    let startLabel = `increment level from: ${unlocked}`;
+    if (unlocked >= MAX_LEVEL) startLabel = `max level, reset levels?`;
+    levelUnlockIncrement = new Button(startLabel, width * .925, height * .5, width * .12, height * .05, null, null, () => incrementLevel(unlocked));
+}
+function incrementLevel(unlocked) {
+    unlocked = (unlocked + 1) % (MAX_LEVEL + 1);
+    localStorage.setItem("unlockedLevel", unlocked);
+    if (DEBUG) console.log("updated to", localStorage.getItem("unlockedLevel"));
+
+    levelUnlockIncrement.label = `increment level from: ${unlocked}`;
+    if (unlocked == MAX_LEVEL) levelUnlockIncrement.label = `max level, reset levels?`;
+    levelUnlockIncrement.action = () => incrementLevel(unlocked);
 }
 
 function playSoundEffect(effect) {

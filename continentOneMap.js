@@ -240,6 +240,7 @@ function setup() {
 
     char = new character;
 
+    createUnlockIncrement(unlocked);
     loadVolumeSetting();
     createModal();
     hideLoadingScreen();
@@ -250,6 +251,9 @@ function mousePressed() {
         if(backButton.isHovered() && backButton.action) {
             buttonClick();
                 setTimeout(() => backButton.action(), 200);
+        }
+        if(levelUnlockIncrement.isHovered() && levelUnlockIncrement.action) {
+            levelUnlockIncrement.action();
         }
     }
 }
@@ -299,6 +303,7 @@ function keyPressed() {
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
     createLevelButtons();
+    createUnlockIncrement(unlocked);
     char.updatePos();
 }
 
@@ -394,7 +399,9 @@ function draw() {
     cursor('default');
 
     backButton.display();
-
+    if (DEBUG) {
+        levelUnlockIncrement.display();
+    }
     imageMode(CENTER);
     for (let lvl of levels) {
         lvl.drawLevel();

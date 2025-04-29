@@ -112,6 +112,7 @@ function setup(){
     lvlIndx['2'] = [levels[1], continentTwo];
     lvlIndx['3'] = [levels[2], continentThree];
     
+    createUnlockIncrement(unlocked);
     loadVolumeSetting();
     createModal();
     hideLoadingScreen();
@@ -202,7 +203,15 @@ class character {
         image(char.img, char.x, char.y, char.width, char.height);
     }
 }
-    
+
+function mousePressed() {
+    if(inputEnabled) {
+        if(levelUnlockIncrement.isHovered() && levelUnlockIncrement.action) {
+            levelUnlockIncrement.action();
+        }
+    }
+}
+
 function keyPressed() {
     if(DEBUG) console.log(`Key pressed: ${key}, KeyCode: ${keyCode}`);
 
@@ -262,6 +271,7 @@ function keyPressed() {
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
     createLevelButtons();
+    createUnlockIncrement(unlocked);
     char.updatePos();
 }
 
@@ -275,6 +285,10 @@ function draw() {
         lvl.drawLevel();
     }
     imageMode(CORNER);
+
+    if (DEBUG) {
+        levelUnlockIncrement.display();
+    }
 
     // Draws character
     char.drawChar();
