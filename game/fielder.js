@@ -620,6 +620,7 @@ function handleStrikeCatch(catcher) {
         if (strikes >= 3) {
             handleSideSwitchStrikeout();
             outs++;
+            batterIterator = (batterIterator + 1) % 9;
             resetBatter();
             if (DEBUG) console.log("Strikeout! Batter is out.");
             if (outs >= 3) {
