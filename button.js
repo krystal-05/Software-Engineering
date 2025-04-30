@@ -97,20 +97,15 @@ function resetGameButtonLocation() {
     audioButton.width = defButtonWidth;
     audioButton.height = defButtonHeight;
 
-    Difficulty1.x = settingsButtonX * 0.995;
-    Difficulty1.y = settingsButtonY * 6;
-    Difficulty1.width = defButtonWidth;
-    Difficulty1.height = defButtonHeight;
+    nextHalfInning.x = settingsButtonX * 0.995;
+    nextHalfInning.y = settingsButtonY * 6;
+    nextHalfInning.width = defButtonWidth;
+    nextHalfInning.height = defButtonHeight;
 
-    Difficulty2.x = settingsButtonX * 0.995;
-    Difficulty2.y = settingsButtonY * 7;
-    Difficulty2.width = defButtonWidth
-    Difficulty2.height = defButtonHeight;
-
-    Difficulty3.x = settingsButtonX * 0.995;
-    Difficulty3.y = settingsButtonY * 8;
-    Difficulty3.width = defButtonWidth;
-    Difficulty3.height = defButtonHeight;
+    AddScore.x = settingsButtonX * 0.995;
+    AddScore.y = settingsButtonY * 7;
+    AddScore.width = defButtonWidth
+    AddScore.height = defButtonHeight;
 
     loseDemo.x = settingsButtonX * 0.995;
     loseDemo.y = settingsButtonY * 10;
