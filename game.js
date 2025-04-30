@@ -328,6 +328,10 @@ function draw() {
         if (ball.y > height) {
             resetBall();
         }
+        if (ballHit && runners == []) {
+            if (DEBUG) console.log("bugged reset");
+            resetBatter();
+        }
         // pitch animation
         if (pitchAnimation) {
             pitchAnimation = false;
