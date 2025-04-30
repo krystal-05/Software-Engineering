@@ -19,10 +19,6 @@ class Button {
             let canHover = (!settingMenu || this.isSettingsButton) && 
                            (!audioSelectionMenu || this.isAudioMenuButton) && 
                            (!howToMenu || this.isHowToButton);
-            /*               
-            if ((settingMenu && !this.isSettingsButton) || (audioSelectionMenu && !this.isAudioMenuButton) || (howToMenu && !this.isHowToButton)) {
-                showHover = false;
-            } */  
             if(showHover && canHover) {
                 cursor('pointer');
             }
@@ -90,6 +86,11 @@ function resetGameButtonLocation() {
     settingButton.y = settingsButtonY;
     settingButton.width = buttonSize;
     settingButton.height = buttonSize;
+
+    howToButton.x = settingsButtonX - widthGap;
+    howToButton.y = settingsButtonY;
+    howToButton.width = buttonSize;
+    howToButton.height = buttonSize;
 
     audioButton.x = settingsButtonX * 0.995;
     audioButton.y = settingsButtonY * 5;
