@@ -1,13 +1,16 @@
 let buttons = [], confirmButton;
-let bgImage, characterImage, characterImage1;
+let bgImage, characterImage, characterImage1, characterImage2;
 let settingMenu = false;
 let audioSelectionMenu = false;
 gameState = "createCharacter";
+const characterList = ["Clarke", "Claira", "Sus"];
+let characterIndex = 0;
 
 function preload() {
     bgImage = loadImage('assets/final_design/start_screen.png');
     characterImage = loadImage('assets/final_design/Clarke/ClarkeBaseIdle.gif');
-    characterImage1 = loadImage('/assets/final_design/Claira/ClairaBaseIdle.gif');  // Load option 2's character
+    characterImage1 = loadImage('assets/final_design/Claira/ClairaBaseIdle.gif');  // Load option 2's character
+    characterImage2 = loadImage('assets/final_design/Sussy/SirSusIdle.gif');
     soundEffects["buttonSound"] = loadSound('sounds/buttonClick.mp3');
     currSong = loadSound('sounds/Aso-Bones.mp3');
 }
@@ -60,12 +63,20 @@ function draw() {
         textSize(scopedDynamicSize);
         text("Clarke", width / 2, height * .2);
         image(characterImage, width / 2 - imgWidth / 2, height / 1.83 - imgHeight / 2, imgWidth, imgHeight);
-    } else if (characterTag === "Claira") {
+    } 
+    else if (characterTag === "Claira") {
         let scopedDynamicSize = width * 0.025;
         textSize(scopedDynamicSize);
         text("Claira", width / 2, height * .2);
         image(characterImage1, width / 2 - imgWidth / 2, height / 1.83 - imgHeight / 2, imgWidth, imgHeight);
-    } else {
+    } 
+    else if (characterTag === "Sus") {
+        let scopedDynamicSize = width * 0.025;
+        textSize(scopedDynamicSize);
+        text("Sus", width / 2, height * .2);
+        image(characterImage2, width / 2 - imgWidth / 2, height / 1.83 - imgHeight / 2, imgWidth, imgHeight);
+    } 
+    else {
         let scopedDynamicSize = width * 0.025;
         textSize(scopedDynamicSize);
         text("Select a Preset", width / 2, height * .2);
@@ -147,8 +158,16 @@ function createCharacterButtons() {
     let defButtonHeight = Math.max(baseDefHeight, minDefHeight);
 
     buttons.push(new Button("Back", width * .15, height * .925, defButtonWidth, defButtonHeight, null, null, () => backToMenu()));
-    buttons.push(new Button("<", width * .325, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Clarke")));
-    buttons.push(new Button(">", width * .675, height * .55, buttonHeight, buttonHeight, null, null, () => selectedCharacter("Claira")));
+
+    buttons.push(new Button("<", width * .325, height * .55, buttonHeight, buttonHeight, null, null, () => {
+        characterIndex = (characterIndex - 1 + characterList.length) % characterList.length;
+        selectedCharacter(characterList[characterIndex]);
+    }));
+
+    buttons.push(new Button(">", width * .675, height * .55, buttonHeight, buttonHeight, null, null, () => {
+        characterIndex = (characterIndex + 1) % characterList.length;
+        selectedCharacter(characterList[characterIndex]);
+    }));
 
     confirmButton = new Button("Confirm Character", width / 2, height * .925, defConfirmButtonWidth, defButtonHeight, null, null, () => confirmCharacter());
 }

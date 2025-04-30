@@ -109,6 +109,25 @@ function preload() {
             );
         }
     }
+    else if(selectedCharacter === "Sus") {
+        // change when Sus is finished
+        playerBatterIdle = loadImage('assets/final_design/Clarke/ClarkeBatIdle.gif');
+        playerBatterSwung = loadImage('assets/final_design/Clarke/ClarkeBatSwing.png');
+        playerTopDown = loadImage('assets/final_design/Clarke/ClarkeTD.png');
+
+        playerIdleGif = loadImage('assets/final_design/Sussy/SirSusIdle.gif');
+        SusBatRunLft = loadImage('assets/final_design/Sussy/SirSusRunLeft.gif');
+        SusBatRunRight = loadImage('assets/final_design/Sussy/SirSusRunRight.gif');   
+        
+        // update to sus when finished
+        playerPitcherIdleGif = loadImage(`assets/final_design/Clarke/ClarkePitchIdle.gif`)
+        
+        for (let i = 2; i <= THROW_FRAME_COUNT + 1; i++) {
+            playerPitchFrames.push(
+                loadImage(`assets/final_design/Clarke/ClarkePitch${i}.png`)
+            );
+        } 
+    }
 
     blueBatterIdle = loadImage('assets/final_design/BlueTeam/BlueBatIdle.gif');
     redBatterIdle = loadImage('assets/final_design/RedTeam/RedBatIdle.gif');
@@ -705,6 +724,9 @@ function drawPlayers() {
                 }
                 else if(selectedCharacter === "Clarke"){
                     img = isMovingRight ? ClarkeBatRunRight : ClarkeBatRunLft;
+                }
+                else if(selectedCharacter === "Sus") {
+                    img = isMovingRight ? SusBatRunRight : SusBatRunLft;
                 }
                 else {
                     img = isMovingRight ? blueRunnerRunningRightGif : blueRunnerRunningLeftGif;
