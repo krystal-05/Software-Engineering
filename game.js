@@ -298,10 +298,6 @@ function draw() {
     pop();
 
     if (pitchActionActive && millis() - throwStartTime > THROW_DURATION) {
-        console.log(
-            "throw timer:", millis() - throwStartTime,
-            "of", THROW_DURATION
-        );
         pitchActionActive = false;
         pitchAnimation = true;
     }
