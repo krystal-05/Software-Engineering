@@ -70,7 +70,8 @@ function userPitch() {
 
         ball.speedY *= pitchMultiplier;
         pitchSkillCheckActive = false;
-        pitchAnimation = true;
+        pitchActionActive = true;
+        throwStartTime = millis();
         botAttemptHit(pitchMultiplier);
         return;
     }
@@ -79,7 +80,8 @@ function userPitch() {
         return;
     }
     if (!ballMoving && inputEnabled) {
-        pitchAnimation = true;
+        pitchActionActive = true;
+        throwStartTime = millis();
         swingAttempt = false;
     }
 }

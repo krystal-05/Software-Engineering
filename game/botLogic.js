@@ -124,7 +124,8 @@ function botPitch() {
 
     if(DEBUG) console.log("BOT PITCH MULTIPLIER", finalMultiplier);
     ball.speedY *= finalMultiplier;
-    pitchAnimation = true;    
+    pitchActionActive = true;
+    throwStartTime = millis();
 }
 
 function changeDifficulty(difficultyValue) {

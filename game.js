@@ -4,6 +4,8 @@ const PLAYER_WIDTH = 80;
 const PLAYER_HEIGHT = 120;
 const SPRITE_Y_OFFSET = 20;
 const MAX_POWER = 1600;
+const THROW_FRAME_COUNT = 3;
+const THROW_DURATION = 750;
 
 let lastSelectedLevel = localStorage.getItem("lastSelectedLevel");
 if (lastSelectedLevel !== null) lastSelectedLevel = parseInt(lastSelectedLevel);
@@ -22,6 +24,12 @@ let pitchCanChange = topInning;
 let batterIterator = 0;
 let playerSideBatting = true;
 let entitiesAssigned = false;
+
+let pitchActionActive = false;
+let playerPitchFrames = [];
+let redPitchFrames = [];
+let throwStartTime = 0;
+let pitchMade = false;
 
 let scoreboard;
 
@@ -79,6 +87,12 @@ function preload() {
         ClairaBatRunRight = loadImage('assets/final_design/Claira/ClairaBatRunRght.gif');
         playerBatterSwung = loadImage('assets/final_design/Claira/ClairaBatSwing.png');
         playerTopDown = loadImage('assets/final_design/Claira/ClairaTD.png');
+        playerPitcherIdleGif = loadImage(`assets/final_design/Claira/ClairaPitchIdle.gif`)
+        for (let i = 2; i <= THROW_FRAME_COUNT + 1; i++) {
+            playerPitchFrames.push(
+                loadImage(`assets/final_design/Claira/ClairaPitch${i}.png`)
+            );
+        }
     }
     else if(selectedCharacter === "Clarke"){
         playerImage = loadImage('assets/final_design/Clarke/Clarke.png');
@@ -88,6 +102,12 @@ function preload() {
         ClarkeBatRunRight = loadImage('assets/final_design/Clarke/ClarkeBatRunRght.gif');
         playerBatterSwung = loadImage('assets/final_design/Clarke/ClarkeBatSwing.png');
         playerTopDown = loadImage('assets/final_design/Clarke/ClarkeTD.png');
+        playerPitcherIdleGif = loadImage(`assets/final_design/Clarke/ClarkePitchIdle.gif`)
+        for (let i = 2; i <= THROW_FRAME_COUNT + 1; i++) {
+            playerPitchFrames.push(
+                loadImage(`assets/final_design/Clarke/ClarkePitch${i}.png`)
+            );
+        }
     }
 
     blueBatterIdle = loadImage('assets/final_design/BlueTeam/BlueBatIdle.gif');
@@ -100,7 +120,11 @@ function preload() {
     blueFielderIdleGif = loadImage('assets/final_design/BlueTeam/BlueFieldIdle.gif');
 
     redPitcherIdleGif = loadImage('assets/final_design/RedTeam/RedPitchIdle1.gif');
-    //redPitcherThrowGif = loadImage('assets/final_design/RedTeam/RedPitchAction.gif');
+    for (let i = 2; i <= THROW_FRAME_COUNT + 1; i++) {
+        redPitchFrames.push(
+            loadImage(`assets/final_design/RedTeam/RedPitch${i}.png`)
+        );
+    }
     
     // blue player running animations
     blueRunnerRunningRightGif = loadImage('assets/final_design/BlueTeam/BlueBatRunRight.gif');
@@ -272,6 +296,15 @@ function draw() {
         displayRunHint();
     }
     pop();
+
+    if (pitchActionActive && millis() - throwStartTime > THROW_DURATION) {
+        console.log(
+            "throw timer:", millis() - throwStartTime,
+            "of", THROW_DURATION
+        );
+        pitchActionActive = false;
+        pitchAnimation = true;
+    }
     
     // Game logic
     while (accumulator >= fixedDt) {
@@ -281,11 +314,9 @@ function draw() {
         }
         // pitch animation
         if (pitchAnimation) {
-            pitcher.armAngle += 0.1 * 60 * fixedDt;
-            if (pitcher.armAngle > PI / 2) {
-                pitchAnimation = false;
-                ballMoving = true;
-            }
+            pitchAnimation = false;
+            pitchMade = true;
+            ballMoving = true;
         }
         // pitch ball movement
         if (ballMoving && !ballHit && !ball.throwing) {
@@ -445,6 +476,7 @@ function resetBall() {
     hitDirectionSlider = false; 
     hitPowerSlider = false;
     sliderSpeed = 400;
+    pitchMade = false;
 }
 
 // Scales side view entities to top down visual
@@ -703,8 +735,16 @@ function drawPlayers() {
     });
 
     let pitcherImg;
-    if (playerSideBatting) pitcherImg = redPitcherIdleGif;
-    else pitcherImg = playerIdleGif;
+    if (pitchActionActive) {
+        let frameDuration = THROW_DURATION / THROW_FRAME_COUNT;
+        let currentPitchFrame = floor((millis() - throwStartTime) / frameDuration);
+        if (currentPitchFrame >= THROW_FRAME_COUNT) {
+            currentPitchFrame = THROW_FRAME_COUNT - 1;
+        }
+        pitcherImg = playerSideBatting ? redPitchFrames[currentPitchFrame] : playerPitchFrames[currentPitchFrame];
+    } else {
+        pitcherImg = playerSideBatting ? redPitcherIdleGif : playerPitcherIdleGif;
+    }
     drawScaledPlayer(pitcher, pitcherImg);
 
     if (batter) {
@@ -718,7 +758,7 @@ function drawPlayers() {
     let ballScale = getBallScaleFactor(ball.y);
     let ballWidth = ballImg.width * ballScale;
     let ballHeight = ballImg.height * ballScale;
-    image(ballImg, ball.x - ballWidth / 2, ball.y - ballHeight / 2, ballWidth, ballHeight);
+    if (pitchMade) image(ballImg, ball.x - ballWidth / 2, ball.y - ballHeight / 2, ballWidth, ballHeight);
 }
 
 function drawScoreboard() {
