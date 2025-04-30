@@ -19,10 +19,6 @@ class Button {
             let canHover = (!settingMenu || this.isSettingsButton) && 
                            (!audioSelectionMenu || this.isAudioMenuButton) && 
                            (!howToMenu || this.isHowToButton);
-            /*               
-            if ((settingMenu && !this.isSettingsButton) || (audioSelectionMenu && !this.isAudioMenuButton) || (howToMenu && !this.isHowToButton)) {
-                showHover = false;
-            } */  
             if(showHover && canHover) {
                 cursor('pointer');
             }

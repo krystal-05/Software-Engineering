@@ -42,6 +42,7 @@ let yPower;
 
 let bgImage;
 let settingButton;
+let howToButton;
 
 let umpire;
 let showStrikePopup = false;
@@ -112,8 +113,8 @@ function preload() {
     }
     else if(selectedCharacter === "Sus") {
         // change when Sus is finished
-        playerBatterIdle = loadImage('assets/final_design/Clarke/ClarkeBatIdle.gif');
-        playerBatterSwung = loadImage('assets/final_design/Clarke/ClarkeBatSwing.png');
+        playerBatterIdle = loadImage('assets/final_design/Sussy/SirSusBatIdle.gif');
+        playerBatterSwung = loadImage('assets/final_design/Sussy/SirSusBatSwing.png');
         playerTopDown = loadImage('assets/final_design/Clarke/ClarkeTD.png');
 
         playerIdleGif = loadImage('assets/final_design/Sussy/SirSusIdle.gif');
@@ -121,11 +122,11 @@ function preload() {
         SusBatRunRight = loadImage('assets/final_design/Sussy/SirSusRunRight.gif');   
         
         // update to sus when finished
-        playerPitcherIdleGif = loadImage(`assets/final_design/Clarke/ClarkePitchIdle.gif`)
+        playerPitcherIdleGif = loadImage(`assets/final_design/Sussy/SirSusPitchIdle.gif`);
         
         for (let i = 2; i <= THROW_FRAME_COUNT + 1; i++) {
             playerPitchFrames.push(
-                loadImage(`assets/final_design/Clarke/ClarkePitch${i}.png`)
+                loadImage(`assets/final_design/Sussy/SirSusPitch${i}.png`)
             );
         } 
     }
@@ -167,6 +168,7 @@ function preload() {
     targetImage = loadImage('assets/final_design/Target2.png');
     directionImage = loadImage('assets/final_design/DirectArrow.png');
     settingButtonImage = loadImage('assets/final_design/game_setting2.png');
+    howToButtonImage = loadImage('assets/final_design/HowToButton.gif');
 
     // Top down players
     redTopDown = loadImage('assets/final_design/RedTeam/RedTD.png');
@@ -227,10 +229,15 @@ function setup() {
     let buttonSize = min(width * 0.1, height * 0.1);
     const widthGap = width * 0.07;  
     const heightGap = height * 0.1; 
+    const buttonWidth = width * 0.08;  
     let settingsButtonX = width - widthGap / 2;
     let settingsButtonY = heightGap / 2;
+    let howToButtonX = settingsButtonX - buttonWidth;
+    let howToButtonY = settingsButtonY;
+
     
     settingButton = new Button("Settings", settingsButtonX, settingsButtonY, buttonSize, buttonSize, settingButtonImage, settingButtonImage, () => settingsClick());
+    howToButton = new Button("How To Play", howToButtonX, howToButtonY, buttonSize, buttonSize, howToButtonImage, howToButtonImage, () => howToClick());
     audioButton = new Button("Audio", settingsButtonX * .995, settingsButtonY * 5, buttonSize * 1.4, buttonSize * .45, null, null, () => audioClick());
     Difficulty1 = new Button("make Normal", settingsButtonX * .995, settingsButtonY * 6, buttonSize * 1.4, buttonSize * .45, null, null, () => changeDifficulty(1));
     Difficulty2 = new Button("make Hard", settingsButtonX * .995, settingsButtonY * 7, buttonSize * 1.4, buttonSize * .45, null, null, () => changeDifficulty(2));
@@ -239,6 +246,7 @@ function setup() {
     winDemo = new Button("Win Demo", settingsButtonX * .995, settingsButtonY * 11, buttonSize * 1.4, buttonSize * .45, null, null, () => winClick());
 
     createModal();
+    createHowToModal();
     createAudioMenu();
     createWinPopup();
     createLosePopup();
@@ -295,6 +303,7 @@ function draw() {
     push();
     drawScoreboard();
     settingButton.display();
+    howToButton.display();
     if (DEBUG){
         audioButton.display();
         Difficulty1.display();
@@ -1019,7 +1028,8 @@ function drawPopup() {
 function keyPressed() {
     // pitch select/infielder select
     if(key == 'Escape') {
-        settingsClick();
+        if(howToMenu) howToClick();
+        else settingsClick();
     }
     if ((key === '1' || key === '2' || key === '3') && inputEnabled) {
         if (topInning && ballHit) {
@@ -1306,7 +1316,7 @@ function loadVolumeSetting() {
 
 // Handle response to user mouse input
 function mousePressed() {
-    if (!settingMenu && !audioSelectionMenu) {
+    if (!settingMenu && !audioSelectionMenu && !howToMenu) {
         if (settingButton.isHovered()) {
             buttonClick();
             setTimeout(() => settingButton.action(), 200);
@@ -1316,6 +1326,10 @@ function mousePressed() {
                 buttonClick();
                 setTimeout(() => audioButton.action(), 200);
             }
+        }
+        if(howToButton.isHovered()) {
+            buttonClick();
+            setTimeout(() => howToButton.action(), 200);
         }
         // temp
         if (Difficulty1.isHovered()) {

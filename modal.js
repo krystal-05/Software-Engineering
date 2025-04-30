@@ -27,7 +27,7 @@ const howToSlides = [
             <p><b>"E"</b> - Toggle camera perspective</p>
             <div style="margin-top: 5vh;"></div>
             <p>This is the power bar that controls how hard the ball is hit</p>
-            <canvas id="powerBarCanvas" width="300" height="80""></canvas>
+            <canvas id="powerBarCanvas" width="300" height="80"></canvas>
             <p>This is the direction bar that controls where you hit the ball</p>
             <canvas id="directionBarCanvas" width="300" height="80"></canvas>
         `
@@ -41,7 +41,7 @@ const howToSlides = [
             <p><b>"E"</b> - Toggle camera perspective</p>
             <div style="margin-top: 5vh;"></div>
             <p>This is the power bar that controls how fast the ball is thrown</p>
-            <canvas id="powerBarCanvas" width="300" height="80""></canvas>
+            <canvas id="powerBarCanvas" width="300" height="80"></canvas>
         `
     },
 
@@ -99,9 +99,6 @@ function createModal() {
         color: #000000;
         font-size: 20px;
         float: right;
-        position: absolute;
-        top: 1vh;
-        right: 1vw;
     }
     .volume_slider {
         margin-top: 15px;
@@ -239,6 +236,15 @@ function createHowToModal() {
             height: 100px;
             width: 40px;
         }
+        .how-to-close-button {
+            cursor: pointer;
+            color: #000000;
+            font-size: 20px;
+            float: right;
+            position: absolute;
+            top: 1vh;
+            right: 1vw;
+        }
 
         .modal-button:hover {
             background-color: #6495FF;
@@ -265,14 +271,14 @@ function createHowToModal() {
 
     // Create how-to modal
     howToModal = document.createElement("div");
-    howToModal.classList.add("modal");
+    howToModal.classList.add("modal", "how-to-modal");
     howToModal.innerHTML = `
         <div class="how-to-modal-content" id="howToModalContent">
             <button id="prevSlide" class="how-to-modal-button">&#8592;</button>
-            <span class="close-button" id="closeHowTo">&times;</span>
+            <span class="how-to-close-button" id="closeHowTo">&times;</span>
             <div class="how-to-modal-slide-content">
                 <h2 id="howToTitle">...</h2>
-                <div id="howToContent" style="margin-top: 1vh; font-size: 14px;"></div>
+                <div id="howToContent" style="margin-top: 1vh;"></div>
             </div>
             <button id="nextSlide" class="how-to-modal-button">&#8594;</button>
         </div>
