@@ -3,7 +3,6 @@ let settingMenu = false;
 let audioSelectionMenu = false;
 gameState = "credits";
 let boyImage, girlImage;
-let audio7;
 
 let teammates = [
     { name: "Oscar \nArtistic Director/Designer", gender: "boy", x: 0, y: 0 },
@@ -23,7 +22,7 @@ let isStopped = false;
 let nameVisible = false;
 
 function preload() {
-    audio7 = loadSound('sounds/credits.mp3');
+    currSong = loadSound('sounds/credits.mp3');
 
     soundEffects["buttonSound"] = loadSound("sounds/buttonClick.mp3");
     boyImage = loadImage('assets/final_design/Clarke/ClarkeBatRunLft.gif');
@@ -35,8 +34,10 @@ function setup() {
     background(20);
     loadVolumeSetting();
 
-    if (audio7) {
-        audio7.play();
+    if (!currSong.isPlaying()) {
+        currSong.loop();
+        loadVolumeSetting();
+        currSong.play();
     }
 
     backButton = new Button("Back", 175, height - 50, 200, 50, null, null, () => backToMenu());
@@ -169,8 +170,7 @@ function mousePressed() {
         }
         setTimeout(() => backButton.action(), 200);
     }
-    if (currSong && !currSong.isPlaying()) {
-        currSong.play();
+    if (!currSong.isPlaying()) {
         currSong.loop();
     }
 }
