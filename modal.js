@@ -415,7 +415,6 @@ function playSoundEffect(effect) {
 
 function updateEnabledInput() {
     inputEnabled = !(settingsDisableInput || popupDisableInput);
-    console.log("input enabled", inputEnabled);
 }
 
 function updateEffectsVolume() {
