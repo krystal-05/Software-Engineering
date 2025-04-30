@@ -22,12 +22,10 @@ const howToSlides = [
     {
         title: "Game Controls",
         content: `
-        <ul style="text-align: left; padding-left: 20px;">
-          <li><b>Spacebar</b> – Start skill check / swing bat</li>
-          <li><b>1, 2, 3</b> – Select pitch or run bases</li>
-          <li><b>E</b> – Toggle camera perspective</li>
-          <li><b>Escape</b> – Open settings menu</li>
-        </ul>
+          <p><b>Spacebar</b> – Start skill check / swing bat</p>
+          <p><b>1, 2, 3</b> – Select pitch or run bases</p>
+          <p><b>E</b> – Toggle camera perspective</p>
+          <p><b>Escape</b> – Open settings menu</p>
         `
     },
     {
@@ -129,7 +127,10 @@ function createModal() {
     debugButton = modal.querySelector("#debugMode");
 
     // Event listeners for modal
-    closeButton.addEventListener("click", settingsClick);
+    closeButton.addEventListener("click", () => {
+        buttonClick();
+        settingsClick();
+    });
     volumeSlider.addEventListener("input", updateVolume);
     effectsVolumeSlider.addEventListener("input", updateEffectsVolume);
     muteButton.addEventListener("click", () => {
@@ -247,9 +248,18 @@ function createHowToModal() {
     `;
     document.body.appendChild(howToModal);
 
-    document.getElementById("closeHowTo").addEventListener("click", howToClick);
-    document.getElementById("prevSlide").addEventListener("click", () => changeHowToSlide(-1));
-    document.getElementById("nextSlide").addEventListener("click", () => changeHowToSlide(1));
+    document.getElementById("closeHowTo").addEventListener("click", () => {
+        buttonClick();
+        howToClick();
+    });
+    document.getElementById("prevSlide").addEventListener("click", () => {
+        buttonClick();
+        changeHowToSlide(-1)
+    });
+    document.getElementById("nextSlide").addEventListener("click", () => {
+        buttonClick();
+        changeHowToSlide(1)
+    });
 
     updateHowToSlide();
 }
