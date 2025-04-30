@@ -121,7 +121,8 @@ function createWinPopup() {
 }
 
 function updateStatsTableSingleSide(stats, isPlayerBatting, popupType = "win") {
-    const prefix = popupType === "win" ? "" : "lose-";
+   // const prefix = popupType === "win" ? "" : "lose-";
+    const prefix = popupType === "win" ? "" : popupType === "lose" ? "lose-" : "done-";
 
     if (isPlayerBatting) {
         document.getElementById(`${prefix}stat-your-score`).textContent = stats.score;
@@ -414,33 +415,71 @@ function createDonePopup(){ //for last level
     donePopup.innerHTML = `
     <div class = "donePopup-content">
         <p class="win"><b>You Win!</b></p>
-        <div class="buttons">
-            <button id="restartButton"  class="donePopup-button"> Restart Level</button>
-            <button id="menuButton" class="donePopup-button"> Menu </button>
-        </div>
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>Stat</th>
+                    <th>Your Team</th>
+                    <th>Opposing Team</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Score</td><td id="done-stat-your-score">0</td><td id="done-stat-opponent-score">0</td></tr>
+                <tr><td>Hits</td><td id="done-stat-your-hits">0</td><td id="done-stat-opponent-hits">0</td></tr>
+                <tr><td>Strikes</td><td id="done-stat-your-strikes">0</td><td id="done-stat-opponent-strikes">0</td></tr>
+                <tr><td>Strikeouts</td><td id="done-stat-your-strikeouts">0</td><td id="done-stat-opponent-strikeouts">0</td></tr>
+                <tr><td>Home Runs</td><td id="done-stat-your-homeruns">0</td><td id="done-stat-opponent-homeruns">0</td></tr>
+                <tr><td>Fouls</td><td id="done-stat-your-fouls">0</td><td id="done-stat-opponent-fouls">0</td></tr>
+            </tbody>
+        </table>
+
+        <p id="redirectMessage">
+            Redirecting to Credits in&nbsp;<span id="countdown">10</span>
+        </p>
+
     </div>
     `;
     document.body.appendChild(donePopup);
-
-    //get donePopup elements 
-    restartButton = donePopup.querySelector("#restartButton");
-    menuButton = donePopup.querySelector("#menuButton");
-
-    //events- on button click
-    restartButton.addEventListener("click", () => {
-        buttonClick();
-        restart();
-        hideDonePopup();
-    });
-
-    menuButton.addEventListener("click", () => {
-        buttonClick();
-        window.location.href = "index.html"
-    });
 }
 
 function showDonePopup() {
+    updateStatsTableSingleSide(
+        {
+            score: score.away,
+            hits: totalHitsPlayer,
+            strikes: totalStrikesByPlayer,
+            strikeouts: totalStrikeoutsPlayer,
+            homeruns: totalHomeRunsPlayer ,
+            fouls: totalFoulsPlayer,
+        },
+        true,
+        "done"
+    );
+
+    updateStatsTableSingleSide(
+        {
+            score: score.home,
+            hits: totalHitsOpponent,
+            strikes: totalStrikesByOpponent,
+            strikeouts: totalStrikeoutsOpponent,
+            homeruns: totalHomeRunsOpponent,
+            fouls: totalFoulsOpponent,
+        },
+        false, 
+        "done"
+    );
     donePopup.style.display = "flex";
+
+    let secondsLeft = 10;
+    const countdownElement = document.getElementById("countdown");
+    const interval = setInterval(() => {
+        secondsLeft--;
+        if (countdownElement) countdownElement.textContent = secondsLeft;
+        if (secondsLeft === 0) {
+            clearInterval(interval);
+            window.location.href = "credits.html";
+        }
+    }, 1000);
 }
 function hideDonePopup(){
     donePopup.style.display = "none";
