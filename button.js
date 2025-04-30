@@ -87,6 +87,11 @@ function resetGameButtonLocation() {
     settingButton.width = buttonSize;
     settingButton.height = buttonSize;
 
+    howToButton.x = settingsButtonX - widthGap;
+    howToButton.y = settingsButtonY;
+    howToButton.width = buttonSize;
+    howToButton.height = buttonSize;
+
     audioButton.x = settingsButtonX * 0.995;
     audioButton.y = settingsButtonY * 5;
     audioButton.width = defButtonWidth;
