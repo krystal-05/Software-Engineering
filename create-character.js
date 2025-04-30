@@ -2,6 +2,7 @@ let buttons = [], confirmButton;
 let bgImage, characterImage, characterImage1, characterImage2;
 let settingMenu = false;
 let audioSelectionMenu = false;
+let howToMenu = false;
 gameState = "createCharacter";
 const characterList = ["Clarke", "Claira", "Sus"];
 let characterIndex = 0;

@@ -1,6 +1,7 @@
 let backButton;
 let settingMenu = false;
 let audioSelectionMenu = false;
+let howToMenu = false;
 gameState = "credits";
 let boyImage, girlImage;
 

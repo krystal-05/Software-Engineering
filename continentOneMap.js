@@ -17,6 +17,7 @@ let levels = [];
 let lvlIndx = {};
 let settingMenu = false;
 let audioSelectionMenu = false;
+let howToMenu = false;
 let animFinished = true;
 let animLock = true;
 let animLock2 = true;

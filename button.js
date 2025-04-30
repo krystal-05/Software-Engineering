@@ -1,5 +1,5 @@
 class Button {
-    constructor(label, x, y, width, height, img = null, imgHover = null, action = null, isSettingsButton = false, isAudioMenuButton = false) {
+    constructor(label, x, y, width, height, img = null, imgHover = null, action = null, isSettingsButton = false, isAudioMenuButton = false, isHowToButton = false) {
         this.label = label;
         this.x = x;
         this.y = y;
@@ -10,20 +10,25 @@ class Button {
         this.action = action;
         this.isSettingsButton = isSettingsButton;
         this.isAudioMenuButton = isAudioMenuButton;
+        this.isHowToButton = isHowToButton;
     }
   
     display() {
         push();
             let showHover = this.isHovered();
-            if ((settingMenu && !this.isSettingsButton) || (audioSelectionMenu && !this.isAudioMenuButton)) {
+            let canHover = (!settingMenu || this.isSettingsButton) && 
+                           (!audioSelectionMenu || this.isAudioMenuButton) && 
+                           (!howToMenu || this.isHowToButton);
+            /*               
+            if ((settingMenu && !this.isSettingsButton) || (audioSelectionMenu && !this.isAudioMenuButton) || (howToMenu && !this.isHowToButton)) {
                 showHover = false;
-            }   
-            if(showHover && inputEnabled) {
+            } */  
+            if(showHover && canHover) {
                 cursor('pointer');
             }
             if (this.img && this.imgHover) {
                 image(
-                    showHover ? this.imgHover : this.img, 
+                    (showHover && canHover) ? this.imgHover : this.img, 
                     this.x - this.width / 2, 
                     this.y - this.height / 2, 
                     this.width, 
@@ -31,7 +36,7 @@ class Button {
                 );
             } else {
                 rectMode(CENTER);
-                fill(showHover ? color(100, 150, 255) : color(200));
+                fill((showHover && canHover) ? color(100, 150, 255) : color(200));
                 rect(this.x, this.y, this.width, this.height, 10);
                 fill(0);
                 textSize(16);

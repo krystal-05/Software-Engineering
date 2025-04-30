@@ -1,4 +1,5 @@
 let modal;
+let howToModal;
 let volumeSlider;
 let effectsVolumeSlider;
 let isMuted = false;
@@ -10,12 +11,38 @@ let soundEffects = {};
 let DEBUG = false;
 let popupDisableInput = false, settingsDisableInput = false, inputEnabled = true;
 let levelUnlockIncrement;
+let currentHowToSlide = 0;
 
 const MAX_LEVEL = 12;
 
 if (typeof gameState === 'undefined') {
     var gameState = "preMenu"; 
 }
+const howToSlides = [
+    {
+        title: "Game Controls",
+        content: `
+        <ul style="text-align: left; padding-left: 20px;">
+          <li><b>Spacebar</b> – Start skill check / swing bat</li>
+          <li><b>1, 2, 3</b> – Select pitch or run bases</li>
+          <li><b>E</b> – Toggle camera perspective</li>
+          <li><b>Escape</b> – Open settings menu</li>
+        </ul>
+        `
+    },
+    {
+        title: "How to Navigate",
+        content: `
+        <ul style="text-align: left; padding-left: 20px;">
+          <li>Use the world map to access levels</li>
+          <li>Character selection is saved across sessions</li>
+          <li>Levels unlock as you progress</li>
+          <li>Settings allow volume and debug adjustments</li>
+        </ul>
+        `
+    }
+];
+
 
 function createModal() {
     const style = document.createElement("style");
@@ -153,6 +180,92 @@ function createModal() {
     }
 }
 
+
+function createHowToModal() {
+    const style = document.createElement("style");
+    style.textContent = `
+    .how-to-modal {
+        position: fixed;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+    }
+    .how-to-modal-content {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        border: 1px solid #000000;
+        background: #FFFFFF;
+        padding: 20px 40px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        width: 300px;
+        max-width: 80%;
+    }
+    .how-to-modal-button {
+        background: #DCDCDC;
+        border: 1px solid #000000;
+        padding: 20px 10px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        font-weight: bold;
+        color: #000000;
+        height: 100px;
+        width: 40px;
+    }
+    .modal-button:hover {
+        background-color: #6495FF;
+        color: #000000;
+    }
+    .how-to-modal-slide-content {
+        flex: 1;
+        margin: 0 20px;
+    }
+  `;
+    document.head.appendChild(style);
+
+    // Create how-to modal
+    howToModal = document.createElement("div");
+    howToModal.classList.add("modal");
+    howToModal.innerHTML = `
+    <div class="how-to-modal-content" id="howToModalContent">
+      <button id="prevSlide" class="how-to-modal-button">&#8592;</button>
+      <div class="how-to-modal-slide-content">
+        <span class="close-button" id="closeHowTo">&times;</span>
+        <h2 id="howToTitle">...</h2>
+        <div id="howToContent" style="margin-top: 10px; font-size: 14px;"></div>
+      </div>
+      <button id="nextSlide" class="how-to-modal-button">&#8594;</button>
+    </div>
+    `;
+    document.body.appendChild(howToModal);
+
+    document.getElementById("closeHowTo").addEventListener("click", howToClick);
+    document.getElementById("prevSlide").addEventListener("click", () => changeHowToSlide(-1));
+    document.getElementById("nextSlide").addEventListener("click", () => changeHowToSlide(1));
+
+    updateHowToSlide();
+}
+
+function changeHowToSlide(direction) {
+    currentHowToSlide = (currentHowToSlide + direction + howToSlides.length) % howToSlides.length;
+    updateHowToSlide();
+}
+  
+function updateHowToSlide() {
+    const slide = howToSlides[currentHowToSlide];
+    document.getElementById("howToTitle").textContent = slide.title;
+    document.getElementById("howToContent").innerHTML = slide.content;
+}
+
+
 function showSettings() {
     settingsDisableInput = true;
     updateEnabledInput();
@@ -170,9 +283,26 @@ function settingsClick() {
 }
 
 function hideSettings() {
-    settingsDisableInput = false;
+    popupDisableInput = false;
     updateEnabledInput();
     modal.style.display = "none";
+}
+
+function showHowTo() {
+    popupDisableInput = true;
+    updateEnabledInput();
+    howToModal.style.display = "flex";
+}
+  
+  function hideHowTo() {
+    settingsDisableInput = false; 
+    updateEnabledInput();
+    howToModal.style.display = "none";
+}
+
+function howToClick() {
+    howToMenu ? hideHowTo() : showHowTo();
+    howToMenu = !howToMenu;
 }
 
 function backToMenu() {

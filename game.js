@@ -17,6 +17,7 @@ let lineup, currentBatter = 0;
 let score = { home: 0, away: 0 }, outs = 0, strikes = 0, inning = 1, topInning = true;
 let ballMoving = false, ballHit = false, pitchAnimation = false, swingAttempt = false;
 let settingMenu = false;
+let howToMenu = false;
 let ballCaughtThisFrame = false;
 let outPopupTime = 0;
 let currentPerspective = "side";

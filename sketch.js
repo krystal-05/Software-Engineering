@@ -2,6 +2,7 @@ let buttons = [];
 let loadButtons = [];
 let isLoad1 = "false";
 let settingMenu = false;
+let howToMenu = false;
 let bgImage, titleIcon;
 let settingsImg, settingsImgHover, creditsImg, creditsImgHover, howToImg, howToImgHover;
 let audioSelectionMenu = false;
@@ -38,6 +39,7 @@ function setup() {
     startMenuButtons();
     loadMenuButtons();
     createModal();
+    createHowToModal();
     createInitialPopup();
     hideLoadingScreen();
 }
@@ -120,8 +122,7 @@ function mousePressed() {
         gameState = "menu";
         return;
     }
-
-    if (settingMenu) { return; }
+    if (settingMenu || howToMenu) { return; }
 
     let activeButtons = (gameState === "menu") ? buttons : loadButtons;
     for (let btn of activeButtons) {
@@ -192,20 +193,7 @@ function startMenuButtons() {
     buttons.push(new Button("Start Game", width / 2, height * 0.75, startButtonWidth, startButtonHeight, null, null, () => gameState = "loadGame"));
     buttons.push(new Button("Settings", startX + buttonSize + gap + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, settingsImg, settingsImgHover, () => settingsClick()));
     buttons.push(new Button("Credits", startX + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, creditsImg, creditsImgHover, () => loadCredits()));
-    buttons.push(new Button(
-        "How To",
-        buttonSize * 0.6,                             // X: small offset from left
-        height - buttonSize * 0.6,                    // Y: near bottom
-        buttonSize,
-        buttonSize,
-        howToImg,
-        howToImgHover,
-        () => loadHowTo(),
-        false,
-        false,
-        true // This sets isHowToButton true
-    ));
-    
+    buttons.push(new Button("How To", buttonSize * 0.6, height - buttonSize * 0.6, buttonSize, buttonSize, howToImg, howToImgHover, () => howToClick()));
 }
 
 function loadMenuButtons() {
@@ -249,7 +237,8 @@ function loadVolumeSetting() {
 
 function keyPressed() {
     if(key === 'Escape' && gameState == "menu") {
-        settingsClick();
+        if(howToMenu) howToClick();
+        else settingsClick();
     }
     else if (key === 'Escape' && (gameState == "loadGame")) {
         goBack();

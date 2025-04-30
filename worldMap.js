@@ -12,6 +12,7 @@ let idleAnimation, runningAnimation;
 let charMoveSpeed = 10;
 let settingMenu = false;
 let audioSelectionMenu = false;
+let howToMenu = false;
 let animFinished = true;
 let char;
 let charOffset;

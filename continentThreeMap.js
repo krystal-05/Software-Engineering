@@ -20,6 +20,7 @@ let levels = [];
 let lvlIndx = {};
 let settingMenu = false;
 let audioSelectionMenu = false;
+let howToMenu = false;
 let animFinished = true;
 gamestate = "continent2map";
 
