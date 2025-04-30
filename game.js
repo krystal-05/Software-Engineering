@@ -239,9 +239,8 @@ function setup() {
     settingButton = new Button("Settings", settingsButtonX, settingsButtonY, buttonSize, buttonSize, settingButtonImage, settingButtonImage, () => settingsClick());
     howToButton = new Button("How To Play", howToButtonX, howToButtonY, buttonSize, buttonSize, howToButtonImage, howToButtonImage, () => howToClick());
     audioButton = new Button("Audio", settingsButtonX * .995, settingsButtonY * 5, buttonSize * 1.4, buttonSize * .45, null, null, () => audioClick());
-    Difficulty1 = new Button("make Normal", settingsButtonX * .995, settingsButtonY * 6, buttonSize * 1.4, buttonSize * .45, null, null, () => changeDifficulty(1));
-    Difficulty2 = new Button("make Hard", settingsButtonX * .995, settingsButtonY * 7, buttonSize * 1.4, buttonSize * .45, null, null, () => changeDifficulty(2));
-    Difficulty3 = new Button("make Impossible", settingsButtonX * .995, settingsButtonY * 8, buttonSize * 1.4, buttonSize * .45, null, null, () => changeDifficulty(3));
+    nextHalfInning = new Button("Next Half Inning", settingsButtonX * .995, settingsButtonY * 6, buttonSize * 1.4, buttonSize * .45, null, null, () => nextInning());
+    AddScore = new Button("Score + 5", settingsButtonX * .995, settingsButtonY * 7, buttonSize * 1.4, buttonSize * .45, null, null, () => addToScore());
     loseDemo = new Button("Lose Demo", settingsButtonX * .995, settingsButtonY * 10, buttonSize * 1.4, buttonSize * .45, null, null, () => loseClick());
     winDemo = new Button("Win Demo", settingsButtonX * .995, settingsButtonY * 11, buttonSize * 1.4, buttonSize * .45, null, null, () => winClick());
 
@@ -306,9 +305,8 @@ function draw() {
     howToButton.display();
     if (DEBUG){
         audioButton.display();
-        Difficulty1.display();
-        Difficulty2.display();
-        Difficulty3.display();
+        nextHalfInning.display();
+        AddScore.display();
         loseDemo.display();
         winDemo.display();
     }
@@ -1332,22 +1330,16 @@ function mousePressed() {
             setTimeout(() => howToButton.action(), 200);
         }
         // temp
-        if (Difficulty1.isHovered()) {
+        if (nextHalfInning.isHovered()) {
             if (DEBUG) {
                 buttonClick();
-                setTimeout(() => Difficulty1.action(), 200);
+                setTimeout(() => nextHalfInning.action(), 200);
             }
         }
-        if (Difficulty2.isHovered()) {
+        if (AddScore.isHovered()) {
             if (DEBUG) {
                 buttonClick();
-                setTimeout(() => Difficulty2.action(), 200);
-            }
-        }
-        if (Difficulty3.isHovered()) {
-            if (DEBUG) {
-                buttonClick();
-                setTimeout(() => Difficulty3.action(), 200);
+                setTimeout(() => AddScore.action(), 200);
             }
         }
         if (loseDemo.isHovered()) {

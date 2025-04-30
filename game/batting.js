@@ -345,3 +345,7 @@ function getBatterImage(batter, swingAttempt, batterIterator) {
         return swingAttempt ? redBatterSwung : redBatterIdle;
     }
 }
+
+function addToScore() {
+    score.away += 5;
+}
