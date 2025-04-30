@@ -337,13 +337,13 @@ function settingsClick() {
 }
 
 function hideSettings() {
-    popupDisableInput = false;
+    settingsDisableInput = false;
     updateEnabledInput();
     modal.style.display = "none";
 }
 
 function showHowTo() {
-    popupDisableInput = true;
+    settingsDisableInput = true;
     updateEnabledInput();
     howToModal.style.display = "flex";
 }
@@ -415,6 +415,7 @@ function playSoundEffect(effect) {
 
 function updateEnabledInput() {
     inputEnabled = !(settingsDisableInput || popupDisableInput);
+    console.log("input enabled", inputEnabled);
 }
 
 function updateEffectsVolume() {
