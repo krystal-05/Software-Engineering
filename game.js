@@ -180,9 +180,9 @@ function preload() {
     soundEffects["hitBall"] = loadSound('sounds/baseballBatHitBall.mp3'); 
     audio1 = loadSound('sounds/gamesong.mp3');
     audio2 = loadSound('sounds/audio2.mp3');
-    audio3 = loadSound('sounds/audio3.mp3');
+    audio3 = loadSound('sounds/audio6.mp3');
     audio4 = loadSound('sounds/audio4.mp3');
-    audio5 = loadSound('sounds/audio5.mp3');
+    audio5 = loadSound('sounds/audio7.mp3');
     soundEffects["strike"] = loadSound('sounds/roblox_1.mp3');
     soundEffects["foul"] = loadSound('sounds/nuh_uh_1.mp3');
     soundEffects["homerun"] = loadSound('sounds/yay_1.mp3');
