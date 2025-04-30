@@ -23,16 +23,30 @@ body {
 }
   
 #prevSlide {
-    left: 0.5vh; 
+    left: 1vh; 
 }
   
 #nextSlide {
-    right: 0.5vh;
+    right: 1vh;
 }
 
 #prevSlide:hover, #nextSlide:hover {
     background-color: #6495FF;
     color: #000000;
+}
+
+#powerBarCanvas {
+    display: block;
+    margin: 0 auto;
+    margin-top: -10%;
+    margin-bottom: -5%;
+}
+
+#directionBarCanvas {
+    display: block;
+    margin: 0 auto;
+    margin-top: -10%;
+    margin-bottom: -2%;
 }
 
 #loadingScreen {

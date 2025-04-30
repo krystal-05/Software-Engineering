@@ -20,23 +20,37 @@ if (typeof gameState === 'undefined') {
 }
 const howToSlides = [
     {
-        title: "Game Controls",
+        title: "Batting Controls",
         content: `
-          <p><b>Spacebar</b> – Start skill check / swing bat</p>
-          <p><b>1, 2, 3</b> – Select pitch or run bases</p>
-          <p><b>E</b> – Toggle camera perspective</p>
-          <p><b>Escape</b> – Open settings menu</p>
+            <p><b>"Spacebar"</b> - Start/Stop skill check / swing bat</p>
+            <p><b>"1", "2", "3"</b> - Manually run bases</p>
+            <p><b>"E"</b> - Toggle camera perspective</p>
+            <div style="margin-top: 5vh;"></div>
+            <p>This is the power bar that controls how hard the ball is hit</p>
+            <canvas id="powerBarCanvas" width="300" height="80""></canvas>
+            <p>This is the direction bar that controls where you hit the ball</p>
+            <canvas id="directionBarCanvas" width="300" height="80"></canvas>
         `
     },
+
     {
-        title: "How to Navigate",
+        title: "Pitching Controls",
         content: `
-        <ul style="text-align: left; padding-left: 20px;">
-          <li>Use the world map to access levels</li>
-          <li>Character selection is saved across sessions</li>
-          <li>Levels unlock as you progress</li>
-          <li>Settings allow volume and debug adjustments</li>
-        </ul>
+            <p><b>"Spacebar"</b> - Start/Stop pitching skill check</p>
+            <p><b>"1", "2", "3"</b> - Select pitch type</p>
+            <p><b>"E"</b> - Toggle camera perspective</p>
+            <div style="margin-top: 5vh;"></div>
+            <p>This is the power bar that controls how fast the ball is thrown</p>
+            <canvas id="powerBarCanvas" width="300" height="80""></canvas>
+        `
+    },
+
+    {
+        title: "Website Navigation",
+        content: `
+            <p><b>Reset Game Save</b> - Resets character selection and relocks all levels</p>
+            <p><b>WASD or Arrow keys</b> - move around the map then Enter to enter a level</p>
+            <p><b>Escape</b> - Opens settings on each page</p>
         `
     }
 ];
@@ -85,6 +99,9 @@ function createModal() {
         color: #000000;
         font-size: 20px;
         float: right;
+        position: absolute;
+        top: 1vh;
+        right: 1vw;
     }
     .volume_slider {
         margin-top: 15px;
@@ -145,7 +162,6 @@ function createModal() {
     debugButton.addEventListener("change", (event) => {
         DEBUG = event.target.checked;
         localStorage.setItem("debugMode", DEBUG.toString());
-        console.log("debug mode: ", DEBUG);
     });
 
     const savedVolume = localStorage.getItem("volume");
@@ -185,66 +201,81 @@ function createModal() {
 function createHowToModal() {
     const style = document.createElement("style");
     style.textContent = `
-    .how-to-modal {
-        position: fixed;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1000;
-    }
-    .how-to-modal-content {
-        position: relative;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        border: 1px solid #000000;
-        background: #FFFFFF;
-        padding: 20px 40px;
-        border-radius: 8px;
-        text-align: center;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        width: 300px;
-        max-width: 80%;
-    }
-    .how-to-modal-button {
-        background: #DCDCDC;
-        border: 1px solid #000000;
-        padding: 20px 10px;
-        font-size: 20px;
-        cursor: pointer;
-        border-radius: 5px;
-        font-weight: bold;
-        color: #000000;
-        height: 100px;
-        width: 40px;
-    }
-    .modal-button:hover {
-        background-color: #6495FF;
-        color: #000000;
-    }
-    .how-to-modal-slide-content {
-        flex: 1;
-        margin: 0 20px;
-    }
-  `;
+        .how-to-modal {
+            position: fixed;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        .how-to-modal-content {
+            position: relative;
+            display: grid;
+            grid-template-columns: auto 1fr auto; 
+            align-items: center;
+            border: 1px solid #000000;
+            background: #FFFFFF;
+            padding: 20px 40px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            max-width: 80%;
+            text-align: center;
+        }
+
+        .how-to-modal-button {
+            background: #DCDCDC;
+            border: 1px solid #000000;
+            padding: 20px 10px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #000000;
+            height: 100px;
+            width: 40px;
+        }
+
+        .modal-button:hover {
+            background-color: #6495FF;
+            color: #000000;
+        }
+
+        .how-to-modal-slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+            
+        .how-to-modal-slide-content p {
+            margin-left: 2vw;
+            margin-right: 2vw;
+            text-align: center; 
+            word-wrap: break-word;
+            font-size: 16px;
+        }
+    `;
     document.head.appendChild(style);
 
     // Create how-to modal
     howToModal = document.createElement("div");
     howToModal.classList.add("modal");
     howToModal.innerHTML = `
-    <div class="how-to-modal-content" id="howToModalContent">
-      <button id="prevSlide" class="how-to-modal-button">&#8592;</button>
-      <div class="how-to-modal-slide-content">
-        <span class="close-button" id="closeHowTo">&times;</span>
-        <h2 id="howToTitle">...</h2>
-        <div id="howToContent" style="margin-top: 10px; font-size: 14px;"></div>
-      </div>
-      <button id="nextSlide" class="how-to-modal-button">&#8594;</button>
-    </div>
+        <div class="how-to-modal-content" id="howToModalContent">
+            <button id="prevSlide" class="how-to-modal-button">&#8592;</button>
+            <span class="close-button" id="closeHowTo">&times;</span>
+            <div class="how-to-modal-slide-content">
+                <h2 id="howToTitle">...</h2>
+                <div id="howToContent" style="margin-top: 1vh; font-size: 14px;"></div>
+            </div>
+            <button id="nextSlide" class="how-to-modal-button">&#8594;</button>
+        </div>
     `;
     document.body.appendChild(howToModal);
 
@@ -273,6 +304,13 @@ function updateHowToSlide() {
     const slide = howToSlides[currentHowToSlide];
     document.getElementById("howToTitle").textContent = slide.title;
     document.getElementById("howToContent").innerHTML = slide.content;
+    if (document.getElementById("powerBarCanvas")) {
+        drawPowerBar();
+    }
+
+    if (document.getElementById("directionBarCanvas")) {
+        drawDirectionBar();
+    }
 }
 
 
@@ -382,4 +420,66 @@ function updateEffectsVolume() {
             sound.amp(currEffectsVolume);
         });
     }
+}
+
+function drawPowerBar() {
+    const canvas = document.getElementById("powerBarCanvas");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const barWidth = 140;  
+    const barHeight = 10;  
+    const barX = (canvas.width - barWidth) / 2;
+    const barY = (canvas.height - barHeight) / 2;
+    const goodZoneWidth = 40;   
+    const perfectZoneWidth = 15; 
+
+    ctx.fillStyle = "#666";
+    ctx.fillRect(barX, barY, barWidth, barHeight);
+
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(barX, barY, barWidth, barHeight);
+
+    const goodZoneX = barX + (barWidth - goodZoneWidth) / 2;
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(goodZoneX, barY, goodZoneWidth, barHeight);
+
+    const perfectZoneX = barX + (barWidth - perfectZoneWidth) / 2;
+    ctx.fillStyle = "green";
+    ctx.fillRect(perfectZoneX, barY, perfectZoneWidth, barHeight);
+}
+
+function drawDirectionBar() {
+    const canvas = document.getElementById("directionBarCanvas");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const barWidth = 140;
+    const barHeight = 10;
+    const barX = (canvas.width - barWidth) / 2;
+    const barY = (canvas.height - barHeight) / 2;
+
+    const foulZoneSize = 20;
+    const fairZoneSize = 100;
+
+    const xLeft = barX + foulZoneSize;
+    const xRight = xLeft + fairZoneSize;
+
+    ctx.fillStyle = "#666";
+    ctx.fillRect(barX, barY, foulZoneSize, barHeight);
+
+    ctx.fillStyle = "green";
+    ctx.fillRect(xLeft, barY, fairZoneSize, barHeight);
+
+    ctx.fillStyle = "#666";
+    ctx.fillRect(xRight, barY, barWidth - foulZoneSize - fairZoneSize, barHeight);
+
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(barX, barY, barWidth, barHeight);
 }

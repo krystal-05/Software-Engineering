@@ -193,7 +193,7 @@ function startMenuButtons() {
     buttons.push(new Button("Start Game", width / 2, height * 0.75, startButtonWidth, startButtonHeight, null, null, () => gameState = "loadGame"));
     buttons.push(new Button("Settings", startX + buttonSize + gap + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, settingsImg, settingsImgHover, () => settingsClick()));
     buttons.push(new Button("Credits", startX + buttonSize / 2, buttonY + buttonSize / 2, buttonSize, buttonSize, creditsImg, creditsImgHover, () => loadCredits()));
-    buttons.push(new Button("How To", buttonSize * 0.6, height - buttonSize * 0.6, buttonSize, buttonSize, howToImg, howToImgHover, () => howToClick()));
+    buttons.push(new Button("How To", buttonSize * 0.6, buttonY + buttonSize / 2, buttonSize, buttonSize, howToImg, howToImgHover, () => howToClick()));
 }
 
 function loadMenuButtons() {
