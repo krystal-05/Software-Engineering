@@ -39,25 +39,25 @@
 
  <p align = "center" > 
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> KEEGAN - Lead Developer </b>  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> OSCAR - Creative Director / Designer </b>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> TRISTIAN - Programmer </b>
    <br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> TREVOR - Lead Developer </b>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> KRYSTAL - Designer / Programmer </b>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> ISRA - Programmer </b>
      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <br>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> VIDHI - Co-Lead Developer </b>
-    &nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> JOSH - Map Designer </b>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> ANTONIO - Programmer </b>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </p>
