@@ -29,9 +29,9 @@
   <img src = "https://github.com/user-attachments/assets/93630752-8044-4e93-8d8d-440313df7736">
 </p>
 
- <p align = "center" > <b> BATTERGROUND is a easy and fun, arcade experience catering to anyone who wants to casually play, or enthusiast of the sport of baseball.</b></p>
- <p align = "center" > <b>With easy controls and lots of levels , players can spend hours, days , years, or even decades being entertained, never being bored.</b></p>
- <p align = "center" > <b>Complimenting the game, orignal and high quality artwork were made to give BATTERGROUND that AAAAA feel.</b></p>
+ <p align = "center" > <b> BATTERGROUND is a easy and fun, arcade experience catering to anyone who wants to casually play, or enthusiast of the sport of baseball.
+ With easy controls and lots of levels , players can spend hours, days , years, or even decades being entertained, never being bored.
+ <b>Complimenting the game, orignal and high quality artwork were made to give BATTERGROUND that AAAAA feel.</b></p>
 <br>
 
 # <h3 align = "center"> THE TEAM (CONTRIBUTORS) <center>
@@ -39,25 +39,25 @@
 
  <p align = "center" > 
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> KEEGAN - Lead Developer </b>  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> OSCAR - Creative Director / Designer </b>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> TRISTIAN - Programmer </b>
    <br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> TREVOR - Lead Developer </b>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> KRYSTAL - Designer / Programmer </b>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> ISRA - Programmer </b>
      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <br>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> VIDHI - Co-Lead Developer </b>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> JOSH - Map Designer </b>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> ANTONIO - Programmer </b>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </p>
@@ -97,19 +97,15 @@
 <br>
 <p>
 <p align = "center">
+  
 <img src = "https://github.com/user-attachments/assets/25eed0c2-0f3d-416a-85d7-67d5159aa4dc" width = "65" height = "65">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 THANK YOU FOR PLAYING
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <img src = "https://github.com/user-attachments/assets/9ef99e07-9a80-4cfd-911f-4f4561b92e91" width = "65" height = "65">
+
 </p>
 
 
