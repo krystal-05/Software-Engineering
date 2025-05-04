@@ -45,7 +45,7 @@
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> ISRA - Programmer </b>
    <br>
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> VIDHI - Co-Lead Developer </b>
-   <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> JOSH - Map Designer </b>
+   <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> JOSHUA - Map Designer </b>
    <img src = "https://github.com/user-attachments/assets/f0fb85a2-3a1c-4e2c-bdb3-9a97768a4fdd" width = "50" height = "50"> <b> ANTONIO - Programmer </b>
 
 </p>
