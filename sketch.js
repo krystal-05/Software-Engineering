@@ -162,9 +162,6 @@ function loadlogin() {
 function loadCredits() {
     window.location.href = "credits.html";
 }
-function loadHowTo(){
-    window.location.href = "how-to.html";
-}
 function deleteSave() {
     localStorage.removeItem("unlockedLevel");
     localStorage.removeItem("lastSelectedContinent");
